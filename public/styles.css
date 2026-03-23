@@ -1,0 +1,501 @@
+:root {
+  --bg: #f4efe5;
+  --surface: rgba(255, 250, 240, 0.74);
+  --surface-strong: rgba(255, 249, 237, 0.92);
+  --ink: #1c2d2c;
+  --muted: #5d6d6b;
+  --line: rgba(28, 45, 44, 0.12);
+  --accent: #0f7b6c;
+  --accent-soft: rgba(15, 123, 108, 0.12);
+  --alert: #c35b32;
+  --gold: #b3852e;
+  --shadow: 0 22px 80px rgba(35, 46, 44, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top left, rgba(15, 123, 108, 0.16), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(195, 91, 50, 0.14), transparent 22%),
+    linear-gradient(135deg, #f8f2e8, #efe6d7 48%, #f3ede2);
+  color: var(--ink);
+  font-family: "Iowan Old Style", "Palatino Linotype", "Times New Roman", "Songti SC", serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(28, 45, 44, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28, 45, 44, 0.025) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.shell {
+  position: relative;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+  gap: 24px;
+  padding: 24px;
+}
+
+.sidebar,
+.panel,
+.hero {
+  backdrop-filter: blur(20px);
+  background: var(--surface);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: var(--shadow);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  border-radius: 26px;
+  padding: 22px 20px;
+}
+
+.brand {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.brand-mark {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  background:
+    linear-gradient(135deg, rgba(15, 123, 108, 0.9), rgba(28, 45, 44, 0.95));
+  color: #f5eee2;
+  font-size: 1.1rem;
+  letter-spacing: 0.14em;
+}
+
+.brand h1,
+.hero h2,
+.panel h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.brand p,
+.hero-subtitle,
+.block-label,
+.panel-kicker,
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+}
+
+.block-label,
+.panel-kicker,
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.74rem;
+}
+
+.metric-stack,
+.patient-list,
+.risk-domain-grid,
+.therapy-package-grid,
+.meeting-list,
+.care-plan-summary,
+.patient-overview {
+  display: grid;
+  gap: 12px;
+}
+
+.metric-card,
+.patient-item,
+.risk-card,
+.package-card,
+.meeting-card,
+.note-block,
+.plan-block,
+.stat-chip,
+.mapping-card {
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: var(--surface-strong);
+}
+
+.metric-card {
+  padding: 14px;
+}
+
+.metric-card strong {
+  display: block;
+  font-size: 1.8rem;
+}
+
+.main-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  border-radius: 32px;
+  padding: 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(15, 123, 108, 0.15);
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-tools {
+  display: grid;
+  gap: 16px;
+  justify-items: end;
+}
+
+.filter-strip {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.filter-field select {
+  min-width: 180px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.76);
+  padding: 10px 12px;
+  color: var(--ink);
+}
+
+.primary-button,
+.ghost-button,
+.meeting-card button,
+.meeting-detail button {
+  cursor: pointer;
+  border-radius: 999px;
+  padding: 12px 18px;
+  border: 1px solid transparent;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--accent), #194f4a);
+  color: #f6f0e4;
+  box-shadow: 0 12px 30px rgba(15, 123, 108, 0.25);
+}
+
+.ghost-button {
+  background: transparent;
+  border-color: rgba(28, 45, 44, 0.16);
+  color: var(--ink);
+}
+
+.primary-button:hover,
+.ghost-button:hover,
+.meeting-card button:hover,
+.meeting-detail button:hover,
+.patient-item:hover {
+  transform: translateY(-2px);
+}
+
+.grid {
+  display: grid;
+  gap: 22px;
+}
+
+.grid-overview,
+.grid-ecosystem,
+.grid-opensrc,
+.grid-medclaw-top,
+.grid-medclaw-clinical,
+.grid-medclaw-data,
+.grid-intervention,
+.grid-mdt,
+.grid-role {
+  grid-template-columns: 1.08fr 1fr;
+}
+
+.grid-mapping {
+  grid-template-columns: 1fr;
+}
+
+.panel {
+  border-radius: 28px;
+  padding: 22px;
+}
+
+.panel-head {
+  margin-bottom: 16px;
+}
+
+.patient-item {
+  text-align: left;
+  padding: 14px;
+  width: 100%;
+  color: inherit;
+}
+
+.patient-item.active {
+  border-color: rgba(15, 123, 108, 0.4);
+  box-shadow: inset 0 0 0 1px rgba(15, 123, 108, 0.22);
+}
+
+.patient-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.patient-item-body {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.pill,
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(28, 45, 44, 0.08);
+}
+
+.pill.low,
+.status-pill.low {
+  background: rgba(15, 123, 108, 0.12);
+}
+
+.pill.medium,
+.status-pill.medium {
+  background: rgba(179, 133, 46, 0.14);
+}
+
+.pill.high,
+.status-pill.high,
+.pill.critical,
+.status-pill.critical {
+  background: rgba(195, 91, 50, 0.14);
+}
+
+.patient-overview {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.stat-chip {
+  padding: 14px;
+}
+
+.stat-chip strong {
+  display: block;
+  font-size: 1.18rem;
+}
+
+.risk-domain-grid,
+.therapy-package-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.risk-card,
+.package-card,
+.meeting-card,
+.note-block,
+.plan-block,
+.mapping-card {
+  padding: 16px;
+}
+
+.risk-card h4,
+.package-card h4,
+.meeting-card h4 {
+  margin: 0 0 8px;
+}
+
+.mini-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.mini-list li + li {
+  margin-top: 6px;
+}
+
+.care-plan-summary {
+  grid-template-columns: 1fr;
+}
+
+.meeting-card {
+  display: grid;
+  gap: 10px;
+}
+
+.meeting-detail {
+  display: grid;
+  gap: 14px;
+}
+
+.meeting-detail.empty-state {
+  min-height: 240px;
+  place-items: center;
+  text-align: center;
+  color: var(--muted);
+}
+
+.message-stream {
+  display: grid;
+  gap: 10px;
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.message-card {
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(28, 45, 44, 0.08);
+}
+
+.message-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.meeting-form,
+.decision-form {
+  display: grid;
+  gap: 10px;
+}
+
+.meeting-form textarea,
+.decision-form textarea,
+.decision-form input,
+.meeting-form select {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.76);
+  padding: 12px 14px;
+  min-height: 48px;
+  color: var(--ink);
+}
+
+.decision-form textarea,
+.meeting-form textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.meeting-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.dim {
+  color: var(--muted);
+}
+
+.mapping-table {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 0.92rem;
+}
+
+.mapping-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(28, 45, 44, 0.12);
+}
+
+.mapping-row code {
+  color: var(--muted);
+  word-break: break-word;
+}
+
+@media (max-width: 1180px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .grid-overview,
+  .grid-ecosystem,
+  .grid-opensrc,
+  .grid-medclaw-top,
+  .grid-medclaw-clinical,
+  .grid-medclaw-data,
+  .grid-intervention,
+  .grid-mdt,
+  .grid-role,
+  .risk-domain-grid,
+  .therapy-package-grid,
+  .patient-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    flex-direction: column;
+    align-items: start;
+    gap: 18px;
+  }
+
+  .hero-tools {
+    justify-items: start;
+    width: 100%;
+  }
+}
