@@ -1,0 +1,28 @@
+{
+  "name": "chronicare-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ChroniCare OS demo for hospital chronic disease management, MDT collaboration, FHIR integration, and AI-assisted care.",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "setup:predictor": "sh scripts/setup_predictor_env.sh",
+    "setup:predictor:tempor-runtime": "sh scripts/setup_predictor_tempor_runtime.sh",
+    "start:predictor": ".venv-predictor/bin/python scripts/predict_service.py --port 8011",
+    "build": "tsc -p tsconfig.json",
+    "build:pages": "PROJECT_STORAGE_ROOT=.pages-storage pnpm exec tsx scripts/build-pages.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/node": "^24.0.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}
