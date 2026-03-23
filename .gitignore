@@ -1,0 +1,17 @@
+node_modules
+dist
+.DS_Store
+storage
+.env
+.env.local
+.env.*.local
+coverage
+*.log
+__pycache__/
+*.pyc
+.venv-predictor
+.pages-storage
+pages-dist
+pnpm-debug.log*
+npm-debug.log*
+yarn-error.log*
