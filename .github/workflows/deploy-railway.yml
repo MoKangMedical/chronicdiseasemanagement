@@ -1,0 +1,37 @@
+name: Deploy to Railway
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
+      RAILWAY_ENVIRONMENT: ${{ secrets.RAILWAY_ENVIRONMENT }}
+      RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate Railway secrets
+        run: |
+          test -n "$RAILWAY_TOKEN"
+          test -n "$RAILWAY_PROJECT_ID"
+          test -n "$RAILWAY_ENVIRONMENT"
+          test -n "$RAILWAY_SERVICE"
+
+      - name: Deploy to Railway
+        run: |
+          railway up \
+            --ci \
+            --service="$RAILWAY_SERVICE" \
+            --environment="$RAILWAY_ENVIRONMENT" \
+            --project="$RAILWAY_PROJECT_ID"

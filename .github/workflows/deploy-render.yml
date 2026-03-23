@@ -1,0 +1,37 @@
+name: Deploy to Render
+
+on:
+  workflow_run:
+    workflows:
+      - Docker Publish
+    types:
+      - completed
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        (
+          github.event.workflow_run.head_branch == 'main' ||
+          github.event.workflow_run.head_branch == 'master'
+        )
+      )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate deploy hook secret
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Missing RENDER_DEPLOY_HOOK_URL secret"
+            exit 1
+          fi
+
+      - name: Trigger Render deploy hook
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
