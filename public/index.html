@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="zh-CN" data-app-mode="live">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>慢康智枢 ChroniCare OS</title>
+    <script>
+      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
+        mode: document.documentElement.dataset.appMode || "live",
+        snapshotPath: "./demo-data/pages-snapshot.json"
+      };
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">CCOS</div>
+          <div>
+            <h1>慢康智枢</h1>
+            <p>ChroniCare OS</p>
+          </div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="block-label">总览</div>
+          <div id="summary-metrics" class="metric-stack"></div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="block-label">患者队列</div>
+          <div id="patient-list" class="patient-list"></div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Clinical Intelligence Layer</p>
+            <h2>慢病风险分层、行为干预与 MDT 在线协作</h2>
+            <p id="hero-subtitle" class="hero-subtitle"></p>
+          </div>
+          <div class="hero-tools">
+            <div class="filter-strip">
+              <label class="filter-field">
+                <span>医院</span>
+                <select id="hospital-filter"></select>
+              </label>
+              <label class="filter-field">
+                <span>工作台角色</span>
+                <select id="role-filter">
+                  <option value="specialist-doctor">专科医生</option>
+                  <option value="general-practitioner">全科医生</option>
+                  <option value="health-manager" selected>健康管理师</option>
+                </select>
+              </label>
+            </div>
+            <div class="hero-actions">
+              <button id="run-workflow-btn" class="primary-button">启动慢病工作流</button>
+              <button id="create-meeting-btn" class="ghost-button">发起 MDT 在线讨论</button>
+            </div>
+          </div>
+        </header>
+
+        <section class="grid grid-overview">
+          <article class="panel panel-patient">
+            <div class="panel-head">
+              <span class="panel-kicker">患者画像</span>
+              <h3 id="patient-name">-</h3>
+            </div>
+            <div id="patient-overview" class="patient-overview"></div>
+          </article>
+
+          <article class="panel panel-risk">
+            <div class="panel-head">
+              <span class="panel-kicker">精准风险分层</span>
+              <h3>疾病领域画像</h3>
+            </div>
+            <div id="risk-domain-grid" class="risk-domain-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-medclaw-top">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">MedClaw</span>
+              <h3>医院级临床智能边界</h3>
+            </div>
+            <div id="medclaw-overview" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">只读合规</span>
+              <h3>权限与审计</h3>
+            </div>
+            <div id="medclaw-guardrails" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-ecosystem">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">B2B2C 生态</span>
+              <h3>付费方 · 医院 · 用户三方协同</h3>
+            </div>
+            <div id="ecosystem-overview" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">AI 产品矩阵</span>
+              <h3>全科、精准就医与基层工具</h3>
+            </div>
+            <div id="ecosystem-products" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-role">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">分角色工作台</span>
+              <h3 id="role-view-title">角色工作视图</h3>
+            </div>
+            <div id="role-view-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">院内资源</span>
+              <h3>当前角色可用医生与管理师</h3>
+            </div>
+            <div id="clinician-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-intervention">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">行为干预</span>
+              <h3>疗法包</h3>
+            </div>
+            <div id="therapy-package-grid" class="therapy-package-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">整合管理</span>
+              <h3>临床计划与随访目标</h3>
+            </div>
+            <div id="care-plan-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-medclaw-clinical">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">影像智能</span>
+              <h3>影像报告解析与时序对比</h3>
+            </div>
+            <div id="imaging-comparison" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">AI 病历</span>
+              <h3>病历全自动生成草案</h3>
+            </div>
+            <div id="record-draft" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-medclaw-data">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">辅助诊断</span>
+              <h3>诊断建议与病情预测</h3>
+            </div>
+            <div id="diagnosis-support" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">数据治理</span>
+              <h3>全链路解析、脱敏与编码</h3>
+            </div>
+            <div id="data-pipeline" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-ecosystem">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">患者权益旅程</span>
+              <h3>付费方驱动的服务编排</h3>
+            </div>
+            <div id="ecosystem-journey" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">合作伙伴</span>
+              <h3>生态客户与医院网络</h3>
+            </div>
+            <div id="ecosystem-partners" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-opensrc">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">GitHub 能力中台</span>
+              <h3>健康管理与疾病预测开源能力</h3>
+            </div>
+            <div id="github-overview" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">能力目录</span>
+              <h3>可接入的开源仓库与模型</h3>
+            </div>
+            <div id="github-catalog" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-opensrc">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">患者级编排</span>
+              <h3>当前患者的开源能力接入计划</h3>
+            </div>
+            <div id="github-plan" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-opensrc">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">真实数据适配链</span>
+              <h3>HealthChain + healthkit-on-fhir</h3>
+            </div>
+            <div id="adapter-summary" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">本地预测服务</span>
+              <h3>TemporAI / PyHealth / disease-prediction</h3>
+            </div>
+            <div id="prediction-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-mdt">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">MDT 在线讨论</span>
+              <h3>会诊房间</h3>
+            </div>
+            <div id="meeting-list" class="meeting-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">实时协作</span>
+              <h3 id="active-meeting-title">选择一个 MDT 会议</h3>
+            </div>
+            <div id="meeting-detail" class="meeting-detail empty-state">
+              会议消息、结论和追踪动作会显示在这里。
+            </div>
+          </article>
+        </section>
+
+        <section class="grid grid-mapping">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">HIS 接口适配</span>
+              <h3>多医院字段映射预览</h3>
+            </div>
+            <div id="mapping-grid" class="therapy-package-grid"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <template id="patient-item-template">
+      <button class="patient-item">
+        <div class="patient-item-head">
+          <strong class="patient-item-name"></strong>
+          <span class="pill"></span>
+        </div>
+        <div class="patient-item-body"></div>
+      </button>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
