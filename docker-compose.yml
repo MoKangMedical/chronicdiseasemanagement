@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  medical-agent-os:
+    build: .
+    ports:
+      - "3010:3010"
+    environment:
+      PORT: 3010
+    volumes:
+      - ./storage:/app/storage
