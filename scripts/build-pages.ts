@@ -8,12 +8,14 @@ import { EcosystemService } from "../src/services/ecosystem-service.js";
 import { GithubCapabilityService } from "../src/services/github-capability-service.js";
 import { LocalPredictionService } from "../src/services/local-prediction-service.js";
 import { MedClawService } from "../src/services/medclaw-service.js";
+import { PopulationManagementService } from "../src/services/population-management-service.js";
 import type { HospitalId, PatientProfile, RiskLevel, WorkbenchRole } from "../src/types.js";
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.resolve(currentDir, "..");
 const publicDir = path.join(projectRoot, "public");
 const pagesDistDir = path.join(projectRoot, "pages-dist");
+const publicSourcesDir = path.join(projectRoot, "src", "data", "public-sources");
 
 const brand = {
   shortName: "慢康智枢",
@@ -35,6 +37,24 @@ function filterKey(hospitalId?: HospitalId, workbenchRole?: WorkbenchRole): stri
 
 function workspaceKey(patientId: string, workbenchRole?: WorkbenchRole): string {
   return `${patientId}|${workbenchRole ?? "all"}`;
+}
+
+function toStaticHtml(source: string): string {
+  return source
+    .replace('data-app-mode="live"', 'data-app-mode="static"')
+    .replace(
+      "window.__APP_CONFIG__ = window.__APP_CONFIG__ || {",
+      `window.__APP_CONFIG__ = {
+        mode: "static",
+        snapshotPath: "./demo-data/pages-snapshot.json",
+        populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json",
+        repo: "MoKangMedical/chronicdiseasemanagement",
+        projectName: "${brand.fullName}",
+        readOnlyMessage: "GitHub Pages 演示站为只读模式"
+      };
+      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {`
+    );
 }
 
 function riskScore(level: RiskLevel): number {
@@ -236,6 +256,7 @@ async function main() {
   const ecosystem = new EcosystemService();
   const githubCapabilities = new GithubCapabilityService();
   const adapters = new DataAdapterService();
+  const population = new PopulationManagementService(platform);
 
   medclaw.reset();
   adapters.reset();
@@ -265,7 +286,10 @@ async function main() {
         workbenchRole: role
       });
     }
+
   }
+
+  const populationCohort = population.getCohortSnapshot();
 
   for (const patient of patients) {
     ecosystemJourneys[patient.id] = ecosystem.getPatientJourney(patient.id);
@@ -327,25 +351,27 @@ async function main() {
   await mkdir(path.join(pagesDistDir, "demo-data"), { recursive: true });
   await cp(publicDir, pagesDistDir, { recursive: true });
 
-  const indexPath = path.join(pagesDistDir, "index.html");
-  const sourceIndex = await readFile(indexPath, "utf8");
-  const pagesIndex = sourceIndex
-    .replace('data-app-mode="live"', 'data-app-mode="static"')
-    .replace(
-      "window.__APP_CONFIG__ = window.__APP_CONFIG__ || {",
-      `window.__APP_CONFIG__ = {
-        mode: "static",
-        snapshotPath: "./demo-data/pages-snapshot.json",
-        repo: "MoKangMedical/chronicdiseasemanagement",
-        projectName: "${brand.fullName}",
-        readOnlyMessage: "GitHub Pages 演示站为只读模式"
-      };
-      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {`
-    );
+  const staticHtmlPages = ["index.html", "followups-hospital.html", "followups-clinician.html", "public-data-config.html"];
+  let pagesIndex = "";
 
-  await writeFile(indexPath, pagesIndex, "utf8");
+  for (const fileName of staticHtmlPages) {
+    const filePath = path.join(pagesDistDir, fileName);
+    const sourceHtml = await readFile(filePath, "utf8");
+    const staticHtml = toStaticHtml(sourceHtml);
+    await writeFile(filePath, staticHtml, "utf8");
+    if (fileName === "index.html") {
+      pagesIndex = staticHtml;
+    }
+  }
+
   await writeFile(path.join(pagesDistDir, "404.html"), pagesIndex, "utf8");
   await writeFile(path.join(pagesDistDir, "demo-data", "pages-snapshot.json"), JSON.stringify(snapshot, null, 2), "utf8");
+  await writeFile(
+    path.join(pagesDistDir, "demo-data", "population-cohort.json"),
+    JSON.stringify(populationCohort, null, 2),
+    "utf8"
+  );
+  await cp(path.join(publicSourcesDir, "qixia", "qixia-public-data.json"), path.join(pagesDistDir, "demo-data", "qixia-public-data.json"));
   await writeFile(path.join(pagesDistDir, ".nojekyll"), "", "utf8");
 
   console.log(`[pages] built static site for ${brand.fullName} at ${pagesDistDir}`);

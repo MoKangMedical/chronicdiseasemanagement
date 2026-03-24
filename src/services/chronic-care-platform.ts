@@ -138,6 +138,8 @@ export class ChronicCarePlatform {
         hospitalId: patient.hospitalId,
         hospitalName: patient.hospitalName,
         name: patient.name,
+        primaryDoctor: patient.primaryDoctor ?? null,
+        responsibleClinician: patient.responsibleClinician ?? null,
         conditions: patient.chronicConditions.map((condition) => condition.name),
         riskLevel: liveRisk.level,
         topDomains: liveRisk.domainAssessments

@@ -4,13 +4,16 @@ import { seedHospitalRecords } from "../data/his-records.js";
 import { buildHisMappingPreviews } from "../data/his-source-payloads.js";
 import { readJsonFile, resolveStoragePath, writeJsonFile } from "../lib/storage.js";
 import type {
+  Clinician,
   HisMappingPreview,
   HospitalDescriptor,
   HISObservationResource,
   HISPatientBundle,
+  HISCareTeamMember,
   HospitalId,
   HospitalRecord,
   Medication,
+  PatientCareOwner,
   PatientProfile
 } from "../types.js";
 
@@ -66,7 +69,6 @@ export class HISSimulator {
   fetchPatientBundle(patientId: string): HISPatientBundle {
     const record = this.getRecord(patientId);
     const patient = this.mapRecordToProfile(record);
-    const latestEncounter = record.encounters[0];
     const refillRisk = patient.medications.some((medication) => medication.adherence === "poor")
       ? "high"
       : patient.medications.some((medication) => medication.adherence === "partial")
@@ -79,7 +81,7 @@ export class HISSimulator {
       sourceSystems: {
         his: {
           activeVisits: 1,
-          primaryDoctor: latestEncounter?.department ?? "全科医学科",
+          primaryDoctor: patient.primaryDoctor?.name ?? "待分配主诊医生",
           nextFollowUpDate: "2026-04-05"
         },
         lis: {
@@ -169,6 +171,18 @@ export class HISSimulator {
       return nextRecord;
     });
 
+    const existingPatientIds = new Set(this.database.records.map((record) => record.patient.id));
+
+    for (const seed of seedHospitalRecords) {
+      if (existingPatientIds.has(seed.patient.id)) {
+        continue;
+      }
+
+      this.database.records.push(seed);
+      existingPatientIds.add(seed.patient.id);
+      changed = true;
+    }
+
     if (changed) {
       this.persist();
     }
@@ -185,6 +199,8 @@ export class HISSimulator {
       dose: `${medication.dose} ${medication.frequency}`,
       adherence: medication.adherence
     }));
+    const primaryDoctor = this.resolvePrimaryDoctor(record);
+    const responsibleClinician = this.resolveResponsibleClinician(record, primaryDoctor);
 
     return {
       id: record.patient.id,
@@ -225,10 +241,89 @@ export class HISSimulator {
       recentEncounters: record.encounters.map((encounter) => ({
         date: encounter.date,
         department: encounter.department,
-        reason: encounter.reason
+        reason: encounter.reason,
+        clinician: encounter.clinician
       })),
+      primaryDoctor,
+      responsibleClinician,
       alerts: record.alerts
     };
+  }
+
+  private resolvePrimaryDoctor(record: HospitalRecord): PatientCareOwner | null {
+    const careTeamCandidate =
+      this.findCareTeamMember(record, ["primary-physician"]) ??
+      this.findCareTeamMember(record, ["cardiologist", "endocrinologist", "neurologist", "pulmonologist"]);
+    if (careTeamCandidate) {
+      return this.mapCareTeamMemberToOwner(careTeamCandidate);
+    }
+
+    const encounterCandidate =
+      this.findEncounterClinician(record, ["outpatient", "inpatient"]) ??
+      this.findEncounterClinician(record, ["follow-up"]);
+    return this.mapEncounterClinicianToOwner(record, encounterCandidate);
+  }
+
+  private resolveResponsibleClinician(
+    record: HospitalRecord,
+    primaryDoctor: PatientCareOwner | null
+  ): PatientCareOwner | null {
+    const careTeamCandidate =
+      this.findCareTeamMember(record, ["case-manager"]) ??
+      this.findCareTeamMember(record, ["primary-physician"]);
+    if (careTeamCandidate) {
+      return this.mapCareTeamMemberToOwner(careTeamCandidate);
+    }
+
+    const followupEncounter = this.findEncounterClinician(record, ["follow-up"]);
+    return this.mapEncounterClinicianToOwner(record, followupEncounter) ?? primaryDoctor;
+  }
+
+  private findCareTeamMember(record: HospitalRecord, roles: Array<HISCareTeamMember["role"]>): HISCareTeamMember | null {
+    return record.careTeam.find((member) => roles.includes(member.role)) ?? null;
+  }
+
+  private findEncounterClinician(
+    record: HospitalRecord,
+    encounterTypes: Array<HospitalRecord["encounters"][number]["encounterType"]>
+  ): HospitalRecord["encounters"][number] | null {
+    return record.encounters.find((encounter) => encounterTypes.includes(encounter.encounterType)) ?? null;
+  }
+
+  private mapCareTeamMemberToOwner(member: HISCareTeamMember): PatientCareOwner {
+    const clinician = seedClinicians.find((candidate) => candidate.id === member.clinicianId);
+    return {
+      clinicianId: member.clinicianId,
+      name: member.name,
+      department: member.department,
+      role: member.role,
+      title: clinician?.title,
+      source: "care-team"
+    };
+  }
+
+  private mapEncounterClinicianToOwner(
+    record: HospitalRecord,
+    encounter: HospitalRecord["encounters"][number] | null
+  ): PatientCareOwner | null {
+    if (!encounter) {
+      return null;
+    }
+    const clinician = this.findClinicianByName(record.hospitalId, encounter.clinician);
+    return {
+      clinicianId: clinician?.id,
+      name: encounter.clinician,
+      department: clinician?.department ?? encounter.department,
+      role: clinician?.role ?? "primary-physician",
+      title: clinician?.title,
+      source: "encounter-derived"
+    };
+  }
+
+  private findClinicianByName(hospitalId: HospitalId, name: string): Clinician | undefined {
+    return seedClinicians.find(
+      (clinician) => clinician.name === name && clinician.hospitalIds.includes(hospitalId)
+    );
   }
 
   private estimateWeeklyExerciseMinutes(steps: number): number {

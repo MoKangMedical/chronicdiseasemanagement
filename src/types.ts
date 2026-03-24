@@ -1,6 +1,24 @@
 export type RiskLevel = "low" | "medium" | "high" | "critical";
 
-export type HospitalId = "xiamen" | "beijing" | "jiangyin";
+export type HospitalId =
+  | "xiamen"
+  | "beijing"
+  | "jiangyin"
+  | "qixia-hospital"
+  | "jiangsu-integrated"
+  | "jiangsu-tcm-zidong"
+  | "njmu2-maigaoqiao"
+  | "taikang-xianlin-gulou"
+  | "maigaoqiao-chsc"
+  | "yanziji-chsc"
+  | "yaohua-chsc"
+  | "maqun-chsc"
+  | "xianlin-chsc"
+  | "xigang-chsc"
+  | "qixia-chsc"
+  | "longtan-chsc"
+  | "jingan-chsc"
+  | "baguazhou-chsc";
 
 export type WorkbenchRole = "specialist-doctor" | "general-practitioner" | "health-manager";
 
@@ -78,6 +96,16 @@ export interface EncounterSummary {
   date: string;
   department: string;
   reason: string;
+  clinician?: string;
+}
+
+export interface PatientCareOwner {
+  clinicianId?: string;
+  name: string;
+  department: string;
+  role: ClinicianRole;
+  title?: string;
+  source: "care-team" | "encounter-derived";
 }
 
 export interface PatientProfile {
@@ -94,6 +122,8 @@ export interface PatientProfile {
   lifestyle: LifestyleProfile;
   medications: Medication[];
   recentEncounters: EncounterSummary[];
+  primaryDoctor?: PatientCareOwner | null;
+  responsibleClinician?: PatientCareOwner | null;
   alerts: string[];
 }
 
@@ -299,6 +329,12 @@ export interface HospitalDescriptor {
   city: string;
   hisVendor: string;
   accent: string;
+  district?: string;
+  level?: string;
+  category?: string;
+  networkRole?: string;
+  integrationStatus?: "live" | "simulated" | "planned";
+  sourceNote?: string;
 }
 
 export interface HisFieldMappingRow {
@@ -734,4 +770,316 @@ export interface LocalPredictionSuite {
     >;
   };
   predictions: LocalPrediction[];
+}
+
+export type PopulationRiskVector = Record<DiseaseDomain, number>;
+
+export interface PopulationEvidenceSource {
+  id: string;
+  type: "lab" | "vital" | "wearable" | "history" | "medication" | "guideline";
+  title: string;
+  detail: string;
+  relevance: number;
+}
+
+export interface PopulationModelPrediction {
+  id: string;
+  model: string;
+  target: string;
+  horizon: string;
+  score: number;
+  level: RiskLevel;
+  explanation: string;
+  evidenceIds: string[];
+}
+
+export interface PopulationInterventionEffect {
+  domain: DiseaseDomain;
+  before: number;
+  after: number;
+  delta: number;
+  reasons: string[];
+}
+
+export interface PopulationTimelineCheckpoint {
+  week: 0 | 4 | 8 | 12;
+  label: string;
+  overallScore: number;
+  overallLevel: RiskLevel;
+  radar: PopulationRiskVector;
+  keyChanges: string[];
+}
+
+export interface PopulationInterventionProjection {
+  packageTitles: string[];
+  adherenceAssumption: string;
+  projectedFollowUpWindow: string;
+  beforeRadar: PopulationRiskVector;
+  afterRadar: PopulationRiskVector;
+  beforeOverallScore: number;
+  afterOverallScore: number;
+  beforeLevel: RiskLevel;
+  afterLevel: RiskLevel;
+  domainEffects: PopulationInterventionEffect[];
+  timelineCheckpoints: PopulationTimelineCheckpoint[];
+  modelProjection: Array<{
+    model: string;
+    beforeScore: number;
+    afterScore: number;
+    delta: number;
+  }>;
+  recommendations: string[];
+}
+
+export interface PopulationCareProcessEntry {
+  date: string;
+  week: 0 | 4 | 8 | 12;
+  weekLabel: string;
+  phase: "intake" | "risk-stratification" | "package-initiation" | "follow-up" | "mdt-review" | "reassessment";
+  actor: "tertiary-specialist" | "general-practitioner" | "health-manager" | "system";
+  title: string;
+  summary: string;
+  explanation: string;
+}
+
+export interface PopulationImprovementRecord {
+  week: 4 | 8 | 12;
+  weekLabel: string;
+  metric: string;
+  before: string;
+  current: string;
+  trend: "improved" | "stable" | "watch";
+  explanation: string;
+}
+
+export interface PopulationRoleTodo {
+  title: string;
+  dueLabel: string;
+  status: "pending" | "at-risk" | "overdue" | "done";
+  note: string;
+}
+
+export interface PopulationRoleFollowupPlan {
+  role: "tertiary-specialist" | "general-practitioner" | "health-manager";
+  title: string;
+  focus: string[];
+  followUpTasks: string[];
+  supervisionTips: string[];
+  todoList: PopulationRoleTodo[];
+}
+
+export interface PopulationManagedPatient {
+  id: string;
+  name: string;
+  gender: "male" | "female";
+  age: number;
+  hospitalId: HospitalId;
+  hospitalName: string;
+  primaryDoctor?: PatientCareOwner | null;
+  responsibleClinician?: PatientCareOwner | null;
+  managementTier: "intensive" | "enhanced" | "routine";
+  overallRiskLevel: RiskLevel;
+  topDomains: DiseaseDomain[];
+  radar: PopulationRiskVector;
+  diagnoses: string[];
+  nextFollowUpDate: string;
+  recommendedPackages: string[];
+  careGaps: string[];
+  adherenceSummary: string;
+  evidenceSources: PopulationEvidenceSource[];
+  predictions: PopulationModelPrediction[];
+  interventionProjection: PopulationInterventionProjection;
+  careProcess: PopulationCareProcessEntry[];
+  improvementRecords: PopulationImprovementRecord[];
+  roleFollowupPlans: PopulationRoleFollowupPlan[];
+  anchorPatientId: string;
+}
+
+export interface PopulationPublicBreakdown {
+  label: string;
+  count: number;
+  ratio: number;
+  note?: string;
+}
+
+export interface PopulationPublicIndicator {
+  title: string;
+  value: string;
+  detail: string;
+  sourceLabel: string;
+  sourceUrl: string;
+  sourceDate: string;
+}
+
+export interface PopulationPublicSource {
+  label: string;
+  url: string;
+  note: string;
+}
+
+export interface PopulationPublicAsset {
+  title: string;
+  value: string;
+  sourceLabel: string;
+  sourceUrl: string;
+  usableModules: string[];
+  usableFields: string[];
+  integrationNote: string;
+}
+
+export interface PopulationPublicProfile {
+  districtName: string;
+  totalPopulation: number;
+  totalPopulationLabel: string;
+  totalPopulationAsOf: string;
+  managedPatientCount: number;
+  managedCoverageRate: number;
+  sexDistribution: PopulationPublicBreakdown[];
+  ageDistribution: PopulationPublicBreakdown[];
+  ageHighlights: PopulationPublicIndicator[];
+  healthIndicators: PopulationPublicIndicator[];
+  systemUsableAssets: PopulationPublicAsset[];
+  notes: string[];
+  sources: PopulationPublicSource[];
+}
+
+export interface PopulationDistrictOperationsSummary {
+  districtName: string;
+  totalPopulation: number;
+  managedPatientCount: number;
+  managedCoverageRate: number;
+  districtHospitalCount: number;
+  activeHospitalCount: number;
+  hospitalCoverageRate: number;
+  primaryDoctorCoverageRate: number;
+  responsibleClinicianCoverageRate: number;
+  specialistDoctorCoverageRate: number;
+  generalPractitionerCoverageRate: number;
+  healthManagerCoverageRate: number;
+}
+
+export interface PopulationHospitalPerformance {
+  rank: number;
+  hospitalId: HospitalId;
+  hospitalName: string;
+  patientCount: number;
+  highRiskCount: number;
+  criticalRiskCount: number;
+  intensiveManagementCount: number;
+  averageRiskScore: number;
+  effectiveRate: number;
+  closedLoopRate: number;
+  referralCount: number;
+  consultationCount: number;
+  mdtReviewCount: number;
+  averageEvidencePerPatient: number;
+  averagePatientsPerClinician: number;
+  topDomains: Array<{
+    domain: DiseaseDomain;
+    label: string;
+    count: number;
+  }>;
+  topPackages: Array<{
+    title: string;
+    count: number;
+  }>;
+}
+
+export interface PopulationCoordinationFunnelStage {
+  key: string;
+  label: string;
+  count: number;
+  rate: number;
+  note: string;
+}
+
+export interface PopulationCoordinationFunnel {
+  totalPatients: number;
+  referralSuggestedCount: number;
+  referralCompletedCount: number;
+  consultationCount: number;
+  mdtReviewCount: number;
+  closedLoopCount: number;
+  closedLoopRate: number;
+  stages: PopulationCoordinationFunnelStage[];
+}
+
+export interface PopulationRoleWorkload {
+  role: "tertiary-specialist" | "general-practitioner" | "health-manager";
+  roleLabel: string;
+  clinicianCount: number;
+  patientCount: number;
+  pendingTaskCount: number;
+  atRiskTaskCount: number;
+  overdueTaskCount: number;
+  doneTaskCount: number;
+  averagePatientsPerClinician: number;
+  pressureIndex: number;
+  topClinicians: Array<{
+    clinicianName: string;
+    hospitalName: string;
+    patientCount: number;
+    overdueCount: number;
+  }>;
+}
+
+export interface PopulationModelGovernanceItem {
+  model: string;
+  averageScore: number;
+  highRiskCount: number;
+  coverageRate: number;
+  disagreementRate: number;
+  governanceStatus: "stable" | "watch" | "investigate";
+  note: string;
+}
+
+export interface PopulationModelGovernanceSummary {
+  modelCount: number;
+  consensusScore: number;
+  disagreementRate: number;
+  stableModelCount: number;
+  watchModelCount: number;
+  investigateModelCount: number;
+  items: PopulationModelGovernanceItem[];
+}
+
+export interface PopulationCohortSnapshot {
+  generatedAt: string;
+  hospitalId?: HospitalId;
+  hospitalLabel: string;
+  patientCount: number;
+  displayedPatientCount: number;
+  publicProfile: PopulationPublicProfile;
+  districtOperations: PopulationDistrictOperationsSummary;
+  summary: {
+    highRiskCount: number;
+    criticalRiskCount: number;
+    intensiveManagementCount: number;
+    averageEvidencePerPatient: number;
+    closedLoopRate: number;
+  };
+  hospitalPerformanceRanking: PopulationHospitalPerformance[];
+  coordinationFunnel: PopulationCoordinationFunnel;
+  roleWorkload: PopulationRoleWorkload[];
+  modelGovernance: PopulationModelGovernanceSummary;
+  referralMetrics: {
+    referralSuggestedCount: number;
+    referralCompletedCount: number;
+    consultationCount: number;
+    mdtReviewCount: number;
+    closedLoopCount: number;
+    closedLoopRate: number;
+  };
+  averageRadar: PopulationRiskVector;
+  domainPrevalence: Array<{
+    domain: DiseaseDomain;
+    label: string;
+    count: number;
+  }>;
+  modelDistribution: Array<{
+    model: string;
+    averageScore: number;
+    highRiskCount: number;
+  }>;
+  patients: PopulationManagedPatient[];
 }

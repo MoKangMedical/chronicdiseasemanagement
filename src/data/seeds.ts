@@ -1,4 +1,5 @@
 import type { AgentDefinition, Clinician, PatientProfile } from "../types.js";
+import { qixiaClinicians } from "./qixia-network.js";
 
 export const seedPatients: PatientProfile[] = [
   {
@@ -208,7 +209,8 @@ export const seedClinicians: Clinician[] = [
     department: "睡眠医学中心",
     title: "睡眠管理师",
     hospitalIds: ["beijing", "jiangyin"]
-  }
+  },
+  ...qixiaClinicians
 ];
 
 export const agentRegistry: AgentDefinition[] = [

@@ -1,4 +1,5 @@
 import type { HospitalDescriptor } from "../types.js";
+import { qixiaHospitals } from "./qixia-network.js";
 
 export const hospitals: HospitalDescriptor[] = [
   {
@@ -21,5 +22,6 @@ export const hospitals: HospitalDescriptor[] = [
     city: "江阴",
     hisVendor: "CareBridge Cloud",
     accent: "#315c97"
-  }
+  },
+  ...qixiaHospitals
 ];

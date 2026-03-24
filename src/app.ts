@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import path from "node:path";
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 import { ChronicCarePlatform } from "./services/chronic-care-platform.js";
@@ -9,17 +10,20 @@ import { EcosystemService } from "./services/ecosystem-service.js";
 import { GithubCapabilityService } from "./services/github-capability-service.js";
 import { LocalPredictionService } from "./services/local-prediction-service.js";
 import { MedClawService } from "./services/medclaw-service.js";
+import { PopulationManagementService } from "./services/population-management-service.js";
 import { VirtualFhirService } from "./services/virtual-fhir-service.js";
 
 export function createApp(platform: ChronicCarePlatform) {
   const app = express();
   const currentDir = path.dirname(fileURLToPath(import.meta.url));
   const publicDir = path.resolve(currentDir, "..", "public");
+  const publicSourcesDir = path.resolve(currentDir, "..", "src", "data", "public-sources");
   const medclaw = new MedClawService();
   const adapters = new DataAdapterService();
   const ecosystem = new EcosystemService();
   const githubCapabilities = new GithubCapabilityService();
   const predictions = new LocalPredictionService();
+  const population = new PopulationManagementService(platform);
   const virtualFhir = new VirtualFhirService();
 
   app.use(cors());
@@ -203,6 +207,7 @@ export function createApp(platform: ChronicCarePlatform) {
         medclaw: "/api/medclaw/overview",
         ecosystem: "/api/ecosystem/overview",
         openSourceCapabilities: "/api/github-capabilities/overview",
+        population: "/api/population/cohort",
         adapters: "/api/integrations/patients/:patientId/adapted",
         predictions: "/api/predictions/patients/:patientId",
         runWorkflow: "POST /api/workflows/chronic-care/run/:patientId",
@@ -215,6 +220,22 @@ export function createApp(platform: ChronicCarePlatform) {
 
   app.get("/api/demo/summary", (_request, response) => {
     response.json(platform.getDemoSummary());
+  });
+
+  app.get("/api/public-sources/qixia", async (_request, response, next) => {
+    try {
+      const filePath = path.join(publicSourcesDir, "qixia", "qixia-public-data.json");
+      const payload = JSON.parse(await readFile(filePath, "utf8"));
+      response.json(payload);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  app.get("/api/population/cohort", (request, response) => {
+    const hospitalId =
+      typeof request.query.hospitalId === "string" ? (request.query.hospitalId as any) : undefined;
+    response.json(population.getCohortSnapshot(hospitalId));
   });
 
   app.get("/api/medclaw/overview", (_request, response) => {

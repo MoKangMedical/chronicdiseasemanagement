@@ -1,4 +1,5 @@
 import type { HospitalRecord } from "../types.js";
+import { qixiaHospitalRecords } from "./qixia-network.js";
 
 export const seedHospitalRecords: HospitalRecord[] = [
   {
@@ -146,5 +147,6 @@ export const seedHospitalRecords: HospitalRecord[] = [
     ],
     careTeam: [],
     alerts: ["认知功能下降", "睡眠片段化", "家庭照护负担升高"]
-  }
+  },
+  ...qixiaHospitalRecords
 ];

@@ -3,16 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1e40af" />
     <title>慢康智枢 ChroniCare OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
     <script>
       window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
         mode: document.documentElement.dataset.appMode || "live",
-        snapshotPath: "./demo-data/pages-snapshot.json"
+        snapshotPath: "./demo-data/pages-snapshot.json",
+        populationPath: "./demo-data/population-cohort.json"
       };
     </script>
     <link rel="stylesheet" href="./styles.css" />
   </head>
-  <body>
+  <body data-page="home">
     <div class="shell">
       <aside class="sidebar">
         <div class="brand">
@@ -22,6 +30,12 @@
             <p>ChroniCare OS</p>
           </div>
         </div>
+
+        <nav class="sidebar-nav">
+          <a class="sidebar-nav-link active" href="./index.html">区级总览</a>
+          <a class="sidebar-nav-link" href="./followups-hospital.html">随访中心</a>
+          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
+        </nav>
 
         <div class="sidebar-block">
           <div class="block-label">总览</div>
@@ -35,6 +49,28 @@
       </aside>
 
       <main class="main-panel">
+        <section class="page-banner page-banner-home">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">District Chronic Care Command Center</div>
+            <h2>区级慢病管理总控台</h2>
+            <p>栖霞区医院网络、三级协同与患者风险联动在同一指挥面板中呈现，支持区级运营调度、医院管理与医生工作分层查看。</p>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">当前模式</span>
+              <strong>区级运营大屏</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">管理单元</span>
+              <strong>医院 / 医生 / 患者</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">核心任务</span>
+              <strong>分层、干预、闭环</strong>
+            </div>
+          </div>
+        </section>
+
         <header class="hero">
           <div class="hero-copy">
             <p class="eyebrow">Clinical Intelligence Layer</p>
@@ -59,9 +95,166 @@
             <div class="hero-actions">
               <button id="run-workflow-btn" class="primary-button">启动慢病工作流</button>
               <button id="create-meeting-btn" class="ghost-button">发起 MDT 在线讨论</button>
+              <a class="ghost-button nav-button" href="./followups-hospital.html">进入随访中心</a>
             </div>
           </div>
         </header>
+
+        <section class="grid grid-dynamic-command">
+          <article class="panel panel-dynamic-stage">
+            <div class="panel-head">
+              <span class="panel-kicker">Dynamic Command Stage</span>
+              <h3>区级动态指挥台</h3>
+            </div>
+            <div id="district-live-stage" class="district-live-stage"></div>
+          </article>
+
+          <article class="panel panel-dynamic-story">
+            <div class="panel-head">
+              <span class="panel-kicker">Disease Burden Storyline</span>
+              <h3>病种负荷、协同漏斗与阶段改善</h3>
+            </div>
+            <div id="district-flow-story" class="district-flow-story"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-population-hero">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">全人群管理仿真</span>
+              <h3>慢病人群管理驾驶舱</h3>
+            </div>
+            <div id="population-summary" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">雷达总览</span>
+              <h3>最常见慢病风险平均画像</h3>
+            </div>
+            <div id="population-radar" class="radar-panel"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-qixia-overview">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">栖霞区医院网络</span>
+              <h3>医院分部与慢病管理规模</h3>
+            </div>
+            <div id="hospital-overview-grid" class="hospital-overview-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">医院详情</span>
+              <h3>患者数、疾病比例、治疗包与起效率</h3>
+            </div>
+            <div id="hospital-detail-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-qixia-public">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">公开区情口径</span>
+              <h3>8 类公开资产、人口结构与三级协同底图</h3>
+            </div>
+            <div id="qixia-public-profile" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-executive-cockpit">
+          <article class="panel panel-feature">
+            <div class="panel-head">
+              <span class="panel-kicker">区级运营驾驶舱</span>
+              <h3>纳管覆盖、风险压降、闭环执行</h3>
+            </div>
+            <div id="district-executive-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">医院绩效横向对比</span>
+              <h3>起效率、覆盖率、结构性负荷</h3>
+            </div>
+            <div id="hospital-benchmark-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">模型治理</span>
+              <h3>预测能力、证据强度与追踪深度</h3>
+            </div>
+            <div id="model-governance-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-population-main">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">管理队列</span>
+              <h3>代表性纳管样本</h3>
+            </div>
+            <div id="population-list" class="population-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">单人预测</span>
+              <h3 id="population-patient-title">选择患者查看预测</h3>
+            </div>
+            <div id="population-patient-profile" class="care-plan-summary"></div>
+            <div id="population-patient-radar" class="radar-panel"></div>
+            <div id="population-intervention-summary" class="care-plan-summary"></div>
+            <div id="population-intervention-radar" class="radar-panel"></div>
+            <div id="population-predictions" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-population-evidence">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">证据来源</span>
+              <h3>用于解释预测的临床证据链</h3>
+            </div>
+            <div id="population-evidence" class="therapy-package-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">模型分布</span>
+              <h3>TemporAI / PyHealth / Disease-Text</h3>
+            </div>
+            <div id="population-model-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-command-center">
+          <article class="panel panel-command-network">
+            <div class="panel-head">
+              <span class="panel-kicker">三级协同</span>
+              <h3>基层筛查 · 区级统筹 · 三级专科联动</h3>
+            </div>
+            <div id="command-center-network" class="command-network"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">实时风险队列</span>
+              <h3>最需要优先管理的患者</h3>
+            </div>
+            <div id="command-center-queue" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">协同指标</span>
+              <h3>会诊、转诊与闭环执行</h3>
+            </div>
+            <div id="command-center-kpis" class="care-plan-summary"></div>
+          </article>
+        </section>
 
         <section class="grid grid-overview">
           <article class="panel panel-patient">
