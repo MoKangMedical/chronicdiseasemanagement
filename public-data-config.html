@@ -28,6 +28,7 @@
         publicDataPath: "./demo-data/qixia-public-data.json"
       };
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body data-page="public-data-config">
@@ -108,6 +109,8 @@
               </label>
             </div>
             <div class="hero-actions">
+              <button id="public-data-export-json" class="primary-button">导出映射 JSON</button>
+              <button id="public-data-export-xlsx" class="ghost-button">导出映射 Excel</button>
               <a class="ghost-button nav-button" href="./index.html">返回区级总览</a>
               <a class="ghost-button nav-button" href="./followups-hospital.html">进入随访中心</a>
             </div>

@@ -28,6 +28,8 @@ const state = {
   publicDataView: "source",
   publicDataSourceFilter: "all",
   publicDataModuleFilter: "all",
+  publicDataDrafts: {},
+  publicDataSelectedAsset: "",
   publicSourceData: null,
   githubPlan: null,
   populationDistrictCohort: null,
@@ -258,6 +260,8 @@ const publicDataMappingPanel = document.querySelector("#public-data-mapping-pane
 const publicDataViewFilter = document.querySelector("#public-data-view-filter");
 const publicDataSourceFilter = document.querySelector("#public-data-source-filter");
 const publicDataModuleFilter = document.querySelector("#public-data-module-filter");
+const publicDataExportJsonBtn = document.querySelector("#public-data-export-json");
+const publicDataExportXlsxBtn = document.querySelector("#public-data-export-xlsx");
 
 function formatLevel(level) {
   return {
@@ -1145,65 +1149,45 @@ function renderPatients() {
 
 function computeHospitalInsights() {
   const patients = getDistrictPopulationPatients();
+  const rankingByHospitalId = new Map(
+    (state.populationDistrictCohort?.hospitalPerformanceRanking ?? []).map((item) => [item.hospitalId, item])
+  );
 
   return state.hospitals
     .map((hospital) => {
       const hospitalPatients = patients.filter((patient) => patient.hospitalId === hospital.id);
-      const patientCount = hospitalPatients.length;
-      const domainCounts = Object.keys(hospitalPatients[0]?.radar ?? {}).map((domain) => ({
-        domain,
-        label: labelRiskDomain(domain),
-        count: hospitalPatients.filter((patient) => (patient.radar?.[domain] ?? 0) >= 60).length
+      const ranking = rankingByHospitalId.get(hospital.id);
+      const patientCount = ranking?.patientCount ?? hospitalPatients.length;
+      const domainCounts = (ranking?.topDomains ?? []).map((item) => ({
+        ...item,
+        ratio: percentage(item.count, patientCount)
       }));
-      const packageCounts = new Map();
-
-      for (const patient of hospitalPatients) {
-        for (const title of patient.interventionProjection.packageTitles ?? []) {
-          packageCounts.set(title, (packageCounts.get(title) ?? 0) + 1);
-        }
-      }
-
-      const effectiveCount = hospitalPatients.filter((patient) => {
-        const before = patient.interventionProjection.beforeOverallScore;
-        const after = patient.interventionProjection.afterOverallScore;
-        const levelChanged = patient.interventionProjection.beforeLevel !== patient.interventionProjection.afterLevel;
-        return after <= before - 8 || levelChanged;
-      }).length;
+      const packageRatios = (ranking?.topPackages ?? []).map((item) => ({
+        title: item.title,
+        count: item.count,
+        ratio: percentage(item.count, patientCount)
+      }));
 
       return {
         hospital,
         patientCount,
-        effectiveCount,
-        effectiveRate: percentage(effectiveCount, patientCount),
-        diseaseRatios: domainCounts
-          .filter((item) => item.count > 0)
-          .sort((left, right) => right.count - left.count)
-          .slice(0, 4)
-          .map((item) => ({
-            ...item,
-            ratio: percentage(item.count, patientCount)
-          })),
-        packageRatios: [...packageCounts.entries()]
-          .sort((left, right) => right[1] - left[1])
-          .slice(0, 4)
-          .map(([title, count]) => ({
-            title,
-            count,
-            ratio: percentage(count, patientCount)
-          })),
-        averageBefore: patientCount
+        effectiveCount: ranking ? Math.round((Number.parseFloat(ranking.effectiveRate) || 0) * patientCount) : 0,
+        effectiveRate: ranking ? `${ranking.effectiveRate}%` : "0%",
+        diseaseRatios: domainCounts,
+        packageRatios,
+        averageBefore: hospitalPatients.length
           ? Number(
               (
                 hospitalPatients.reduce((total, patient) => total + patient.interventionProjection.beforeOverallScore, 0) /
-                patientCount
+                hospitalPatients.length
               ).toFixed(1)
             )
           : 0,
-        averageAfter: patientCount
+        averageAfter: hospitalPatients.length
           ? Number(
               (
                 hospitalPatients.reduce((total, patient) => total + patient.interventionProjection.afterOverallScore, 0) /
-                patientCount
+                hospitalPatients.length
               ).toFixed(1)
             )
           : 0
@@ -1300,6 +1284,70 @@ function renderQixiaPublicProfile() {
 
   qixiaPublicProfile.innerHTML = profile
     ? `
+      <div class="public-asset-ribbon">
+        ${profile.systemUsableAssets
+          .map(
+            (asset) => `
+              <article class="public-spotlight-card">
+                <div class="public-spotlight-head">
+                  <span class="mini-tag">${asset.title}</span>
+                  <strong>${asset.value}</strong>
+                </div>
+                <div class="dim">${asset.integrationNote}</div>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+      <div class="public-visual-grid">
+        <article class="public-topology-card">
+          <div class="panel-kicker">三级协同公开结构</div>
+          <h4>1+8+1+10 区域分级协同网络</h4>
+          <div class="public-topology-flow">
+            <div class="topology-node primary">
+              <strong>1</strong>
+              <span>省级牵头医院</span>
+            </div>
+            <div class="topology-arrow">→</div>
+            <div class="topology-node tertiary">
+              <strong>8</strong>
+              <span>三级协作医院</span>
+            </div>
+            <div class="topology-arrow">→</div>
+            <div class="topology-node district">
+              <strong>1</strong>
+              <span>区级牵头医院</span>
+            </div>
+            <div class="topology-arrow">→</div>
+            <div class="topology-node community">
+              <strong>10</strong>
+              <span>社区卫生服务中心</span>
+            </div>
+          </div>
+          <div class="dim">这组结构已映射到首页三级协同网络、医院分部展示和转诊拓扑模块。</div>
+        </article>
+
+        <article class="public-capacity-card">
+          <div class="panel-kicker">基层触达与公共健康</div>
+          <h4>重点公共健康能力带</h4>
+          <div class="capacity-stat-grid">
+            ${profile.systemUsableAssets
+              .filter((asset) =>
+                ["家庭医生签约服务对象", "重点人群联系人数", "医疗资源底盘", "慢病防控结果指标"].includes(asset.title)
+              )
+              .map(
+                (asset) => `
+                  <div class="capacity-stat-card">
+                    <span>${asset.title}</span>
+                    <strong>${asset.value}</strong>
+                    <div class="dim">${asset.usableModules.slice(0, 2).join(" · ")}</div>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+        </article>
+      </div>
       <div class="public-profile-grid">
         <div class="plan-block">
           <h4>${profile.districtName}人口底盘</h4>
@@ -1339,7 +1387,7 @@ function renderQixiaPublicProfile() {
               .join("")}
           </div>
           <div class="plan-block public-assets-block">
-            <h4>公开资料接入字典</h4>
+            <h4>8 类公开资产接入字典</h4>
             <div class="public-assets-grid">
               ${profile.systemUsableAssets
                 .map(
@@ -1396,10 +1444,95 @@ function buildPublicDataModules(publicData) {
     .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label, "zh-CN"));
 }
 
+function publicDraftKey(asset) {
+  return slugify(asset.title);
+}
+
+function buildDefaultPublicDraft(asset) {
+  const baseField = asset.usableFields?.[0] ?? "pending.target";
+  return {
+    assetTitle: asset.title,
+    publicAssetValue: asset.value,
+    sourceLabel: asset.sourceLabel,
+    districtAuthorityField: `wjw.${publicDraftKey(asset)}.official_metric`,
+    hospitalHisField: `his.${publicDraftKey(asset)}.mapped_value`,
+    systemTargetField: baseField,
+    syncStrategy: "先保留公开口径，待真实区卫健委或医院字段确认后做覆盖映射。",
+    owner: "区级数据治理",
+    status: "draft"
+  };
+}
+
+function ensurePublicDataDrafts(publicData) {
+  for (const asset of publicData?.systemUsableAssets ?? []) {
+    const key = publicDraftKey(asset);
+    if (!state.publicDataDrafts[key]) {
+      state.publicDataDrafts[key] = buildDefaultPublicDraft(asset);
+    }
+  }
+}
+
+function draftRowsForExport(publicData, filteredAssets) {
+  return filteredAssets.map((asset) => {
+    const key = publicDraftKey(asset);
+    const draft = state.publicDataDrafts[key] ?? buildDefaultPublicDraft(asset);
+    return {
+      资产名称: asset.title,
+      公开值: asset.value,
+      来源: asset.sourceLabel,
+      区卫健委字段: draft.districtAuthorityField,
+      医院HIS字段: draft.hospitalHisField,
+      系统目标字段: draft.systemTargetField,
+      同步策略: draft.syncStrategy,
+      责任归口: draft.owner,
+      状态: draft.status
+    };
+  });
+}
+
+function downloadTextFile(fileName, content, mimeType) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = fileName;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+function exportPublicDataDraftsJson(publicData, filteredAssets) {
+  const payload = {
+    district: publicData.district,
+    exportedAt: new Date().toISOString(),
+    filters: {
+      source: state.publicDataSourceFilter,
+      module: state.publicDataModuleFilter
+    },
+    mappings: draftRowsForExport(publicData, filteredAssets)
+  };
+  downloadTextFile("qixia-public-data-mapping-drafts.json", JSON.stringify(payload, null, 2), "application/json");
+}
+
+function exportPublicDataDraftsExcel(publicData, filteredAssets) {
+  if (typeof window.XLSX === "undefined") {
+    window.alert("Excel 导出组件未加载，请稍后重试。");
+    return;
+  }
+
+  const rows = draftRowsForExport(publicData, filteredAssets);
+  const workbook = window.XLSX.utils.book_new();
+  const sheet = window.XLSX.utils.json_to_sheet(rows);
+  window.XLSX.utils.book_append_sheet(workbook, sheet, "字段映射草案");
+  window.XLSX.writeFile(workbook, "qixia-public-data-mapping-drafts.xlsx");
+}
+
 function renderPublicDataConfig() {
   if (!isPublicDataConfigPage) return;
   const publicData = state.publicSourceData;
   if (!publicData) return;
+  ensurePublicDataDrafts(publicData);
 
   const assets = publicData.systemUsableAssets ?? [];
   const sources = publicData.sources ?? [];
@@ -1501,6 +1634,10 @@ function renderPublicDataConfig() {
     return true;
   });
 
+  if (!state.publicDataSelectedAsset && filteredAssets[0]) {
+    state.publicDataSelectedAsset = filteredAssets[0].title;
+  }
+
   if (publicDataFilteredPanel) {
     if (selectedView === "source") {
       const filteredSources = sources.filter((source) => selectedSource === "all" || source.label === selectedSource);
@@ -1545,7 +1682,7 @@ function renderPublicDataConfig() {
               ${filteredAssets
                 .map(
                   (asset) => `
-                    <div class="public-asset-card">
+                    <div class="public-asset-card public-asset-card-compact ${state.publicDataSelectedAsset === asset.title ? "active" : ""}">
                       <div class="public-indicator-head">
                         <strong>${asset.title}</strong>
                         <span class="mini-tag">${asset.value}</span>
@@ -1567,6 +1704,7 @@ function renderPublicDataConfig() {
                           ${asset.usableFields.map((field) => `<code>${field}</code>`).join("")}
                         </div>
                       </div>
+                      <button class="ghost-button public-edit-button" type="button" data-public-asset="${asset.title}">编辑映射</button>
                     </div>
                   `
                 )
@@ -1582,14 +1720,53 @@ function renderPublicDataConfig() {
       ? filteredAssets
           .map(
             (asset, index) => `
-              <div class="plan-block">
-                <h4>映射草案 ${index + 1} · ${asset.title}</h4>
-                <div class="mini-list">
-                  <li>公开字段：${asset.value}</li>
-                  <li>拟接入表：${asset.usableModules[0] ?? "区级总览"} / ${asset.usableFields[0] ?? "待定字段"}</li>
-                  <li>区卫健委真实字段：<code>pending_wjw_${slugify(asset.title)}</code></li>
-                  <li>医院真实字段：<code>pending_hospital_${slugify(asset.title)}</code></li>
-                  <li>同步策略：先保留公开口径，后续以真实字段覆盖并保留来源映射。</li>
+              <div class="mapping-form-card ${state.publicDataSelectedAsset === asset.title ? "active" : ""}">
+                <div class="mapping-form-head">
+                  <div>
+                    <h4>映射草案 ${index + 1} · ${asset.title}</h4>
+                    <div class="dim">${asset.sourceLabel} · 当前公开值 ${asset.value}</div>
+                  </div>
+                  <span class="mini-tag">${(state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).status}</span>
+                </div>
+                <div class="mapping-three-column">
+                  <div class="mapping-column">
+                    <span>区卫健委字段</span>
+                    <input type="text" data-draft-key="${publicDraftKey(asset)}" data-draft-field="districtAuthorityField" value="${(state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).districtAuthorityField}" />
+                  </div>
+                  <div class="mapping-column">
+                    <span>医院 HIS 字段</span>
+                    <input type="text" data-draft-key="${publicDraftKey(asset)}" data-draft-field="hospitalHisField" value="${(state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).hospitalHisField}" />
+                  </div>
+                  <div class="mapping-column">
+                    <span>系统目标字段</span>
+                    <input type="text" data-draft-key="${publicDraftKey(asset)}" data-draft-field="systemTargetField" value="${(state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).systemTargetField}" />
+                  </div>
+                </div>
+                <div class="mapping-form-grid">
+                  <label class="mapping-field">
+                    <span>同步策略</span>
+                    <textarea rows="3" data-draft-key="${publicDraftKey(asset)}" data-draft-field="syncStrategy">${(state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).syncStrategy}</textarea>
+                  </label>
+                  <label class="mapping-field">
+                    <span>责任归口</span>
+                    <input type="text" data-draft-key="${publicDraftKey(asset)}" data-draft-field="owner" value="${(state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).owner}" />
+                  </label>
+                  <label class="mapping-field">
+                    <span>状态</span>
+                    <select data-draft-key="${publicDraftKey(asset)}" data-draft-field="status">
+                      ${["draft", "review", "ready"].map((status) => `<option value="${status}" ${((state.publicDataDrafts[publicDraftKey(asset)] ?? buildDefaultPublicDraft(asset)).status === status) ? "selected" : ""}>${status}</option>`).join("")}
+                    </select>
+                  </label>
+                </div>
+                <div class="mapping-reference-grid">
+                  <div class="mapping-reference-card">
+                    <span>可进入模块</span>
+                    <div class="asset-chip-list">${asset.usableModules.map((module) => `<span class="asset-chip">${module}</span>`).join("")}</div>
+                  </div>
+                  <div class="mapping-reference-card">
+                    <span>当前目标字段建议</span>
+                    <div class="asset-code-list">${asset.usableFields.map((field) => `<code>${field}</code>`).join("")}</div>
+                  </div>
                 </div>
               </div>
             `
@@ -1597,6 +1774,33 @@ function renderPublicDataConfig() {
           .join("")
       : `<div class="note-block">当前筛选条件下没有可生成的映射草案。</div>`;
   }
+
+  publicDataFilteredPanel?.querySelectorAll("[data-public-asset]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.publicDataSelectedAsset = button.getAttribute("data-public-asset") || "";
+      renderPublicDataConfig();
+    });
+  });
+
+  publicDataMappingPanel?.querySelectorAll("[data-draft-key][data-draft-field]").forEach((field) => {
+    field.addEventListener("input", (event) => {
+      const target = event.currentTarget;
+      const key = target.getAttribute("data-draft-key");
+      const draftField = target.getAttribute("data-draft-field");
+      if (!key || !draftField) return;
+      state.publicDataDrafts[key] = state.publicDataDrafts[key] ?? {};
+      state.publicDataDrafts[key][draftField] = target.value;
+      state.publicDataSelectedAsset = state.publicDataDrafts[key].assetTitle ?? state.publicDataSelectedAsset;
+    });
+    field.addEventListener("change", (event) => {
+      const target = event.currentTarget;
+      const key = target.getAttribute("data-draft-key");
+      const draftField = target.getAttribute("data-draft-field");
+      if (!key || !draftField) return;
+      state.publicDataDrafts[key] = state.publicDataDrafts[key] ?? {};
+      state.publicDataDrafts[key][draftField] = target.value;
+    });
+  });
 }
 
 function renderExecutiveCockpit() {
@@ -2386,9 +2590,10 @@ function renderPopulation() {
     `
     <div class="plan-block">
       <h4>${cohort.hospitalLabel}</h4>
-      <div class="dim">当前纳管 ${cohort.patientCount} 位对象，按 ${cohort.publicProfile.totalPopulationLabel} 常住人口为全区口径展示覆盖率与管理规模。</div>
+      <div class="dim">当前按 ${cohort.patientCount.toLocaleString("zh-CN")} 人全量仿真，页面展示 ${cohort.displayedPatientCount.toLocaleString("zh-CN")} 位代表性管理样本；全区口径以 ${cohort.publicProfile.totalPopulationLabel} 常住人口为底数。</div>
       <div class="stat-grid">
-        ${statChip("常住人口底数", cohort.publicProfile.totalPopulationLabel)}
+        ${statChip("全量模拟人数", `${cohort.patientCount.toLocaleString("zh-CN")} 人`)}
+        ${statChip("展示样本", `${cohort.displayedPatientCount.toLocaleString("zh-CN")} 人`)}
         ${statChip("纳管覆盖率", `${cohort.publicProfile.managedCoverageRate}%`)}
         ${statChip("高风险", cohort.summary.highRiskCount)}
         ${statChip("危重", cohort.summary.criticalRiskCount)}
@@ -2615,7 +2820,7 @@ function renderPopulation() {
     </div>
     <div class="plan-block">
       <h4>患者关联源</h4>
-      <div class="dim">原型锚点：${selectedPatient.anchorPatientId}，用于延展生成 100 人慢病管理仿真队列。</div>
+      <div class="dim">原型锚点：${selectedPatient.anchorPatientId}，用于延展生成 ${cohort.patientCount.toLocaleString("zh-CN")} 人全量仿真，并在页面中展示 ${cohort.displayedPatientCount.toLocaleString("zh-CN")} 位样本。</div>
     </div>
   `
   );
@@ -3709,6 +3914,16 @@ publicDataSourceFilter?.addEventListener("change", () => {
 
 publicDataModuleFilter?.addEventListener("change", () => {
   renderPublicDataConfig();
+});
+
+publicDataExportJsonBtn?.addEventListener("click", () => {
+  const publicData = normalizePublicData();
+  exportPublicDataDraftsJson(publicData, publicDataFilteredAssets(publicData));
+});
+
+publicDataExportXlsxBtn?.addEventListener("click", () => {
+  const publicData = normalizePublicData();
+  exportPublicDataDraftsExcel(publicData, publicDataFilteredAssets(publicData));
 });
 
 exportFollowupsBtn?.addEventListener("click", () => {

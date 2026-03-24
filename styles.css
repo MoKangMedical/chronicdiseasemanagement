@@ -1035,6 +1035,126 @@ a {
   gap: 18px;
 }
 
+.public-asset-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.public-spotlight-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(96, 165, 250, 0.18), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.92));
+  box-shadow: 0 18px 40px rgba(30, 64, 175, 0.08);
+}
+
+.public-spotlight-head {
+  display: grid;
+  gap: 8px;
+}
+
+.public-spotlight-head strong {
+  font-size: 1.25rem;
+  color: var(--primary-dark);
+}
+
+.public-visual-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.public-topology-card,
+.public-capacity-card {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(191, 219, 254, 0.72);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(243, 248, 255, 0.94));
+}
+
+.public-topology-flow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.topology-node {
+  display: grid;
+  gap: 6px;
+  padding: 16px 12px;
+  border-radius: 18px;
+  text-align: center;
+  border: 1px solid rgba(59, 130, 246, 0.16);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.topology-node strong {
+  font-size: 1.6rem;
+  color: var(--primary-dark);
+}
+
+.topology-node span {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+}
+
+.topology-node.primary {
+  background: linear-gradient(180deg, rgba(219, 234, 254, 0.9), rgba(239, 246, 255, 0.95));
+}
+
+.topology-node.tertiary {
+  background: linear-gradient(180deg, rgba(224, 242, 254, 0.9), rgba(240, 249, 255, 0.95));
+}
+
+.topology-node.district {
+  background: linear-gradient(180deg, rgba(219, 234, 254, 0.95), rgba(219, 234, 254, 0.72));
+}
+
+.topology-node.community {
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.9), rgba(240, 253, 250, 0.95));
+}
+
+.topology-arrow {
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.capacity-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.capacity-stat-card {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(191, 219, 254, 0.72);
+}
+
+.capacity-stat-card span {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.capacity-stat-card strong {
+  font-size: 1.1rem;
+  color: var(--primary-dark);
+}
+
 .public-assets-block {
   margin-top: 18px;
 }
@@ -1146,6 +1266,84 @@ a {
   background: rgba(15, 23, 42, 0.06);
   color: var(--text-primary);
   font-size: 0.78rem;
+}
+
+.public-asset-card.active,
+.mapping-form-card.active {
+  border-color: rgba(37, 99, 235, 0.42);
+  box-shadow: 0 18px 36px rgba(37, 99, 235, 0.12);
+}
+
+.public-edit-button {
+  justify-self: start;
+}
+
+.mapping-form-card {
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(191, 219, 254, 0.72);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.mapping-form-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.mapping-three-column {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mapping-column,
+.mapping-field,
+.mapping-reference-card {
+  display: grid;
+  gap: 8px;
+}
+
+.mapping-column span,
+.mapping-field span,
+.mapping-reference-card span {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.mapping-column input,
+.mapping-field input,
+.mapping-field select,
+.mapping-field textarea {
+  width: 100%;
+  border: 1px solid rgba(191, 219, 254, 0.96);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.95);
+  padding: 10px 12px;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.mapping-field textarea {
+  resize: vertical;
+  min-height: 88px;
+}
+
+.mapping-form-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 0.6fr;
+  gap: 12px;
+}
+
+.mapping-reference-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .source-link {
@@ -1818,6 +2016,13 @@ body[data-page="followups-clinician"] .followup-group-card {
   .therapy-package-grid,
   .patient-overview,
   .public-profile-grid,
+  .public-asset-ribbon,
+  .public-visual-grid,
+  .public-topology-flow,
+  .capacity-stat-grid,
+  .mapping-three-column,
+  .mapping-form-grid,
+  .mapping-reference-grid,
   .metric-ribbon,
   .governance-grid,
   .funnel-strip,
