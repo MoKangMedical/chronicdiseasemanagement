@@ -991,6 +991,14 @@ a {
   margin-bottom: 16px;
 }
 
+.overview-band-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .overview-band-grid {
   display: grid;
   gap: 18px;
@@ -1007,6 +1015,16 @@ a {
   background: rgba(15, 23, 42, 0.2);
   font-weight: 700;
   font-size: 0.9rem;
+}
+
+.overview-filter-reset {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(191, 219, 254, 0.45);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-weight: 700;
 }
 
 .metric-stack-band {
@@ -1106,6 +1124,30 @@ a {
   stroke-width: 1.2;
 }
 
+.overview-radar-hit {
+  fill: transparent;
+  cursor: pointer;
+}
+
+.overview-radar-node {
+  cursor: pointer;
+}
+
+.overview-radar-node.active .overview-radar-dot {
+  fill: white;
+  stroke: #67e8f9;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(1.28);
+}
+
+.overview-radar-node.active .overview-radar-label,
+.overview-radar-node.active .overview-radar-value {
+  fill: white;
+  font-weight: 800;
+}
+
 .overview-radar-label,
 .overview-radar-value,
 .overview-line-tick,
@@ -1152,8 +1194,14 @@ a {
 }
 
 .overview-funnel-stage {
+  appearance: none;
+  text-align: left;
+  border: 1px solid rgba(191, 219, 254, 0.18);
+  background: rgba(15, 23, 42, 0.16);
   display: grid;
   gap: 6px;
+  padding: 12px;
+  border-radius: 18px;
 }
 
 .overview-funnel-copy,
@@ -1191,6 +1239,16 @@ a {
 
 .overview-funnel-stage.terminal .overview-funnel-track i {
   background: linear-gradient(90deg, rgba(165, 243, 252, 0.95), rgba(16, 185, 129, 0.95));
+}
+
+.overview-funnel-stage.active {
+  border-color: rgba(103, 232, 249, 0.6);
+  background: rgba(8, 47, 73, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(103, 232, 249, 0.22);
+}
+
+.overview-queue-row {
+  cursor: default;
 }
 
 .stat-grid {
