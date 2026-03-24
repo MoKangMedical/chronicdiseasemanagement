@@ -236,11 +236,57 @@ a {
   opacity: 0.92;
 }
 
+.page-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.banner-action {
+  text-decoration: none;
+}
+
 .page-banner-chips {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   min-width: 360px;
+}
+
+.wallboard-hero-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 340px;
+}
+
+.wallboard-ribbon-card {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(191, 219, 254, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.wallboard-ribbon-card span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(191, 219, 254, 0.82);
+}
+
+.wallboard-ribbon-card strong,
+.wallboard-ribbon-card .counter-value {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.wallboard-ribbon-card small {
+  color: rgba(226, 232, 240, 0.84);
 }
 
 .banner-chip {
@@ -426,6 +472,7 @@ a {
 }
 
 .grid-overview,
+.grid-intervention-spotlight,
 .grid-ecosystem,
 .grid-opensrc,
 .grid-medclaw-top,
@@ -438,6 +485,10 @@ a {
 }
 
 .grid-mapping {
+  grid-template-columns: 1fr;
+}
+
+.grid-intervention-spotlight {
   grid-template-columns: 1fr;
 }
 
@@ -475,7 +526,8 @@ a {
 .therapy-package-grid,
 .meeting-list,
 .care-plan-summary,
-.patient-overview {
+.patient-overview,
+.intervention-spotlight-panel {
   display: grid;
   gap: 12px;
 }
@@ -638,6 +690,90 @@ a {
 
 .mini-list li + li {
   margin-top: 6px;
+}
+
+.panel-intervention-spotlight {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(239, 246, 255, 0.96)),
+    radial-gradient(circle at top right, rgba(34, 211, 238, 0.12), transparent 28%);
+}
+
+.intervention-spotlight-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
+  gap: 16px;
+}
+
+.spotlight-conditions-card,
+.spotlight-recommend-card {
+  padding: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(191, 219, 254, 0.72);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: 14px;
+}
+
+.spotlight-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.spotlight-card-head strong {
+  font-size: 1.08rem;
+}
+
+.spotlight-condition-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.spotlight-condition-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(30, 64, 175, 0.08);
+  border: 1px solid rgba(96, 165, 250, 0.36);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.spotlight-package-list {
+  display: grid;
+  gap: 12px;
+}
+
+.spotlight-package-item {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(226, 232, 240, 0.94);
+  background: rgba(248, 250, 252, 0.9);
+}
+
+.spotlight-package-rank {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.94), rgba(14, 116, 144, 0.88));
+  color: white;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.spotlight-package-copy h4 {
+  margin: 0 0 6px;
+  font-size: 1rem;
 }
 
 .meeting-card {
@@ -1976,6 +2112,94 @@ body[data-page="followups-clinician"] .followup-group-card {
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
 }
 
+body[data-display-mode="wallboard"] {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.2), transparent 24%),
+    radial-gradient(circle at 100% 0%, rgba(14, 165, 233, 0.18), transparent 22%),
+    linear-gradient(180deg, #edf5ff 0%, #eef4fb 38%, #e8f0fa 100%);
+}
+
+body[data-display-mode="wallboard"] .shell {
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 18px;
+}
+
+body[data-display-mode="wallboard"] .sidebar {
+  display: none;
+}
+
+body[data-display-mode="wallboard"] .main-panel {
+  gap: 20px;
+}
+
+body[data-display-mode="wallboard"] .page-banner-home {
+  display: grid;
+  align-items: stretch;
+  padding: 26px 28px;
+  grid-template-columns: 1.4fr 0.9fr 1.1fr;
+}
+
+body[data-display-mode="wallboard"] .page-banner-copy h2 {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+}
+
+body[data-display-mode="wallboard"] .page-banner,
+body[data-display-mode="wallboard"] .hero,
+body[data-display-mode="wallboard"] .panel {
+  border-radius: 30px;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.1);
+}
+
+body[data-display-mode="wallboard"] .hero {
+  padding: 34px;
+}
+
+body[data-display-mode="wallboard"] .hero h2 {
+  font-size: clamp(2.15rem, 4vw, 3.2rem);
+}
+
+body[data-display-mode="wallboard"] .hero-subtitle {
+  font-size: 1.02rem;
+}
+
+body[data-display-mode="wallboard"] .grid-dynamic-command {
+  grid-template-columns: minmax(0, 1.6fr) minmax(400px, 1fr);
+}
+
+body[data-display-mode="wallboard"] .dynamic-metric-card .counter-value {
+  font-size: 2rem;
+}
+
+body[data-display-mode="wallboard"] .network-orbit {
+  min-height: 520px;
+}
+
+body[data-display-mode="wallboard"] .dynamic-story-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body[data-display-mode="wallboard"] .orbit-node {
+  min-width: 158px;
+}
+
+body[data-display-mode="wallboard"] .population-row,
+body[data-display-mode="wallboard"] .hospital-card,
+body[data-display-mode="wallboard"] .mapping-card,
+body[data-display-mode="wallboard"] .package-card,
+body[data-display-mode="wallboard"] .benchmark-row {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+body[data-display-mode="wallboard"] .population-row:hover,
+body[data-display-mode="wallboard"] .hospital-card:hover,
+body[data-display-mode="wallboard"] .mapping-card:hover,
+body[data-display-mode="wallboard"] .package-card:hover,
+body[data-display-mode="wallboard"] .benchmark-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+}
+
 .grid-dynamic-command {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
@@ -2473,6 +2697,7 @@ body[data-page="followups-clinician"] .followup-group-card {
   .metric-ribbon,
   .governance-grid,
   .funnel-strip,
+  .intervention-spotlight-grid,
   .hospital-overview-grid,
   .followup-groups,
   .network-stage,
@@ -2494,6 +2719,11 @@ body[data-page="followups-clinician"] .followup-group-card {
 
   .page-banner {
     flex-direction: column;
+  }
+
+  .wallboard-hero-ribbon {
+    min-width: 0;
+    grid-template-columns: 1fr;
   }
 
   .page-banner-chips {
@@ -2536,6 +2766,10 @@ body[data-page="followups-clinician"] .followup-group-card {
     width: 60px;
     height: 60px;
     border-radius: 18px;
+  }
+
+  body[data-display-mode="wallboard"] .page-banner-home {
+    grid-template-columns: 1fr;
   }
 
   .network-orbit {

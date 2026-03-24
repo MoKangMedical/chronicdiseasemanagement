@@ -1,10 +1,12 @@
 const appConfig = window.__APP_CONFIG__ ?? {};
 const pageMode = document.body.dataset.page || "home";
+const pageQuery = new URLSearchParams(window.location.search);
 const isHomePage = pageMode === "home";
 const isHospitalFollowupsPage = pageMode === "followups-hospital";
 const isClinicianFollowupsPage = pageMode === "followups-clinician";
 const isPublicDataConfigPage = pageMode === "public-data-config";
 const isFollowupsPage = isHospitalFollowupsPage || isClinicianFollowupsPage || pageMode === "followups";
+const isWallboardMode = isHomePage && pageQuery.get("display") === "wallboard";
 const isStaticMode = appConfig.mode === "static";
 const snapshotPath = appConfig.snapshotPath ?? "./demo-data/pages-snapshot.json";
 const populationPath = appConfig.populationPath ?? "./demo-data/population-cohort.json";
@@ -32,6 +34,7 @@ const state = {
   publicDataSelectedAsset: "",
   publicSourceData: null,
   dynamicHospitalFocusId: "",
+  wallboardTimers: [],
   githubPlan: null,
   populationDistrictCohort: null,
   populationCohort: null,
@@ -210,6 +213,9 @@ const populationSummary = document.querySelector("#population-summary");
 const populationRadar = document.querySelector("#population-radar");
 const districtLiveStage = document.querySelector("#district-live-stage");
 const districtFlowStory = document.querySelector("#district-flow-story");
+const wallboardHeroRibbon = document.querySelector("#wallboard-hero-ribbon");
+const displayModeToggle = document.querySelector("#display-mode-toggle");
+const interventionSpotlightPanel = document.querySelector("#intervention-spotlight-panel");
 const hospitalOverviewGrid = document.querySelector("#hospital-overview-grid");
 const hospitalDetailPanel = document.querySelector("#hospital-detail-panel");
 const qixiaPublicProfile = document.querySelector("#qixia-public-profile");
@@ -579,6 +585,115 @@ function activateProgressBars(root) {
       bar.style.setProperty("--progress-width", bar.getAttribute("data-progress-width") || "0%");
     });
   });
+}
+
+function clearWallboardTimers() {
+  state.wallboardTimers.forEach((timer) => window.clearInterval(timer));
+  state.wallboardTimers = [];
+}
+
+function normalizeConditionName(name) {
+  return String(name || "")
+    .replace(/\s+/g, "")
+    .replace(/Ⅱ/g, "2")
+    .replace(/二/g, "2");
+}
+
+function interventionRecommendationCatalog(conditionName) {
+  const normalized = normalizeConditionName(conditionName);
+  if (normalized.includes("高血压")) {
+    return [
+      { title: "控压随访包", rationale: "用于固定血压监测、服药提醒与异常升级随访。" },
+      { title: "心肺耐力训练包", rationale: "通过有氧运动改善血压控制、耐力和心血管风险。" }
+    ];
+  }
+
+  if (normalized.includes("2型糖尿病") || normalized.includes("2型糖尿") || normalized.includes("糖尿病")) {
+    return [
+      { title: "控糖饮食包", rationale: "围绕低 GI 饮食、碳水分配和餐后血糖管理。" },
+      { title: "餐后步行处方", rationale: "用于降低餐后血糖波动并提高胰岛素敏感性。" }
+    ];
+  }
+
+  if (normalized.includes("肥胖") || normalized.includes("代谢")) {
+    return [
+      { title: "减重干预包", rationale: "围绕体重下降目标和生活方式协同减重。" },
+      { title: "营养替换包", rationale: "用于优化总热量摄入与营养结构替换。" }
+    ];
+  }
+
+  return [];
+}
+
+function buildInterventionSpotlight(patient, carePlan) {
+  const chronicConditions = patient?.chronicConditions?.map((item) => item.name) ?? [];
+  const curatedRecommendations = chronicConditions.flatMap((condition) => interventionRecommendationCatalog(condition));
+  const therapyPackages = carePlan?.therapyPackages ?? [];
+  const seen = new Set();
+  const recommendations = [];
+
+  curatedRecommendations.forEach((item) => {
+    if (seen.has(item.title)) return;
+    seen.add(item.title);
+    recommendations.push(item);
+  });
+
+  therapyPackages.forEach((pkg) => {
+    const normalizedTitle = String(pkg.title || "").replace(/：.*/, "");
+    if (seen.has(normalizedTitle)) return;
+    seen.add(normalizedTitle);
+    recommendations.push({
+      title: normalizedTitle,
+      rationale: pkg.content?.rationale || (pkg.content?.interventions ?? [])[0] || "已纳入当前 care plan。"
+    });
+  });
+
+  return {
+    conditions: chronicConditions,
+    recommendations
+  };
+}
+
+function renderInterventionSpotlight(patient, carePlan) {
+  if (!interventionSpotlightPanel) return;
+  const spotlight = buildInterventionSpotlight(patient, carePlan);
+
+  interventionSpotlightPanel.innerHTML = `
+    <div class="intervention-spotlight-grid">
+      <div class="spotlight-conditions-card">
+        <div class="spotlight-card-head">
+          <span class="mini-tag">重点慢病</span>
+          <strong>${patient.name}</strong>
+        </div>
+        <div class="spotlight-condition-list">
+          ${spotlight.conditions.map((item) => `<span class="spotlight-condition-pill">${item}</span>`).join("")}
+        </div>
+        <div class="dim">当前主页默认焦点患者的重点病种将直接驱动推荐干预包展示与后续随访动作。</div>
+      </div>
+
+      <div class="spotlight-recommend-card">
+        <div class="spotlight-card-head">
+          <span class="mini-tag">推荐干预包</span>
+          <strong>优先执行顺序</strong>
+        </div>
+        <div class="spotlight-package-list">
+          ${spotlight.recommendations
+            .map(
+              (item, index) => `
+                <article class="spotlight-package-item">
+                  <div class="spotlight-package-rank">${String(index + 1).padStart(2, "0")}</div>
+                  <div class="spotlight-package-copy">
+                    <h4>推荐：${item.title}</h4>
+                    <div class="dim">${item.rationale}</div>
+                  </div>
+                </article>
+              `
+            )
+            .join("")}
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function renderPublicBreakdownRows(items) {
@@ -1514,6 +1629,88 @@ function renderDynamicCommandStage() {
   animateCounters(districtFlowStory);
   activateProgressBars(districtLiveStage);
   activateProgressBars(districtFlowStory);
+}
+
+function renderWallboardHero() {
+  if (!wallboardHeroRibbon) return;
+  const cohort = state.populationDistrictCohort ?? state.populationCohort;
+  if (!cohort) {
+    wallboardHeroRibbon.innerHTML = "";
+    return;
+  }
+
+  const insights = computeHospitalInsights();
+  const activeInsight = resolveActiveHospitalInsight(insights);
+  const leadPatient =
+    cohort.patients.find((patient) => patient.id === state.populationPatientId) ?? cohort.patients[0] ?? null;
+  const topDomain = cohort.domainPrevalence?.[0];
+
+  wallboardHeroRibbon.innerHTML = `
+    <div class="wallboard-ribbon-card">
+      <span>区级底数</span>
+      ${counterMarkup(cohort.publicProfile?.totalPopulation ?? 0, { format: "compact" })}
+      <small>${cohort.publicProfile?.totalPopulationLabel ?? "-"}</small>
+    </div>
+    <div class="wallboard-ribbon-card">
+      <span>实时焦点医院</span>
+      <strong>${activeInsight?.hospital.name ?? "栖霞区全域"}</strong>
+      <small>${activeInsight ? `${formatCompactMetric(activeInsight.patientCount)} 人 · 起效率 ${activeInsight.effectiveRate}` : "等待数据"}</small>
+    </div>
+    <div class="wallboard-ribbon-card">
+      <span>当前最高病种负荷</span>
+      <strong>${topDomain?.label ?? "待补充"}</strong>
+      <small>${topDomain ? `${formatCompactMetric(topDomain.count)} 人` : "暂无公开口径"}</small>
+    </div>
+    <div class="wallboard-ribbon-card">
+      <span>演示患者窗口</span>
+      <strong>${leadPatient?.name ?? "未选择患者"}</strong>
+      <small>${leadPatient ? `${leadPatient.hospitalName} · ${leadPatient.nextFollowUpDate}` : "暂无患者"}</small>
+    </div>
+  `;
+
+  animateCounters(wallboardHeroRibbon);
+}
+
+function startWallboardRotation() {
+  clearWallboardTimers();
+  if (!isWallboardMode) return;
+  const cohort = state.populationDistrictCohort ?? state.populationCohort;
+  if (!cohort?.patients?.length) return;
+
+  const checkpointWeeks = [0, 4, 8, 12];
+  let checkpointIndex = checkpointWeeks.indexOf(state.populationCheckpointWeek);
+  if (checkpointIndex < 0) checkpointIndex = checkpointWeeks.length - 1;
+
+  const hospitalTimer = window.setInterval(() => {
+    const insights = computeHospitalInsights();
+    if (!insights.length) return;
+    const activeId = state.dynamicHospitalFocusId || state.filters.hospitalId || insights[0].hospital.id;
+    const currentIndex = Math.max(
+      0,
+      insights.findIndex((item) => item.hospital.id === activeId)
+    );
+    const nextInsight = insights[(currentIndex + 1) % insights.length];
+    state.dynamicHospitalFocusId = nextInsight.hospital.id;
+    renderDynamicCommandStage();
+    renderHospitalOverview();
+    renderWallboardHero();
+  }, 8000);
+
+  const patientTimer = window.setInterval(() => {
+    const patients = cohort.patients;
+    const currentIndex = Math.max(
+      0,
+      patients.findIndex((patient) => patient.id === state.populationPatientId)
+    );
+    const nextPatient = patients[(currentIndex + 1) % patients.length];
+    state.populationPatientId = nextPatient.id;
+    checkpointIndex = (checkpointIndex + 1) % checkpointWeeks.length;
+    state.populationCheckpointWeek = checkpointWeeks[checkpointIndex];
+    renderPopulation();
+    renderWallboardHero();
+  }, 10000);
+
+  state.wallboardTimers = [hospitalTimer, patientTimer];
 }
 
 function renderHospitalOverview() {
@@ -2923,6 +3120,7 @@ function renderPopulation() {
   if (hospitalOverviewGrid && hospitalDetailPanel) renderHospitalOverview();
   if (qixiaPublicProfile) renderQixiaPublicProfile();
   renderDynamicCommandStage();
+  renderWallboardHero();
   renderExecutiveCockpit();
   if (reminderCenter) renderReminderCenter();
 
@@ -3216,6 +3414,8 @@ function renderPopulation() {
   } else if (activeCheckpoint) {
     state.populationAnimatedRadar = { ...activeCheckpoint.radar };
   }
+
+  startWallboardRotation();
 }
 
 function renderCommandCenter() {
@@ -3411,6 +3611,7 @@ function renderWorkspace() {
     : `<div class="note-block">当前医院和角色下没有可用人员。</div>`;
 
   const therapyPackages = carePlan?.therapyPackages ?? [];
+  renderInterventionSpotlight(patient, carePlan);
   therapyPackageGrid.innerHTML = therapyPackages.length
     ? therapyPackages
         .map(
@@ -4242,6 +4443,11 @@ exportFollowupsBtn?.addEventListener("click", () => {
 });
 
 async function init() {
+  document.body.dataset.displayMode = isWallboardMode ? "wallboard" : "standard";
+  if (displayModeToggle) {
+    displayModeToggle.textContent = isWallboardMode ? "退出区级大屏模式" : "切换区级大屏模式";
+    displayModeToggle.setAttribute("href", isWallboardMode ? "./index.html" : "./index.html?display=wallboard");
+  }
   ensureSidebarNavigation();
   const [hospitals, mappings, allClinicians, medclawOverview, ecosystemOverview, githubOverview, publicSourceData] = await Promise.all([
     api("/api/hospitals"),
