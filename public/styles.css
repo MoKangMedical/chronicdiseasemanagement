@@ -236,11 +236,57 @@ a {
   opacity: 0.92;
 }
 
+.page-banner-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.banner-action {
+  text-decoration: none;
+}
+
 .page-banner-chips {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
   min-width: 360px;
+}
+
+.wallboard-hero-ribbon {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  min-width: 340px;
+}
+
+.wallboard-ribbon-card {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(191, 219, 254, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.wallboard-ribbon-card span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(191, 219, 254, 0.82);
+}
+
+.wallboard-ribbon-card strong,
+.wallboard-ribbon-card .counter-value {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.wallboard-ribbon-card small {
+  color: rgba(226, 232, 240, 0.84);
 }
 
 .banner-chip {
@@ -1976,6 +2022,94 @@ body[data-page="followups-clinician"] .followup-group-card {
   box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
 }
 
+body[data-display-mode="wallboard"] {
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.2), transparent 24%),
+    radial-gradient(circle at 100% 0%, rgba(14, 165, 233, 0.18), transparent 22%),
+    linear-gradient(180deg, #edf5ff 0%, #eef4fb 38%, #e8f0fa 100%);
+}
+
+body[data-display-mode="wallboard"] .shell {
+  grid-template-columns: 1fr;
+  gap: 20px;
+  padding: 18px;
+}
+
+body[data-display-mode="wallboard"] .sidebar {
+  display: none;
+}
+
+body[data-display-mode="wallboard"] .main-panel {
+  gap: 20px;
+}
+
+body[data-display-mode="wallboard"] .page-banner-home {
+  display: grid;
+  align-items: stretch;
+  padding: 26px 28px;
+  grid-template-columns: 1.4fr 0.9fr 1.1fr;
+}
+
+body[data-display-mode="wallboard"] .page-banner-copy h2 {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+}
+
+body[data-display-mode="wallboard"] .page-banner,
+body[data-display-mode="wallboard"] .hero,
+body[data-display-mode="wallboard"] .panel {
+  border-radius: 30px;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.1);
+}
+
+body[data-display-mode="wallboard"] .hero {
+  padding: 34px;
+}
+
+body[data-display-mode="wallboard"] .hero h2 {
+  font-size: clamp(2.15rem, 4vw, 3.2rem);
+}
+
+body[data-display-mode="wallboard"] .hero-subtitle {
+  font-size: 1.02rem;
+}
+
+body[data-display-mode="wallboard"] .grid-dynamic-command {
+  grid-template-columns: minmax(0, 1.6fr) minmax(400px, 1fr);
+}
+
+body[data-display-mode="wallboard"] .dynamic-metric-card .counter-value {
+  font-size: 2rem;
+}
+
+body[data-display-mode="wallboard"] .network-orbit {
+  min-height: 520px;
+}
+
+body[data-display-mode="wallboard"] .dynamic-story-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+body[data-display-mode="wallboard"] .orbit-node {
+  min-width: 158px;
+}
+
+body[data-display-mode="wallboard"] .population-row,
+body[data-display-mode="wallboard"] .hospital-card,
+body[data-display-mode="wallboard"] .mapping-card,
+body[data-display-mode="wallboard"] .package-card,
+body[data-display-mode="wallboard"] .benchmark-row {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+body[data-display-mode="wallboard"] .population-row:hover,
+body[data-display-mode="wallboard"] .hospital-card:hover,
+body[data-display-mode="wallboard"] .mapping-card:hover,
+body[data-display-mode="wallboard"] .package-card:hover,
+body[data-display-mode="wallboard"] .benchmark-row:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 38px rgba(15, 23, 42, 0.1);
+}
+
 .grid-dynamic-command {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.9fr);
@@ -2496,6 +2630,11 @@ body[data-page="followups-clinician"] .followup-group-card {
     flex-direction: column;
   }
 
+  .wallboard-hero-ribbon {
+    min-width: 0;
+    grid-template-columns: 1fr;
+  }
+
   .page-banner-chips {
     min-width: 0;
     grid-template-columns: 1fr;
@@ -2536,6 +2675,10 @@ body[data-page="followups-clinician"] .followup-group-card {
     width: 60px;
     height: 60px;
     border-radius: 18px;
+  }
+
+  body[data-display-mode="wallboard"] .page-banner-home {
+    grid-template-columns: 1fr;
   }
 
   .network-orbit {
