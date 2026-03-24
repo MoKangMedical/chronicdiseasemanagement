@@ -969,6 +969,62 @@ a {
   align-items: start;
 }
 
+.overview-band {
+  margin-bottom: 24px;
+}
+
+.overview-band-inner {
+  padding: 20px 22px;
+  border-radius: 26px;
+  background:
+    linear-gradient(135deg, rgba(30, 64, 175, 0.96), rgba(37, 99, 235, 0.92)),
+    radial-gradient(circle at top right, rgba(14, 165, 233, 0.35), transparent 55%);
+  color: white;
+  box-shadow: 0 24px 48px rgba(30, 64, 175, 0.26);
+}
+
+.overview-band-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.overview-band-head .dim {
+  color: rgba(226, 232, 240, 0.86);
+}
+
+.overview-band-tag {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(191, 219, 254, 0.45);
+  background: rgba(15, 23, 42, 0.2);
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.metric-stack-band {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.metric-stack-band .metric-card {
+  background: rgba(15, 23, 42, 0.22);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: white;
+  box-shadow: none;
+}
+
+.metric-stack-band .metric-card strong {
+  color: white;
+}
+
+.metric-stack-band .metric-card .dim {
+  color: rgba(226, 232, 240, 0.86);
+}
+
 .stat-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
