@@ -991,6 +991,11 @@ a {
   margin-bottom: 16px;
 }
 
+.overview-band-grid {
+  display: grid;
+  gap: 18px;
+}
+
 .overview-band-head .dim {
   color: rgba(226, 232, 240, 0.86);
 }
@@ -1023,6 +1028,169 @@ a {
 
 .metric-stack-band .metric-card .dim {
   color: rgba(226, 232, 240, 0.86);
+}
+
+.overview-visual-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.overview-visual-card {
+  min-height: 290px;
+  padding: 16px;
+  border-radius: 24px;
+  border: 1px solid rgba(191, 219, 254, 0.24);
+  background:
+    linear-gradient(180deg, rgba(15, 23, 42, 0.24), rgba(15, 23, 42, 0.16)),
+    radial-gradient(circle at top right, rgba(103, 232, 249, 0.16), transparent 42%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+.overview-visual-head {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.overview-visual-head span {
+  color: rgba(191, 219, 254, 0.78);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.overview-visual-head strong {
+  color: white;
+  font-size: 1rem;
+}
+
+.overview-visual-body {
+  min-height: 220px;
+  display: grid;
+  align-items: center;
+}
+
+.overview-visual-body .note-block {
+  color: rgba(226, 232, 240, 0.88);
+  border-color: rgba(191, 219, 254, 0.18);
+  background: rgba(15, 23, 42, 0.18);
+}
+
+.overview-radar-chart,
+.overview-line-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.overview-radar-grid,
+.overview-radar-axis,
+.overview-line-grid {
+  fill: none;
+  stroke: rgba(191, 219, 254, 0.18);
+  stroke-width: 1;
+}
+
+.overview-radar-shape {
+  fill: rgba(103, 232, 249, 0.16);
+  stroke: rgba(103, 232, 249, 0.96);
+  stroke-width: 2.2;
+}
+
+.overview-radar-dot {
+  fill: #a5f3fc;
+  stroke: rgba(15, 23, 42, 0.45);
+  stroke-width: 1.2;
+}
+
+.overview-radar-label,
+.overview-radar-value,
+.overview-line-tick,
+.overview-line-label,
+.overview-line-value {
+  font-size: 10px;
+  text-anchor: middle;
+  fill: rgba(226, 232, 240, 0.9);
+}
+
+.overview-radar-value,
+.overview-line-value {
+  font-size: 11px;
+  font-weight: 700;
+  fill: #a5f3fc;
+}
+
+.overview-line-tick {
+  text-anchor: start;
+  fill: rgba(191, 219, 254, 0.68);
+}
+
+.overview-line-path {
+  fill: none;
+  stroke: #67e8f9;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.overview-line-area {
+  fill: url(#overviewLineFill);
+}
+
+.overview-line-dot {
+  fill: #f8fafc;
+  stroke: #67e8f9;
+  stroke-width: 2;
+}
+
+.overview-funnel {
+  display: grid;
+  gap: 10px;
+}
+
+.overview-funnel-stage {
+  display: grid;
+  gap: 6px;
+}
+
+.overview-funnel-copy,
+.overview-funnel-meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.overview-funnel-copy span,
+.overview-funnel-meta small {
+  color: rgba(226, 232, 240, 0.78);
+}
+
+.overview-funnel-copy strong {
+  color: white;
+  font-size: 1rem;
+}
+
+.overview-funnel-track {
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.14);
+  overflow: hidden;
+}
+
+.overview-funnel-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(103, 232, 249, 0.9), rgba(59, 130, 246, 0.95));
+  box-shadow: 0 0 24px rgba(103, 232, 249, 0.3);
+}
+
+.overview-funnel-stage.terminal .overview-funnel-track i {
+  background: linear-gradient(90deg, rgba(165, 243, 252, 0.95), rgba(16, 185, 129, 0.95));
 }
 
 .stat-grid {
@@ -2769,12 +2937,18 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   .dynamic-stage-network,
   .dynamic-story-grid,
   .highlight-asset-strip,
-  .journey-stage-strip {
+  .journey-stage-strip,
+  .overview-visual-grid {
     grid-template-columns: 1fr;
   }
 
   .page-banner {
     flex-direction: column;
+  }
+
+  .overview-band-head {
+    flex-direction: column;
+    align-items: start;
   }
 
   .wallboard-hero-ribbon {
@@ -2834,6 +3008,19 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
 
   .orbit-node {
     min-width: 132px;
+  }
+
+  .overview-band-inner {
+    padding: 18px;
+  }
+
+  .metric-stack-band {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .overview-visual-card {
+    min-height: 260px;
+    padding: 14px;
   }
 
   .filter-field select {

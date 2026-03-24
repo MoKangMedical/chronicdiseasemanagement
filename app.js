@@ -182,6 +182,9 @@ async function resolveStaticApi(path, options = {}) {
 }
 
 const summaryMetrics = document.querySelector("#summary-metrics");
+const overviewRiskRadar = document.querySelector("#overview-risk-radar");
+const overviewCoverageTrend = document.querySelector("#overview-coverage-trend");
+const overviewClosedLoopFunnel = document.querySelector("#overview-closed-loop-funnel");
 const patientList = document.querySelector("#patient-list");
 const patientName = document.querySelector("#patient-name");
 const heroSubtitle = document.querySelector("#hero-subtitle");
@@ -476,6 +479,209 @@ function renderComparisonRadar(title, beforeVector, afterVector) {
       </svg>
     </div>
   `;
+}
+
+function renderOverviewBandRadar(vector) {
+  const entries = Object.entries(vector ?? {});
+  if (!entries.length) {
+    return `<div class="note-block">暂无风险分布数据。</div>`;
+  }
+
+  const cx = 150;
+  const cy = 128;
+  const radius = 88;
+  const levels = [25, 50, 75, 100];
+  const polar = (index, value) => {
+    const angle = (Math.PI * 2 * index) / entries.length - Math.PI / 2;
+    const currentRadius = (radius * value) / 100;
+    return [cx + Math.cos(angle) * currentRadius, cy + Math.sin(angle) * currentRadius];
+  };
+
+  const polygonPoints = entries
+    .map(([, value], index) => {
+      const [x, y] = polar(index, value);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  return `
+    <svg viewBox="0 0 300 256" class="overview-radar-chart" role="img" aria-label="区级风险分布雷达">
+      ${levels
+        .map((level) => {
+          const points = entries
+            .map(([, _value], index) => {
+              const [x, y] = polar(index, level);
+              return `${x.toFixed(1)},${y.toFixed(1)}`;
+            })
+            .join(" ");
+          return `<polygon class="overview-radar-grid" points="${points}"></polygon>`;
+        })
+        .join("")}
+      ${entries
+        .map(([, _value], index) => {
+          const [x, y] = polar(index, 100);
+          return `<line class="overview-radar-axis" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"></line>`;
+        })
+        .join("")}
+      <polygon class="overview-radar-shape" points="${polygonPoints}"></polygon>
+      ${entries
+        .map(([domain, value], index) => {
+          const [x, y] = polar(index, value);
+          const [lx, ly] = polar(index, 116);
+          return `
+            <circle class="overview-radar-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.5"></circle>
+            <text class="overview-radar-label" x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${labelRiskDomain(domain)}</text>
+            <text class="overview-radar-value" x="${x.toFixed(1)}" y="${(y - 10).toFixed(1)}">${value}</text>
+          `;
+        })
+        .join("")}
+    </svg>
+  `;
+}
+
+function renderOverviewCoverageTrend(ops, cohort) {
+  if (!ops || !cohort) {
+    return `<div class="note-block">暂无覆盖率趋势数据。</div>`;
+  }
+
+  const points = [
+    { label: "医院接入", value: ops.hospitalCoverageRate },
+    { label: "专科覆盖", value: ops.specialistDoctorCoverageRate },
+    { label: "全科覆盖", value: ops.generalPractitionerCoverageRate },
+    { label: "责任覆盖", value: ops.responsibleClinicianCoverageRate },
+    { label: "闭环执行", value: cohort.summary?.closedLoopRate ?? 0 }
+  ];
+
+  const width = 320;
+  const height = 210;
+  const padX = 28;
+  const padTop = 18;
+  const padBottom = 38;
+  const innerWidth = width - padX * 2;
+  const innerHeight = height - padTop - padBottom;
+  const maxValue = Math.max(100, ...points.map((point) => point.value));
+  const stepX = innerWidth / Math.max(1, points.length - 1);
+
+  const mappedPoints = points.map((point, index) => {
+    const x = padX + stepX * index;
+    const y = padTop + innerHeight - (point.value / maxValue) * innerHeight;
+    return { ...point, x, y };
+  });
+
+  const path = mappedPoints.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(" ");
+  const areaPath = `${path} L ${mappedPoints[mappedPoints.length - 1].x.toFixed(1)} ${(height - padBottom).toFixed(1)} L ${
+    mappedPoints[0].x.toFixed(1)
+  } ${(height - padBottom).toFixed(1)} Z`;
+
+  return `
+    <svg viewBox="0 0 ${width} ${height}" class="overview-line-chart" role="img" aria-label="覆盖率进展图">
+      <defs>
+        <linearGradient id="overviewLineFill" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0%" stop-color="rgba(103, 232, 249, 0.38)"></stop>
+          <stop offset="100%" stop-color="rgba(103, 232, 249, 0.04)"></stop>
+        </linearGradient>
+      </defs>
+      ${[0, 25, 50, 75, 100]
+        .map((tick) => {
+          const y = padTop + innerHeight - (tick / maxValue) * innerHeight;
+          return `
+            <line class="overview-line-grid" x1="${padX}" y1="${y.toFixed(1)}" x2="${width - padX}" y2="${y.toFixed(1)}"></line>
+            <text class="overview-line-tick" x="0" y="${(y + 4).toFixed(1)}">${tick}%</text>
+          `;
+        })
+        .join("")}
+      <path class="overview-line-area" d="${areaPath}"></path>
+      <path class="overview-line-path" d="${path}"></path>
+      ${mappedPoints
+        .map(
+          (point) => `
+            <circle class="overview-line-dot" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="4"></circle>
+            <text class="overview-line-value" x="${point.x.toFixed(1)}" y="${(point.y - 12).toFixed(1)}">${point.value}%</text>
+            <text class="overview-line-label" x="${point.x.toFixed(1)}" y="${height - 10}">${point.label}</text>
+          `
+        )
+        .join("")}
+    </svg>
+  `;
+}
+
+function renderOverviewClosedLoopFunnel(funnel) {
+  const stages = funnel?.stages?.slice(0, 6) ?? [];
+  if (!stages.length) {
+    return `<div class="note-block">暂无闭环漏斗数据。</div>`;
+  }
+
+  const maxCount = Math.max(...stages.map((stage) => stage.count), 1);
+  return `
+    <div class="overview-funnel">
+      ${stages
+        .map(
+          (stage, index) => `
+            <div class="overview-funnel-stage ${index === stages.length - 1 ? "terminal" : ""}">
+              <div class="overview-funnel-copy">
+                <span>${stage.label}</span>
+                <strong>${formatCompactMetric(stage.count)}</strong>
+              </div>
+              <div class="overview-funnel-track">
+                <i style="width:${((stage.count / maxCount) * 100).toFixed(1)}%"></i>
+              </div>
+              <div class="overview-funnel-meta">
+                <small>${formatRateValue(stage.rate)}</small>
+                <small>${stage.note}</small>
+              </div>
+            </div>
+          `
+        )
+        .join("")}
+    </div>
+  `;
+}
+
+function renderOverviewBand() {
+  const cohort = state.populationDistrictCohort ?? state.populationCohort;
+  const ops = cohort?.districtOperations ?? null;
+
+  if (summaryMetrics) {
+    const items = cohort
+      ? [
+          ["纳管人数", `${cohort.patientCount.toLocaleString("zh-CN")} 人`],
+          ["高风险", cohort.summary.highRiskCount],
+          ["危重", cohort.summary.criticalRiskCount],
+          ["闭环率", `${cohort.summary.closedLoopRate}%`],
+          ["医院覆盖", formatRateValue(ops?.hospitalCoverageRate ?? 0)],
+          ["责任覆盖", formatRateValue(ops?.responsibleClinicianCoverageRate ?? 0)]
+        ]
+      : [
+          ["患者", state.dashboard?.summary?.patients ?? 0],
+          ["文档", state.dashboard?.summary?.documents ?? 0],
+          ["开放 MDT", state.dashboard?.summary?.openMeetings ?? 0],
+          ["Care Plan", state.dashboard?.summary?.carePlans ?? 0],
+          ["当前角色资源", state.dashboard?.clinicians ?? 0]
+        ];
+
+    summaryMetrics.innerHTML = items
+      .map(
+        ([label, value]) => `
+          <div class="metric-card">
+            <span class="dim">${label}</span>
+            <strong>${value}</strong>
+          </div>
+        `
+      )
+      .join("");
+  }
+
+  if (overviewRiskRadar) {
+    setElementHtml(overviewRiskRadar, cohort ? renderOverviewBandRadar(cohort.averageRadar) : `<div class="note-block">暂无风险分布数据。</div>`);
+  }
+
+  if (overviewCoverageTrend) {
+    setElementHtml(overviewCoverageTrend, renderOverviewCoverageTrend(ops, cohort));
+  }
+
+  if (overviewClosedLoopFunnel) {
+    setElementHtml(overviewClosedLoopFunnel, renderOverviewClosedLoopFunnel(cohort?.coordinationFunnel));
+  }
 }
 
 async function api(path, options = {}) {
@@ -1281,22 +1487,8 @@ function renderFilters() {
 }
 
 function renderDashboard() {
-  if (!state.dashboard || !summaryMetrics) return;
-  summaryMetrics.innerHTML = "";
-  const items = [
-    ["患者", state.dashboard.summary.patients],
-    ["文档", state.dashboard.summary.documents],
-    ["开放 MDT", state.dashboard.summary.openMeetings],
-    ["Care Plan", state.dashboard.summary.carePlans],
-    ["当前角色资源", state.dashboard.clinicians]
-  ];
-
-  for (const [label, value] of items) {
-    const card = document.createElement("div");
-    card.className = "metric-card";
-    card.innerHTML = `<span class="dim">${label}</span><strong>${value}</strong>`;
-    summaryMetrics.append(card);
-  }
+  if (!state.dashboard) return;
+  renderOverviewBand();
 }
 
 function renderPatients() {
@@ -3117,6 +3309,7 @@ function renderPopulation() {
   );
 
   setElementHtml(populationRadar, renderRadarChart("栖霞区慢病风险平均画像", districtCohort.averageRadar));
+  renderOverviewBand();
   if (hospitalOverviewGrid && hospitalDetailPanel) renderHospitalOverview();
   if (qixiaPublicProfile) renderQixiaPublicProfile();
   renderDynamicCommandStage();
