@@ -16,6 +16,7 @@
         mode: "static",
         snapshotPath: "./demo-data/pages-snapshot.json",
         populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json",
         repo: "MoKangMedical/chronicdiseasemanagement",
         projectName: "慢康智枢 ChroniCare OS",
         readOnlyMessage: "GitHub Pages 演示站为只读模式"
@@ -42,6 +43,7 @@
         <nav class="sidebar-nav">
           <a class="sidebar-nav-link active" href="./index.html">区级总览</a>
           <a class="sidebar-nav-link" href="./followups-hospital.html">随访中心</a>
+          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
         </nav>
 
         <div class="sidebar-block">
@@ -56,6 +58,28 @@
       </aside>
 
       <main class="main-panel">
+        <section class="page-banner page-banner-home">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">District Chronic Care Command Center</div>
+            <h2>区级慢病管理总控台</h2>
+            <p>栖霞区医院网络、三级协同与患者风险联动在同一指挥面板中呈现，支持区级运营调度、医院管理与医生工作分层查看。</p>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">当前模式</span>
+              <strong>区级运营大屏</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">管理单元</span>
+              <strong>医院 / 医生 / 患者</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">核心任务</span>
+              <strong>分层、干预、闭环</strong>
+            </div>
+          </div>
+        </section>
+
         <header class="hero">
           <div class="hero-copy">
             <p class="eyebrow">Clinical Intelligence Layer</p>
@@ -121,11 +145,47 @@
           </article>
         </section>
 
+        <section class="grid grid-qixia-public">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">公开区情口径</span>
+              <h3>人口总数、年龄结构、性别结构与健康指标</h3>
+            </div>
+            <div id="qixia-public-profile" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-executive-cockpit">
+          <article class="panel panel-feature">
+            <div class="panel-head">
+              <span class="panel-kicker">区级运营驾驶舱</span>
+              <h3>纳管覆盖、风险压降、闭环执行</h3>
+            </div>
+            <div id="district-executive-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">医院绩效横向对比</span>
+              <h3>起效率、覆盖率、结构性负荷</h3>
+            </div>
+            <div id="hospital-benchmark-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">模型治理</span>
+              <h3>预测能力、证据强度与追踪深度</h3>
+            </div>
+            <div id="model-governance-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+
         <section class="grid grid-population-main">
           <article class="panel">
             <div class="panel-head">
               <span class="panel-kicker">管理队列</span>
-              <h3>100 位模拟患者</h3>
+              <h3>100 位纳管患者</h3>
             </div>
             <div id="population-list" class="population-list"></div>
           </article>

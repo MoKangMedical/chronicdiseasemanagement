@@ -2,11 +2,1164 @@
   "generatedAt": "2026-03-24T12:00:00+08:00",
   "hospitalLabel": "栖霞区医院网络 100 人慢病管理队列",
   "patientCount": 100,
+  "publicProfile": {
+    "districtName": "栖霞区",
+    "totalPopulation": 1017800,
+    "totalPopulationLabel": "101.78 万人",
+    "totalPopulationAsOf": "2024 年末常住人口",
+    "managedPatientCount": 100,
+    "managedCoverageRate": 0.01,
+    "sexDistribution": [
+      {
+        "label": "男性",
+        "count": 511258,
+        "ratio": 51.76,
+        "note": "七普口径"
+      },
+      {
+        "label": "女性",
+        "count": 476577,
+        "ratio": 48.24,
+        "note": "七普口径"
+      }
+    ],
+    "ageDistribution": [
+      {
+        "label": "0-14 岁",
+        "count": 110406,
+        "ratio": 11.18,
+        "note": "七普年龄结构"
+      },
+      {
+        "label": "15-39 岁",
+        "count": 459235,
+        "ratio": 46.49,
+        "note": "七普年龄结构"
+      },
+      {
+        "label": "40-59 岁",
+        "count": 263739,
+        "ratio": 26.7,
+        "note": "七普年龄结构"
+      },
+      {
+        "label": "60-64 岁",
+        "count": 47835,
+        "ratio": 4.84,
+        "note": "七普年龄结构"
+      },
+      {
+        "label": "65 岁及以上",
+        "count": 106620,
+        "ratio": 10.79,
+        "note": "七普年龄结构"
+      }
+    ],
+    "ageHighlights": [
+      {
+        "title": "60 岁及以上人口",
+        "value": "16.58 万人",
+        "detail": "占常住人口 16.37%，为当前公开官方区级老龄人口口径。",
+        "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+        "sourceDate": "2025-04-28"
+      },
+      {
+        "title": "0-6 岁儿童",
+        "value": "4.99 万人",
+        "detail": "占常住人口 4.92%，可用于评估家庭健康服务与早筛资源需求。",
+        "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+        "sourceDate": "2025-04-28"
+      }
+    ],
+    "healthIndicators": [
+      {
+        "title": "重大慢病过早死亡率",
+        "value": "8%",
+        "detail": "区级公开健康指标，可作为慢病防控总体成效参考，不等同于病种患病率。",
+        "sourceLabel": "栖霞区政府 2026 年卫生健康工作会议报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+        "sourceDate": "2026-03-05"
+      },
+      {
+        "title": "家庭医生签约服务对象",
+        "value": "15.64 万人",
+        "detail": "公开报道口径，体现基层连续管理和慢病随访触达基础。",
+        "sourceLabel": "栖霞区 2025 年民生服务报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+        "sourceDate": "2025-07-30"
+      },
+      {
+        "title": "重点人群联系率",
+        "value": "16.84 万人",
+        "detail": "区级基层健康联系人数，用于衡量慢病重点对象触达能力。",
+        "sourceLabel": "栖霞区 2025 年民生服务报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+        "sourceDate": "2025-07-30"
+      },
+      {
+        "title": "医疗卫生机构",
+        "value": "313 家",
+        "detail": "包含医院、基层卫生机构与公共卫生机构，是区级医疗服务网络供给底盘。",
+        "sourceLabel": "栖霞区政府工作报告",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+        "sourceDate": "2026-03-05"
+      },
+      {
+        "title": "社区卫生服务中心",
+        "value": "10 家",
+        "detail": "可直接映射为区级基层协同节点，是分级诊疗和慢病随访的基层入口能力。",
+        "sourceLabel": "栖霞区 2024 卫生健康工作会议报道",
+        "sourceUrl": "https://xl.nanjing.gov.cn/gzdt/202405/t20240506_4658517.html",
+        "sourceDate": "2024-05-06"
+      },
+      {
+        "title": "紧密型城市医疗集团结构",
+        "value": "1+8+1+10",
+        "detail": "省级牵头医院、8 家三级协作医院、1 家区医院、10 家社区卫生服务中心，适合做三级协同拓扑底图。",
+        "sourceLabel": "栖霞区紧密型城市医疗集团成立报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/zmhd/xwfbh/20251229/",
+        "sourceDate": "2025-12-29"
+      }
+    ],
+    "systemUsableAssets": [
+      {
+        "title": "常住人口底数",
+        "value": "101.78 万人",
+        "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+        "usableModules": [
+          "区级总览",
+          "覆盖率驾驶舱",
+          "医院绩效看板"
+        ],
+        "usableFields": [
+          "publicProfile.totalPopulation",
+          "districtOperations.managedCoverageRate",
+          "hospitalCoverageRate"
+        ],
+        "integrationNote": "作为纳管覆盖率、医院覆盖率和随访触达率的统一分母口径。"
+      },
+      {
+        "title": "老年人口画像",
+        "value": "60 岁及以上 16.58 万人",
+        "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+        "usableModules": [
+          "认知障碍早筛",
+          "老年慢病管理",
+          "家庭医生优先队列"
+        ],
+        "usableFields": [
+          "publicProfile.ageHighlights",
+          "population.carePriority",
+          "followup.priorityRules"
+        ],
+        "integrationNote": "可作为痴呆、心血管、复合慢病等老年重点对象的优先管理口径。"
+      },
+      {
+        "title": "儿童与家庭健康底数",
+        "value": "0-6 岁 4.99 万人",
+        "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+        "usableModules": [
+          "家庭健康服务",
+          "基层签约触达",
+          "健康宣教"
+        ],
+        "usableFields": [
+          "publicProfile.ageHighlights",
+          "operations.familyHealthCoverage"
+        ],
+        "integrationNote": "适合扩展母婴、家庭健康和社区宣教覆盖率口径。"
+      },
+      {
+        "title": "家庭医生签约服务对象",
+        "value": "15.64 万人",
+        "sourceLabel": "栖霞区 2025 年民生服务报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+        "usableModules": [
+          "基层触达率",
+          "签约服务驾驶舱",
+          "健康管理师工作台"
+        ],
+        "usableFields": [
+          "districtOperations.generalPractitionerCoverageRate",
+          "roleWorkload",
+          "followup.contactablePopulation"
+        ],
+        "integrationNote": "可映射为基层连续管理能力和全科医生服务承载量的公开参照。"
+      },
+      {
+        "title": "重点人群联系人数",
+        "value": "16.84 万人",
+        "sourceLabel": "栖霞区 2025 年民生服务报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+        "usableModules": [
+          "提醒中心",
+          "重点对象随访",
+          "风险闭环追踪"
+        ],
+        "usableFields": [
+          "followup.overdueBacklog",
+          "coordinationFunnel.closedLoopCount",
+          "publicProfile.healthIndicators"
+        ],
+        "integrationNote": "可作为重点对象池的公开基线，用于衡量区级提醒与随访闭环能力。"
+      },
+      {
+        "title": "医疗资源底盘",
+        "value": "313 家机构 / 10 家社区中心",
+        "sourceLabel": "栖霞区 2026 卫生健康工作会议 + 2024 卫生健康工作会议",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+        "usableModules": [
+          "医院网络地图",
+          "三级协同拓扑",
+          "资源分层展示"
+        ],
+        "usableFields": [
+          "hospitalNetwork",
+          "districtOperations.activeHospitalCount",
+          "commandCenter.network"
+        ],
+        "integrationNote": "可作为首页医院网络、分层协同和区级资源分布的公开供给口径。"
+      },
+      {
+        "title": "慢病防控结果指标",
+        "value": "重大慢病过早死亡率 8%",
+        "sourceLabel": "栖霞区 2026 年卫生健康工作会议报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+        "usableModules": [
+          "区级绩效看板",
+          "模型治理",
+          "慢病防控总览"
+        ],
+        "usableFields": [
+          "publicProfile.healthIndicators",
+          "modelGovernance",
+          "districtExecutivePanel"
+        ],
+        "integrationNote": "适合作为区级总体结果指标，不应用作单病种患病率或单患者预测特征。"
+      },
+      {
+        "title": "三级协同组织结构",
+        "value": "1+8+1+10 医疗集团",
+        "sourceLabel": "栖霞区紧密型城市医疗集团成立报道",
+        "sourceUrl": "https://www.njqxq.gov.cn/zmhd/xwfbh/20251229/",
+        "usableModules": [
+          "三级诊疗协同",
+          "转诊拓扑",
+          "医院分层展示"
+        ],
+        "usableFields": [
+          "coordinationFunnel",
+          "referralMetrics",
+          "commandCenter.network"
+        ],
+        "integrationNote": "可直接映射为省级牵头、三级协作、区医院与社区中心的网络拓扑。"
+      }
+    ],
+    "notes": [
+      "人口总量采用 2024 年末官方常住人口 101.78 万人口径。",
+      "年龄和性别结构采用第七次全国人口普查栖霞区口径，用于展示公开可获得的人口分层。",
+      "未检索到栖霞区官方公开的分病种患病率表，页面中的病种比例仍来自本平台纳管队列模拟数据。",
+      "公开资料接入字典只收录可直接进入本系统字段口径的公开数据，避免将宣传性文字误当成结构化业务指标。"
+    ],
+    "sources": [
+      {
+        "label": "栖霞区 2024 国民经济和社会发展统计公报",
+        "url": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+        "note": "提供 2024 年末常住人口、60 岁及以上人口、0-6 岁儿童等官方口径。"
+      },
+      {
+        "label": "栖霞区第七次全国人口普查年龄金字塔",
+        "url": "https://www.hongheiku.com/xianjirank/jssxsq/9507.html",
+        "note": "提供 2020 年区级年龄与性别结构明细。"
+      },
+      {
+        "label": "栖霞区 2025 年民生服务报道",
+        "url": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+        "note": "提供家庭医生签约和重点人群联系等基层健康服务覆盖指标。"
+      },
+      {
+        "label": "栖霞区 2026 年卫生健康工作会议报道",
+        "url": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+        "note": "提供重大慢病过早死亡率和医疗卫生机构等公开指标。"
+      },
+      {
+        "label": "栖霞区 2024 年卫生健康工作会议报道",
+        "url": "https://xl.nanjing.gov.cn/gzdt/202405/t20240506_4658517.html",
+        "note": "提供社区卫生服务中心、床位数、卫生技术人员等资源供给指标。"
+      },
+      {
+        "label": "栖霞区紧密型城市医疗集团成立报道",
+        "url": "https://www.njqxq.gov.cn/zmhd/xwfbh/20251229/",
+        "note": "提供 1+8+1+10 紧密型城市医疗集团结构，适合映射为三级协同网络。"
+      }
+    ]
+  },
+  "districtOperations": {
+    "districtName": "栖霞区",
+    "totalPopulation": 1017800,
+    "managedPatientCount": 100,
+    "managedCoverageRate": 0.01,
+    "districtHospitalCount": 15,
+    "activeHospitalCount": 15,
+    "hospitalCoverageRate": 100,
+    "primaryDoctorCoverageRate": 100,
+    "responsibleClinicianCoverageRate": 100,
+    "specialistDoctorCoverageRate": 74,
+    "generalPractitionerCoverageRate": 26,
+    "healthManagerCoverageRate": 0
+  },
   "summary": {
     "highRiskCount": 9,
     "criticalRiskCount": 0,
     "intensiveManagementCount": 19,
     "averageEvidencePerPatient": 6,
+    "closedLoopRate": 52
+  },
+  "hospitalPerformanceRanking": [
+    {
+      "rank": 1,
+      "hospitalId": "yanziji-chsc",
+      "hospitalName": "燕子矶社区卫生服务中心",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 30,
+      "effectiveRate": 100,
+      "closedLoopRate": 100,
+      "referralCount": 0,
+      "consultationCount": 6,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "respiratory",
+          "label": "呼吸慢病",
+          "count": 5
+        },
+        {
+          "domain": "sleep",
+          "label": "睡眠",
+          "count": 2
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "睡眠改善包",
+          "count": 7
+        },
+        {
+          "title": "睡前行为干预包",
+          "count": 7
+        },
+        {
+          "title": "肺康复运动包",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "rank": 2,
+      "hospitalId": "xigang-chsc",
+      "hospitalName": "西岗社区卫生服务中心",
+      "patientCount": 6,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 19.3,
+      "effectiveRate": 100,
+      "closedLoopRate": 100,
+      "referralCount": 0,
+      "consultationCount": 1,
+      "mdtReviewCount": 6,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 6,
+      "topDomains": [],
+      "topPackages": [
+        {
+          "title": "睡眠改善包",
+          "count": 6
+        },
+        {
+          "title": "睡前行为干预包",
+          "count": 6
+        },
+        {
+          "title": "减重干预包",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "rank": 3,
+      "hospitalId": "qixia-chsc",
+      "hospitalName": "栖霞社区卫生服务中心",
+      "patientCount": 6,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 27,
+      "effectiveRate": 100,
+      "closedLoopRate": 100,
+      "referralCount": 0,
+      "consultationCount": 5,
+      "mdtReviewCount": 6,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 6,
+      "topDomains": [
+        {
+          "domain": "dementia",
+          "label": "认知障碍",
+          "count": 6
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "认知训练包",
+          "count": 6
+        },
+        {
+          "title": "照护者教育包",
+          "count": 6
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "rank": 4,
+      "hospitalId": "taikang-xianlin-gulou",
+      "hospitalName": "泰康仙林鼓楼医院",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 2,
+      "averageRiskScore": 34.6,
+      "effectiveRate": 100,
+      "closedLoopRate": 85.7,
+      "referralCount": 2,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "dementia",
+          "label": "认知障碍",
+          "count": 7
+        },
+        {
+          "domain": "sleep",
+          "label": "睡眠",
+          "count": 5
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "认知训练包",
+          "count": 7
+        },
+        {
+          "title": "照护者教育包",
+          "count": 7
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 5,
+      "hospitalId": "maqun-chsc",
+      "hospitalName": "马群社区卫生服务中心",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 34.2,
+      "effectiveRate": 100,
+      "closedLoopRate": 85.7,
+      "referralCount": 0,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "metabolic",
+          "label": "代谢",
+          "count": 6
+        },
+        {
+          "domain": "diabetes",
+          "label": "糖尿病",
+          "count": 2
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "减重干预包",
+          "count": 7
+        },
+        {
+          "title": "营养替换包",
+          "count": 7
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 6,
+      "hospitalId": "longtan-chsc",
+      "hospitalName": "龙潭社区卫生服务中心",
+      "patientCount": 6,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 21.8,
+      "effectiveRate": 100,
+      "closedLoopRate": 83.3,
+      "referralCount": 0,
+      "consultationCount": 3,
+      "mdtReviewCount": 6,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 6,
+      "topDomains": [],
+      "topPackages": [
+        {
+          "title": "睡眠改善包",
+          "count": 6
+        },
+        {
+          "title": "睡前行为干预包",
+          "count": 6
+        },
+        {
+          "title": "肺康复运动包",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "rank": 7,
+      "hospitalId": "jiangsu-tcm-zidong",
+      "hospitalName": "江苏省中医院紫东院区",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 6,
+      "averageRiskScore": 37.3,
+      "effectiveRate": 100,
+      "closedLoopRate": 57.1,
+      "referralCount": 6,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "diabetes",
+          "label": "糖尿病",
+          "count": 7
+        },
+        {
+          "domain": "metabolic",
+          "label": "代谢",
+          "count": 4
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "控糖饮食包",
+          "count": 7
+        },
+        {
+          "title": "餐后步行处方",
+          "count": 7
+        },
+        {
+          "title": "减重干预包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 8,
+      "hospitalId": "jiangsu-integrated",
+      "hospitalName": "江苏省中西医结合医院",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 34.9,
+      "effectiveRate": 100,
+      "closedLoopRate": 42.9,
+      "referralCount": 0,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 7
+        },
+        {
+          "domain": "sleep",
+          "label": "睡眠",
+          "count": 2
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "控压随访包",
+          "count": 7
+        },
+        {
+          "title": "心肺耐力训练包",
+          "count": 7
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 9,
+      "hospitalId": "xianlin-chsc",
+      "hospitalName": "仙林社区卫生服务中心",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 25,
+      "effectiveRate": 100,
+      "closedLoopRate": 28.6,
+      "referralCount": 0,
+      "consultationCount": 4,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "sleep",
+          "label": "睡眠",
+          "count": 2
+        },
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 1
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "睡眠改善包",
+          "count": 7
+        },
+        {
+          "title": "睡前行为干预包",
+          "count": 7
+        },
+        {
+          "title": "控压随访包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 10,
+      "hospitalId": "qixia-hospital",
+      "hospitalName": "南京市栖霞区医院",
+      "patientCount": 7,
+      "highRiskCount": 4,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 7,
+      "averageRiskScore": 42.6,
+      "effectiveRate": 100,
+      "closedLoopRate": 0,
+      "referralCount": 7,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "diabetes",
+          "label": "糖尿病",
+          "count": 7
+        },
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 6
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "控糖饮食包",
+          "count": 7
+        },
+        {
+          "title": "餐后步行处方",
+          "count": 7
+        },
+        {
+          "title": "控压随访包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 11,
+      "hospitalId": "njmu2-maigaoqiao",
+      "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "patientCount": 7,
+      "highRiskCount": 3,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 2,
+      "averageRiskScore": 44.6,
+      "effectiveRate": 100,
+      "closedLoopRate": 0,
+      "referralCount": 2,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "renal",
+          "label": "肾脏",
+          "count": 7
+        },
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 4
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "肾病饮食包",
+          "count": 7
+        },
+        {
+          "title": "液体管理包",
+          "count": 7
+        },
+        {
+          "title": "控压随访包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 12,
+      "hospitalId": "yaohua-chsc",
+      "hospitalName": "尧化社区卫生服务中心",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 1,
+      "averageRiskScore": 31.9,
+      "effectiveRate": 100,
+      "closedLoopRate": 0,
+      "referralCount": 1,
+      "consultationCount": 7,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "diabetes",
+          "label": "糖尿病",
+          "count": 7
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "控糖饮食包",
+          "count": 7
+        },
+        {
+          "title": "餐后步行处方",
+          "count": 7
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 7
+        }
+      ]
+    },
+    {
+      "rank": 13,
+      "hospitalId": "jingan-chsc",
+      "hospitalName": "靖安社区卫生服务中心",
+      "patientCount": 6,
+      "highRiskCount": 2,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 1,
+      "averageRiskScore": 41.4,
+      "effectiveRate": 100,
+      "closedLoopRate": 0,
+      "referralCount": 1,
+      "consultationCount": 6,
+      "mdtReviewCount": 6,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 6,
+      "topDomains": [
+        {
+          "domain": "renal",
+          "label": "肾脏",
+          "count": 6
+        },
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 1
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "肾病饮食包",
+          "count": 6
+        },
+        {
+          "title": "液体管理包",
+          "count": 6
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "rank": 14,
+      "hospitalId": "baguazhou-chsc",
+      "hospitalName": "八卦洲社区卫生服务中心",
+      "patientCount": 6,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 31.5,
+      "effectiveRate": 100,
+      "closedLoopRate": 0,
+      "referralCount": 0,
+      "consultationCount": 6,
+      "mdtReviewCount": 6,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 6,
+      "topDomains": [
+        {
+          "domain": "diabetes",
+          "label": "糖尿病",
+          "count": 3
+        },
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 1
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "控糖饮食包",
+          "count": 6
+        },
+        {
+          "title": "餐后步行处方",
+          "count": 6
+        },
+        {
+          "title": "睡眠改善包",
+          "count": 6
+        }
+      ]
+    },
+    {
+      "rank": 15,
+      "hospitalId": "maigaoqiao-chsc",
+      "hospitalName": "迈皋桥社区卫生服务中心",
+      "patientCount": 7,
+      "highRiskCount": 0,
+      "criticalRiskCount": 0,
+      "intensiveManagementCount": 0,
+      "averageRiskScore": 19.5,
+      "effectiveRate": 85.7,
+      "closedLoopRate": 100,
+      "referralCount": 0,
+      "consultationCount": 0,
+      "mdtReviewCount": 7,
+      "averageEvidencePerPatient": 6,
+      "averagePatientsPerClinician": 7,
+      "topDomains": [
+        {
+          "domain": "cardiovascular",
+          "label": "心血管",
+          "count": 1
+        }
+      ],
+      "topPackages": [
+        {
+          "title": "控压随访包",
+          "count": 7
+        },
+        {
+          "title": "心肺耐力训练包",
+          "count": 7
+        },
+        {
+          "title": "控糖饮食包",
+          "count": 4
+        }
+      ]
+    }
+  ],
+  "coordinationFunnel": {
+    "totalPatients": 100,
+    "referralSuggestedCount": 19,
+    "referralCompletedCount": 99,
+    "consultationCount": 100,
+    "mdtReviewCount": 100,
+    "closedLoopCount": 52,
+    "closedLoopRate": 52,
+    "stages": [
+      {
+        "key": "screened",
+        "label": "纳管筛查",
+        "count": 100,
+        "rate": 100,
+        "note": "纳入区级慢病管理池"
+      },
+      {
+        "key": "risk-stratified",
+        "label": "风险分层",
+        "count": 100,
+        "rate": 100,
+        "note": "已完成统一风险画像"
+      },
+      {
+        "key": "referral-suggested",
+        "label": "转诊建议",
+        "count": 19,
+        "rate": 19,
+        "note": "进入专科优先关注队列"
+      },
+      {
+        "key": "consultation",
+        "label": "会诊/专科复核",
+        "count": 100,
+        "rate": 100,
+        "note": "需要专科进一步确认"
+      },
+      {
+        "key": "mdt-review",
+        "label": "MDT 复核",
+        "count": 100,
+        "rate": 100,
+        "note": "进入多学科协同处置"
+      },
+      {
+        "key": "closed-loop",
+        "label": "闭环复评",
+        "count": 52,
+        "rate": 52,
+        "note": "完成闭环管理或进入稳定随访"
+      }
+    ]
+  },
+  "roleWorkload": [
+    {
+      "role": "tertiary-specialist",
+      "roleLabel": "三甲专科医生",
+      "clinicianCount": 15,
+      "patientCount": 100,
+      "pendingTaskCount": 100,
+      "atRiskTaskCount": 100,
+      "overdueTaskCount": 0,
+      "doneTaskCount": 0,
+      "averagePatientsPerClinician": 6.7,
+      "pressureIndex": 10,
+      "topClinicians": [
+        {
+          "clinicianName": "顾晨",
+          "hospitalName": "南京市栖霞区医院",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "钱昊",
+          "hospitalName": "江苏省中西医结合医院",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "胡宁",
+          "hospitalName": "江苏省中医院紫东院区",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "钱昊",
+          "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "罗岚",
+          "hospitalName": "泰康仙林鼓楼医院",
+          "patientCount": 7,
+          "overdueCount": 0
+        }
+      ]
+    },
+    {
+      "role": "general-practitioner",
+      "roleLabel": "全科医生",
+      "clinicianCount": 15,
+      "patientCount": 100,
+      "pendingTaskCount": 100,
+      "atRiskTaskCount": 0,
+      "overdueTaskCount": 0,
+      "doneTaskCount": 100,
+      "averagePatientsPerClinician": 6.7,
+      "pressureIndex": 3.3,
+      "topClinicians": [
+        {
+          "clinicianName": "顾晨",
+          "hospitalName": "南京市栖霞区医院",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "钱昊",
+          "hospitalName": "江苏省中西医结合医院",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "胡宁",
+          "hospitalName": "江苏省中医院紫东院区",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "钱昊",
+          "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+          "patientCount": 7,
+          "overdueCount": 0
+        },
+        {
+          "clinicianName": "罗岚",
+          "hospitalName": "泰康仙林鼓楼医院",
+          "patientCount": 7,
+          "overdueCount": 0
+        }
+      ]
+    },
+    {
+      "role": "health-manager",
+      "roleLabel": "健康管理师",
+      "clinicianCount": 15,
+      "patientCount": 100,
+      "pendingTaskCount": 100,
+      "atRiskTaskCount": 0,
+      "overdueTaskCount": 100,
+      "doneTaskCount": 0,
+      "averagePatientsPerClinician": 6.7,
+      "pressureIndex": 16.7,
+      "topClinicians": [
+        {
+          "clinicianName": "顾晨",
+          "hospitalName": "南京市栖霞区医院",
+          "patientCount": 7,
+          "overdueCount": 7
+        },
+        {
+          "clinicianName": "钱昊",
+          "hospitalName": "江苏省中西医结合医院",
+          "patientCount": 7,
+          "overdueCount": 7
+        },
+        {
+          "clinicianName": "胡宁",
+          "hospitalName": "江苏省中医院紫东院区",
+          "patientCount": 7,
+          "overdueCount": 7
+        },
+        {
+          "clinicianName": "钱昊",
+          "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+          "patientCount": 7,
+          "overdueCount": 7
+        },
+        {
+          "clinicianName": "罗岚",
+          "hospitalName": "泰康仙林鼓楼医院",
+          "patientCount": 7,
+          "overdueCount": 7
+        }
+      ]
+    }
+  ],
+  "modelGovernance": {
+    "modelCount": 3,
+    "consensusScore": 38.4,
+    "disagreementRate": 84,
+    "stableModelCount": 0,
+    "watchModelCount": 0,
+    "investigateModelCount": 3,
+    "items": [
+      {
+        "model": "TemporAI",
+        "averageScore": 48.8,
+        "highRiskCount": 6,
+        "coverageRate": 100,
+        "disagreementRate": 84,
+        "governanceStatus": "investigate",
+        "note": "时序风险主导早期预警"
+      },
+      {
+        "model": "PyHealth",
+        "averageScore": 32.3,
+        "highRiskCount": 0,
+        "coverageRate": 100,
+        "disagreementRate": 84,
+        "governanceStatus": "investigate",
+        "note": "多模态 EHR 适合做综合分层"
+      },
+      {
+        "model": "Disease-Text",
+        "averageScore": 34,
+        "highRiskCount": 0,
+        "coverageRate": 100,
+        "disagreementRate": 84,
+        "governanceStatus": "investigate",
+        "note": "文本模型用于补充病历语义提示"
+      }
+    ]
+  },
+  "referralMetrics": {
+    "referralSuggestedCount": 19,
+    "referralCompletedCount": 99,
+    "consultationCount": 100,
+    "mdtReviewCount": 100,
+    "closedLoopCount": 52,
     "closedLoopRate": 52
   },
   "averageRadar": {
@@ -80,6 +1233,22 @@
       "age": 60,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -624,6 +1793,22 @@
       "age": 60,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -1168,6 +2353,22 @@
       "age": 58,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -1711,6 +2912,22 @@
       "age": 74,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -2256,6 +3473,22 @@
       "age": 77,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -2799,6 +4032,22 @@
       "age": 70,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -3341,6 +4590,22 @@
       "age": 64,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -3884,6 +5149,22 @@
       "age": 63,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -4427,6 +5708,22 @@
       "age": 54,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -4970,6 +6267,22 @@
       "age": 57,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -5514,6 +6827,22 @@
       "age": 63,
       "hospitalId": "xigang-chsc",
       "hospitalName": "西岗社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -6056,6 +7385,22 @@
       "age": 71,
       "hospitalId": "qixia-chsc",
       "hospitalName": "栖霞社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -6599,6 +7944,22 @@
       "age": 67,
       "hospitalId": "longtan-chsc",
       "hospitalName": "龙潭社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -7142,6 +8503,22 @@
       "age": 64,
       "hospitalId": "jingan-chsc",
       "hospitalName": "靖安社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -7686,6 +9063,22 @@
       "age": 69,
       "hospitalId": "baguazhou-chsc",
       "hospitalName": "八卦洲社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -8230,6 +9623,22 @@
       "age": 68,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -8775,6 +10184,22 @@
       "age": 62,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -9318,6 +10743,22 @@
       "age": 61,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -9862,6 +11303,22 @@
       "age": 69,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -10407,6 +11864,22 @@
       "age": 77,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -10950,6 +12423,22 @@
       "age": 62,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -11491,6 +12980,22 @@
       "age": 70,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -12034,6 +13539,22 @@
       "age": 64,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -12577,6 +14098,22 @@
       "age": 57,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -13120,6 +14657,22 @@
       "age": 57,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -13663,6 +15216,22 @@
       "age": 63,
       "hospitalId": "xigang-chsc",
       "hospitalName": "西岗社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -14205,6 +15774,22 @@
       "age": 71,
       "hospitalId": "qixia-chsc",
       "hospitalName": "栖霞社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -14748,6 +16333,22 @@
       "age": 67,
       "hospitalId": "longtan-chsc",
       "hospitalName": "龙潭社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -15290,6 +16891,22 @@
       "age": 64,
       "hospitalId": "jingan-chsc",
       "hospitalName": "靖安社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -15835,6 +17452,22 @@
       "age": 69,
       "hospitalId": "baguazhou-chsc",
       "hospitalName": "八卦洲社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -16380,6 +18013,22 @@
       "age": 68,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -16924,6 +18573,22 @@
       "age": 63,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -17468,6 +19133,22 @@
       "age": 62,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -18012,6 +19693,22 @@
       "age": 69,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -18557,6 +20254,22 @@
       "age": 77,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -19100,6 +20813,22 @@
       "age": 62,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -19641,6 +21370,22 @@
       "age": 70,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -20184,6 +21929,22 @@
       "age": 64,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -20727,6 +22488,22 @@
       "age": 57,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -21270,6 +23047,22 @@
       "age": 57,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -21814,6 +23607,22 @@
       "age": 63,
       "hospitalId": "xigang-chsc",
       "hospitalName": "西岗社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -22356,6 +24165,22 @@
       "age": 72,
       "hospitalId": "qixia-chsc",
       "hospitalName": "栖霞社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -22899,6 +24724,22 @@
       "age": 67,
       "hospitalId": "longtan-chsc",
       "hospitalName": "龙潭社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -23441,6 +25282,22 @@
       "age": 65,
       "hospitalId": "jingan-chsc",
       "hospitalName": "靖安社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -23986,6 +25843,22 @@
       "age": 69,
       "hospitalId": "baguazhou-chsc",
       "hospitalName": "八卦洲社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -24531,6 +26404,22 @@
       "age": 68,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -25075,6 +26964,22 @@
       "age": 63,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -25619,6 +27524,22 @@
       "age": 62,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -26162,6 +28083,22 @@
       "age": 69,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "enhanced",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -26707,6 +28644,22 @@
       "age": 78,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -27250,6 +29203,22 @@
       "age": 63,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -27791,6 +29760,22 @@
       "age": 70,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -28334,6 +30319,22 @@
       "age": 64,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -28877,6 +30878,22 @@
       "age": 58,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -29420,6 +31437,22 @@
       "age": 58,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -29963,6 +31996,22 @@
       "age": 63,
       "hospitalId": "xigang-chsc",
       "hospitalName": "西岗社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -30505,6 +32554,22 @@
       "age": 72,
       "hospitalId": "qixia-chsc",
       "hospitalName": "栖霞社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -31048,6 +33113,22 @@
       "age": 68,
       "hospitalId": "longtan-chsc",
       "hospitalName": "龙潭社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -31590,6 +33671,22 @@
       "age": 65,
       "hospitalId": "jingan-chsc",
       "hospitalName": "靖安社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "enhanced",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -32135,6 +34232,22 @@
       "age": 69,
       "hospitalId": "baguazhou-chsc",
       "hospitalName": "八卦洲社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -32680,6 +34793,22 @@
       "age": 68,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -33225,6 +35354,22 @@
       "age": 63,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -33769,6 +35914,22 @@
       "age": 62,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -34312,6 +36473,22 @@
       "age": 69,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -34857,6 +37034,22 @@
       "age": 78,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -35400,6 +37593,22 @@
       "age": 63,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -35942,6 +38151,22 @@
       "age": 70,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -36485,6 +38710,22 @@
       "age": 64,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -37028,6 +39269,22 @@
       "age": 58,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -37572,6 +39829,22 @@
       "age": 58,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -38116,6 +40389,22 @@
       "age": 64,
       "hospitalId": "xigang-chsc",
       "hospitalName": "西岗社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -38658,6 +40947,22 @@
       "age": 72,
       "hospitalId": "qixia-chsc",
       "hospitalName": "栖霞社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -39201,6 +41506,22 @@
       "age": 68,
       "hospitalId": "longtan-chsc",
       "hospitalName": "龙潭社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -39743,6 +42064,22 @@
       "age": 65,
       "hospitalId": "jingan-chsc",
       "hospitalName": "靖安社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -40287,6 +42624,22 @@
       "age": 70,
       "hospitalId": "baguazhou-chsc",
       "hospitalName": "八卦洲社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -40831,6 +43184,22 @@
       "age": 69,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -41376,6 +43745,22 @@
       "age": 63,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -41919,6 +44304,22 @@
       "age": 62,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -42462,6 +44863,22 @@
       "age": 70,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -43006,6 +45423,22 @@
       "age": 78,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -43549,6 +45982,22 @@
       "age": 63,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -44091,6 +46540,22 @@
       "age": 71,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -44634,6 +47099,22 @@
       "age": 65,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -45177,6 +47658,22 @@
       "age": 58,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -45720,6 +48217,22 @@
       "age": 58,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -46264,6 +48777,22 @@
       "age": 64,
       "hospitalId": "xigang-chsc",
       "hospitalName": "西岗社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -46806,6 +49335,22 @@
       "age": 72,
       "hospitalId": "qixia-chsc",
       "hospitalName": "栖霞社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -47349,6 +49894,22 @@
       "age": 68,
       "hospitalId": "longtan-chsc",
       "hospitalName": "龙潭社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -47891,6 +50452,22 @@
       "age": 65,
       "hospitalId": "jingan-chsc",
       "hospitalName": "靖安社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -48435,6 +51012,22 @@
       "age": 70,
       "hospitalId": "baguazhou-chsc",
       "hospitalName": "八卦洲社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -48979,6 +51572,22 @@
       "age": 69,
       "hospitalId": "qixia-hospital",
       "hospitalName": "南京市栖霞区医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -49523,6 +52132,22 @@
       "age": 64,
       "hospitalId": "jiangsu-integrated",
       "hospitalName": "江苏省中西医结合医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -50066,6 +52691,22 @@
       "age": 63,
       "hospitalId": "jiangsu-tcm-zidong",
       "hospitalName": "江苏省中医院紫东院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -50610,6 +53251,22 @@
       "age": 70,
       "hospitalId": "njmu2-maigaoqiao",
       "hospitalName": "南京医科大学第二附属医院迈皋桥院区",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-003",
+        "name": "钱昊",
+        "department": "心血管内科",
+        "role": "cardiologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "intensive",
       "overallRiskLevel": "high",
       "topDomains": [
@@ -51155,6 +53812,22 @@
       "age": 78,
       "hospitalId": "taikang-xianlin-gulou",
       "hospitalName": "泰康仙林鼓楼医院",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-005",
+        "name": "罗岚",
+        "department": "神经内科",
+        "role": "neurologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -51699,6 +54372,22 @@
       "age": 63,
       "hospitalId": "maigaoqiao-chsc",
       "hospitalName": "迈皋桥社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-002",
+        "name": "顾晨",
+        "department": "全科医学科",
+        "role": "primary-physician",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [
@@ -52238,6 +54927,22 @@
       "age": 71,
       "hospitalId": "yanziji-chsc",
       "hospitalName": "燕子矶社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-006",
+        "name": "任拓",
+        "department": "呼吸与危重症医学科",
+        "role": "pulmonologist",
+        "title": "主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -52781,6 +55486,22 @@
       "age": 65,
       "hospitalId": "yaohua-chsc",
       "hospitalName": "尧化社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-004",
+        "name": "胡宁",
+        "department": "内分泌科",
+        "role": "endocrinologist",
+        "title": "副主任医师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -53324,6 +56045,22 @@
       "age": 59,
       "hospitalId": "maqun-chsc",
       "hospitalName": "马群社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-007",
+        "name": "沈凡",
+        "department": "临床营养科",
+        "role": "dietician",
+        "title": "营养治疗师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "medium",
       "topDomains": [
@@ -53867,6 +56604,22 @@
       "age": 50,
       "hospitalId": "xianlin-chsc",
       "hospitalName": "仙林社区卫生服务中心",
+      "primaryDoctor": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
+      "responsibleClinician": {
+        "clinicianId": "doc-qx-009",
+        "name": "陶舒",
+        "department": "睡眠医学中心",
+        "role": "sleep-coach",
+        "title": "睡眠管理师",
+        "source": "encounter-derived"
+      },
       "managementTier": "routine",
       "overallRiskLevel": "low",
       "topDomains": [

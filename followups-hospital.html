@@ -16,6 +16,7 @@
         mode: "static",
         snapshotPath: "./demo-data/pages-snapshot.json",
         populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json",
         repo: "MoKangMedical/chronicdiseasemanagement",
         projectName: "慢康智枢 ChroniCare OS",
         readOnlyMessage: "GitHub Pages 演示站为只读模式"
@@ -44,6 +45,7 @@
           <a class="sidebar-nav-link" href="./index.html">区级总览</a>
           <a class="sidebar-nav-link active" href="./followups-hospital.html">医院管理视图</a>
           <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作视图</a>
+          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
         </nav>
 
         <div class="sidebar-block">
@@ -58,6 +60,28 @@
       </aside>
 
       <main class="main-panel">
+        <section class="page-banner page-banner-workbench">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">Hospital Operations Console</div>
+            <h2>医院管理台</h2>
+            <p>面向院级管理者的正式业务页面，围绕逾期任务、责任医生、患者进展与导出清单展开，强调督办闭环与院内协同。</p>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">页面定位</span>
+              <strong>医院级管理台</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">管理重点</span>
+              <strong>任务督办 / 责任到人</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">输出</span>
+              <strong>Excel 导出 / 逾期待办</strong>
+            </div>
+          </div>
+        </section>
+
         <header class="hero">
           <div class="hero-copy">
             <p class="eyebrow">Hospital Follow-up View</p>
@@ -109,6 +133,24 @@
               <h3>当前医院逾期待办</h3>
             </div>
             <div id="reminder-center" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-followup-ops">
+          <article class="panel panel-feature">
+            <div class="panel-head">
+              <span class="panel-kicker">医院运营驾驶舱</span>
+              <h3>逾期压力、闭环效率、协同负荷</h3>
+            </div>
+            <div id="followup-ops-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">角色负荷</span>
+              <h3>三类角色工作压力分布</h3>
+            </div>
+            <div id="followup-workload-panel" class="care-plan-summary"></div>
           </article>
         </section>
 

@@ -3,13 +3,16 @@ const pageMode = document.body.dataset.page || "home";
 const isHomePage = pageMode === "home";
 const isHospitalFollowupsPage = pageMode === "followups-hospital";
 const isClinicianFollowupsPage = pageMode === "followups-clinician";
+const isPublicDataConfigPage = pageMode === "public-data-config";
 const isFollowupsPage = isHospitalFollowupsPage || isClinicianFollowupsPage || pageMode === "followups";
 const isStaticMode = appConfig.mode === "static";
 const snapshotPath = appConfig.snapshotPath ?? "./demo-data/pages-snapshot.json";
 const populationPath = appConfig.populationPath ?? "./demo-data/population-cohort.json";
+const publicDataPath = appConfig.publicDataPath ?? "./demo-data/qixia-public-data.json";
 const qixiaDistrictName = "栖霞区";
 let snapshotPromise = null;
 let populationPromise = null;
+let publicDataPromise = null;
 
 const state = {
   dashboard: null,
@@ -22,6 +25,10 @@ const state = {
   ecosystemOverview: null,
   ecosystemJourney: null,
   githubOverview: null,
+  publicDataView: "source",
+  publicDataSourceFilter: "all",
+  publicDataModuleFilter: "all",
+  publicSourceData: null,
   githubPlan: null,
   populationDistrictCohort: null,
   populationCohort: null,
@@ -83,6 +90,19 @@ async function loadPopulationSnapshot() {
   return populationPromise;
 }
 
+async function loadPublicSourceSnapshot() {
+  if (!publicDataPromise) {
+    publicDataPromise = fetch(publicDataPath).then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`无法加载公开资料快照：${response.status}`);
+      }
+      return response.json();
+    });
+  }
+
+  return publicDataPromise;
+}
+
 async function resolveStaticApi(path, options = {}) {
   const method = (options.method ?? "GET").toUpperCase();
   const snapshot = await loadSnapshot();
@@ -104,6 +124,10 @@ async function resolveStaticApi(path, options = {}) {
   if (pathname === "/api/population/cohort") {
     const populationSnapshot = await loadPopulationSnapshot();
     return deepClone(populationSnapshot);
+  }
+  if (pathname === "/api/public-sources/qixia") {
+    const publicSourceSnapshot = await loadPublicSourceSnapshot();
+    return deepClone(publicSourceSnapshot);
   }
   if (pathname === "/api/dashboard") {
     return deepClone(snapshot.dashboards[filterKey(hospitalId, workbenchRole)] ?? snapshot.dashboards["all|all"]);
@@ -183,7 +207,19 @@ const populationSummary = document.querySelector("#population-summary");
 const populationRadar = document.querySelector("#population-radar");
 const hospitalOverviewGrid = document.querySelector("#hospital-overview-grid");
 const hospitalDetailPanel = document.querySelector("#hospital-detail-panel");
+const qixiaPublicProfile = document.querySelector("#qixia-public-profile");
+const publicDataConfigSummary = document.querySelector("#public-data-config-summary");
+const publicDataConfigToolbar = document.querySelector("#public-data-config-toolbar");
+const publicDataSourceExplorer = document.querySelector("#public-data-source-explorer");
+const publicDataModuleExplorer = document.querySelector("#public-data-module-explorer");
+const publicDataAssetCatalog = document.querySelector("#public-data-asset-catalog");
+const publicDataMappingDraft = document.querySelector("#public-data-mapping-draft");
+const districtExecutivePanel = document.querySelector("#district-executive-panel");
+const hospitalBenchmarkPanel = document.querySelector("#hospital-benchmark-panel");
+const modelGovernancePanel = document.querySelector("#model-governance-panel");
 const reminderCenter = document.querySelector("#reminder-center");
+const followupOpsPanel = document.querySelector("#followup-ops-panel");
+const followupWorkloadPanel = document.querySelector("#followup-workload-panel");
 const populationList = document.querySelector("#population-list");
 const populationPatientTitle = document.querySelector("#population-patient-title");
 const populationPatientProfile = document.querySelector("#population-patient-profile");
@@ -213,6 +249,15 @@ const followupStatusFilter = document.querySelector("#followup-status-filter");
 const followupClinicianFilter = document.querySelector("#followup-clinician-filter");
 const exportFollowupsBtn = document.querySelector("#export-followups-btn");
 const clinicianTabs = document.querySelector("#clinician-tabs");
+const publicDataSummary = document.querySelector("#public-data-summary");
+const publicDataSourcesNav = document.querySelector("#public-data-sources-nav");
+const publicDataAssetsPanel = document.querySelector("#public-data-assets-panel");
+const publicDataSourcesPanel = document.querySelector("#public-data-sources-panel");
+const publicDataFilteredPanel = document.querySelector("#public-data-filtered-panel");
+const publicDataMappingPanel = document.querySelector("#public-data-mapping-panel");
+const publicDataViewFilter = document.querySelector("#public-data-view-filter");
+const publicDataSourceFilter = document.querySelector("#public-data-source-filter");
+const publicDataModuleFilter = document.querySelector("#public-data-module-filter");
 
 function formatLevel(level) {
   return {
@@ -258,6 +303,13 @@ function formatTodoStatus(status) {
     overdue: "已逾期",
     done: "已完成"
   }[status] ?? status;
+}
+
+function slugify(value) {
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function labelFollowupSource(source) {
@@ -451,6 +503,352 @@ function percentage(value, total) {
   return `${Math.round((value / total) * 100)}%`;
 }
 
+function coveragePercentage(value, total) {
+  if (!total) return "0%";
+  const percent = (value / total) * 100;
+  if (percent < 1) return `${percent.toFixed(2)}%`;
+  return `${percent.toFixed(1)}%`;
+}
+
+function formatPersonCount(count) {
+  if (count >= 10000) {
+    return `${(count / 10000).toFixed(2)} 万人`;
+  }
+  return `${count.toLocaleString("zh-CN")} 人`;
+}
+
+function renderPublicBreakdownRows(items) {
+  return items
+    .map(
+      (item) => `
+        <div class="public-breakdown-row">
+          <div class="public-breakdown-copy">
+            <strong>${item.label}</strong>
+            <div class="dim">${formatPersonCount(item.count)}${item.note ? ` · ${item.note}` : ""}</div>
+          </div>
+          <div class="public-breakdown-bar">
+            <span style="width:${Math.max(item.ratio, 3)}%"></span>
+          </div>
+          <strong class="public-breakdown-ratio">${item.ratio}%</strong>
+        </div>
+      `
+    )
+    .join("");
+}
+
+function renderBadgeList(items, className = "mini-tag") {
+  return items.map((item) => `<span class="${className}">${item}</span>`).join("");
+}
+
+function normalizePublicData() {
+  const data = state.publicSourceData ?? { sources: [], systemUsableAssets: [], district: qixiaDistrictName };
+  const sources = data.sources ?? [];
+  const assets = data.systemUsableAssets ?? [];
+  const modules = [...new Set(assets.flatMap((asset) => asset.usableModules ?? []))].sort((left, right) =>
+    left.localeCompare(right, "zh-CN")
+  );
+
+  return {
+    district: data.district ?? qixiaDistrictName,
+    updatedAt: data.updatedAt ?? "",
+    summary: data.summary ?? null,
+    sources,
+    assets,
+    modules
+  };
+}
+
+function publicDataAssetMatchesSource(asset, sourceLabel) {
+  return sourceLabel === "all" || asset.sourceLabel === sourceLabel;
+}
+
+function publicDataAssetMatchesModule(asset, moduleLabel) {
+  return moduleLabel === "all" || (asset.usableModules ?? []).includes(moduleLabel);
+}
+
+function publicDataFilteredAssets(data) {
+  return data.assets.filter(
+    (asset) =>
+      publicDataAssetMatchesSource(asset, state.publicDataSourceFilter) &&
+      publicDataAssetMatchesModule(asset, state.publicDataModuleFilter)
+  );
+}
+
+function renderPublicDataConfig() {
+  const data = normalizePublicData();
+  if (!publicDataConfigSummary || !publicDataSourceExplorer || !publicDataModuleExplorer || !publicDataAssetCatalog || !publicDataMappingDraft) {
+    return;
+  }
+
+  const filteredAssets = publicDataFilteredAssets(data);
+  const selectedSource = data.sources.find((source) => source.label === state.publicDataSourceFilter) ?? null;
+  const selectedModule = data.modules.includes(state.publicDataModuleFilter) ? state.publicDataModuleFilter : null;
+  const sourceStats = data.sources.map((source) => ({
+    ...source,
+    assetCount: data.assets.filter((asset) => asset.sourceLabel === source.label).length
+  }));
+  const moduleStats = data.modules.map((module) => ({
+    label: module,
+    assetCount: data.assets.filter((asset) => (asset.usableModules ?? []).includes(module)).length
+  }));
+
+  publicDataConfigSummary.innerHTML = `
+    <div class="plan-block">
+      <h4>${data.district} 公开资料接入字典</h4>
+      <div class="stat-grid">
+        ${statChip("来源数", data.sources.length)}
+        ${statChip("资产数", data.assets.length)}
+        ${statChip("模块数", data.modules.length)}
+        ${statChip("更新时间", data.updatedAt ? data.updatedAt.slice(0, 10) : "未标注")}
+      </div>
+      <div class="dim">静态配置页，面向后续接入真实区卫健委/医院字段映射的占位目录。</div>
+    </div>
+    <div class="plan-block">
+      <h4>当前选中</h4>
+      <ul class="mini-list">
+        <li>来源：${selectedSource?.label ?? "全部来源"}</li>
+        <li>模块：${selectedModule ?? "全部模块"}</li>
+        <li>筛选资产：${filteredAssets.length} 条</li>
+      </ul>
+    </div>
+  `;
+
+  publicDataConfigToolbar.innerHTML = `
+    <div class="config-toggle-group">
+      <button class="config-toggle ${state.publicDataView === "source" ? "active" : ""}" data-public-view="source">按来源查看</button>
+      <button class="config-toggle ${state.publicDataView === "module" ? "active" : ""}" data-public-view="module">按模块查看</button>
+    </div>
+    <div class="config-filter-strip">
+      <label class="filter-field">
+        <span>来源</span>
+        <select id="public-data-source-filter">
+          <option value="all">全部来源</option>
+          ${data.sources.map((source) => `<option value="${source.label}">${source.label}</option>`).join("")}
+        </select>
+      </label>
+      <label class="filter-field">
+        <span>模块</span>
+        <select id="public-data-module-filter">
+          <option value="all">全部模块</option>
+          ${data.modules.map((module) => `<option value="${module}">${module}</option>`).join("")}
+        </select>
+      </label>
+    </div>
+  `;
+
+  const sourceFilter = document.querySelector("#public-data-source-filter");
+  const moduleFilter = document.querySelector("#public-data-module-filter");
+  if (sourceFilter) sourceFilter.value = state.publicDataSourceFilter;
+  if (moduleFilter) moduleFilter.value = state.publicDataModuleFilter;
+
+  sourceFilter?.addEventListener("change", () => {
+    state.publicDataSourceFilter = sourceFilter.value;
+    renderPublicDataConfig();
+  });
+  moduleFilter?.addEventListener("change", () => {
+    state.publicDataModuleFilter = moduleFilter.value;
+    renderPublicDataConfig();
+  });
+  publicDataConfigToolbar.querySelectorAll("[data-public-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.publicDataView = button.getAttribute("data-public-view") || "source";
+      renderPublicDataConfig();
+    });
+  });
+
+  const sourceExplorerCards = sourceStats
+    .map(
+      (source) => `
+        <button class="source-index-card ${state.publicDataSourceFilter === source.label ? "active" : ""}" data-source-label="${source.label}">
+          <div class="source-index-head">
+            <strong>${source.label}</strong>
+            <span class="mini-tag">${source.assetCount} 条</span>
+          </div>
+          <div class="dim">${source.note}</div>
+          <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">${source.url}</a>
+        </button>
+      `
+    )
+    .join("");
+
+  const moduleExplorerCards = moduleStats
+    .map(
+      (module) => `
+        <button class="module-index-card ${state.publicDataModuleFilter === module.label ? "active" : ""}" data-module-label="${module.label}">
+          <div class="source-index-head">
+            <strong>${module.label}</strong>
+            <span class="mini-tag">${module.assetCount} 条</span>
+          </div>
+          <div class="dim">可接入该模块的公开资产集合</div>
+        </button>
+      `
+    )
+    .join("");
+
+  const groupedAssets =
+    state.publicDataView === "source"
+      ? data.sources
+          .map((source) => {
+            const assets = data.assets.filter((asset) => asset.sourceLabel === source.label && publicDataAssetMatchesModule(asset, state.publicDataModuleFilter));
+            if (!assets.length) return "";
+            return `
+              <article class="public-asset-group">
+                <div class="public-asset-group-head">
+                  <div>
+                    <strong>${source.label}</strong>
+                    <div class="dim">${source.note}</div>
+                  </div>
+                  <span class="mini-tag">${assets.length} 条资产</span>
+                </div>
+                <div class="public-asset-grid">
+                  ${assets.map((asset) => renderPublicAssetCard(asset)).join("")}
+                </div>
+              </article>
+            `;
+          })
+          .join("")
+      : data.modules
+          .map((module) => {
+            const assets = data.assets.filter((asset) => (asset.usableModules ?? []).includes(module) && publicDataAssetMatchesSource(asset, state.publicDataSourceFilter));
+            if (!assets.length) return "";
+            return `
+              <article class="public-asset-group">
+                <div class="public-asset-group-head">
+                  <div>
+                    <strong>${module}</strong>
+                    <div class="dim">可接入该模块的公开资产</div>
+                  </div>
+                  <span class="mini-tag">${assets.length} 条资产</span>
+                </div>
+                <div class="public-asset-grid">
+                  ${assets.map((asset) => renderPublicAssetCard(asset)).join("")}
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+
+  publicDataSourceExplorer.innerHTML = sourceExplorerCards || `<div class="note-block">暂无来源数据。</div>`;
+  publicDataModuleExplorer.innerHTML = moduleExplorerCards || `<div class="note-block">暂无模块数据。</div>`;
+  publicDataAssetCatalog.innerHTML = filteredAssets.length
+    ? groupedAssets
+    : `<div class="note-block">当前筛选下没有匹配的公开资产，请切换来源或模块。</div>`;
+  publicDataMappingDraft.innerHTML = renderPublicMappingDraft(data);
+
+  publicDataSourceExplorer.querySelectorAll("[data-source-label]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.publicDataSourceFilter = button.getAttribute("data-source-label") || "all";
+      renderPublicDataConfig();
+    });
+  });
+
+  publicDataModuleExplorer.querySelectorAll("[data-module-label]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.publicDataModuleFilter = button.getAttribute("data-module-label") || "all";
+      renderPublicDataConfig();
+    });
+  });
+}
+
+function renderPublicAssetCard(asset) {
+  return `
+    <article class="public-asset-card public-asset-card-compact">
+      <div class="public-indicator-head">
+        <strong>${asset.title}</strong>
+        <span class="mini-tag">${asset.value}</span>
+      </div>
+      <div class="asset-metadata">
+        <div class="asset-meta">
+          <span>来源</span>
+          <div class="dim">${asset.sourceLabel}</div>
+        </div>
+        <div class="asset-meta">
+          <span>可接入模块</span>
+          <div class="asset-chip-list">${renderBadgeList(asset.usableModules, "asset-chip")}</div>
+        </div>
+        <div class="asset-meta">
+          <span>目标字段</span>
+          <div class="asset-code-list">${asset.usableFields.map((field) => `<code>${field}</code>`).join("")}</div>
+        </div>
+      </div>
+      <div class="dim">${asset.integrationNote}</div>
+      <a class="source-link" href="${asset.sourceUrl}" target="_blank" rel="noreferrer">${asset.sourceUrl}</a>
+    </article>
+  `;
+}
+
+function renderPublicMappingDraft(data) {
+  const drafts = [
+    {
+      title: "区级人口底盘",
+      sourceField: "publicProfile.totalPopulation",
+      targetField: "区卫健委人口统计口径 / population.totalResident",
+      note: "后续可替换为真实区卫健委年度人口统计接口。"
+    },
+    {
+      title: "重点人群联系人数",
+      sourceField: "publicProfile.healthIndicators",
+      targetField: "区级重点人群联系系统 / followup.contactablePopulation",
+      note: "后续可对接医院签约与家庭医生系统。"
+    },
+    {
+      title: "医院网络拓扑",
+      sourceField: "coordinationFunnel / hospitalNetwork",
+      targetField: "医院编目表 / hospital.registry",
+      note: "后续可替换为真实医院名录、科室目录和责任医生编目。"
+    },
+    {
+      title: "协同闭环指标",
+      sourceField: "districtOperations.closedLoopRate",
+      targetField: "区级运营绩效 / ops.closedLoopRate",
+      note: "后续可连接区级慢病管理、转诊和督办系统。"
+    }
+  ];
+
+  return `
+    <div class="plan-block">
+      <h4>字段映射草案</h4>
+      <div class="dim">静态占位，不持久化。用于后续替换为真实区卫健委 / 医院字段映射。</div>
+      <div class="draft-table">
+        ${drafts
+          .map(
+            (draft) => `
+              <div class="draft-row">
+                <div>
+                  <strong>${draft.title}</strong>
+                  <div class="dim">${draft.note}</div>
+                </div>
+                <div class="draft-mapping">
+                  <code>${draft.sourceField}</code>
+                  <span>→</span>
+                  <strong>${draft.targetField}</strong>
+                </div>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+      <div class="source-list">
+        ${data.sources.map((source) => `<a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">${source.label}</a>`).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function formatRateValue(value) {
+  const numeric = Number(value ?? 0);
+  if (!Number.isFinite(numeric) || numeric === 0) return "0%";
+  return `${numeric < 1 ? numeric.toFixed(2) : numeric.toFixed(1)}%`;
+}
+
+function governanceStatusLabel(status) {
+  return {
+    stable: "稳定",
+    watch: "观察",
+    investigate: "排查"
+  }[status] ?? status;
+}
+
 function qixiaHospitalsOnly(hospitals) {
   return (hospitals ?? []).filter((hospital) => hospital.district === qixiaDistrictName);
 }
@@ -540,39 +938,60 @@ function setElementText(element, text) {
   }
 }
 
-function stableIndex(seed, modulo) {
-  if (!modulo) return 0;
-  let total = 0;
-  for (const char of String(seed)) {
-    total = (total * 33 + char.charCodeAt(0)) >>> 0;
-  }
-  return total % modulo;
+function getPatientRiskLevel(patient) {
+  return patient.riskLevel ?? patient.overallRiskLevel ?? "low";
 }
 
-function getAttendingDoctor(hospitalId, patientId) {
-  const doctors = state.allClinicians.filter(
-    (clinician) =>
-      clinician.hospitalIds.includes(hospitalId) &&
-      (clinician.workbenchRole === "specialist-doctor" || clinician.workbenchRole === "general-practitioner")
+function getPatientOverdueCount(patient) {
+  return (patient.roleFollowupPlans ?? []).reduce(
+    (total, plan) => total + plan.todoList.filter((todo) => todo.status === "overdue").length,
+    0
   );
-  const fallbackDoctors = doctors.length
-    ? doctors
-    : state.allClinicians.filter((clinician) => clinician.hospitalIds.includes(hospitalId));
-  if (!fallbackDoctors.length) {
+}
+
+function summarizeHierarchyPatients(patients) {
+  return {
+    patientCount: patients.length,
+    highRiskCount: patients.filter((patient) => {
+      const level = getPatientRiskLevel(patient);
+      return level === "high" || level === "critical";
+    }).length,
+    overdueCount: patients.reduce((total, patient) => total + getPatientOverdueCount(patient), 0)
+  };
+}
+
+function getPatientOwner(patient, ownerMode = "primary") {
+  const primaryDoctor = patient.primaryDoctor ?? null;
+  const responsibleClinician = patient.responsibleClinician ?? null;
+  const preferredOwner =
+    ownerMode === "responsible"
+      ? responsibleClinician ?? primaryDoctor
+      : primaryDoctor ?? responsibleClinician;
+
+  if (preferredOwner) {
     return {
-      name: "待分配医生",
-      department: "院内待分配"
+      ...preferredOwner,
+      displayRole: ownerMode === "responsible" ? "责任医生" : "主诊医生"
     };
   }
-  return fallbackDoctors[stableIndex(`${hospitalId}-${patientId}`, fallbackDoctors.length)];
+
+  return {
+    name: ownerMode === "responsible" ? "待补充责任医生" : "待补充主诊医生",
+    department: "院内待补充",
+    role: ownerMode === "responsible" ? "case-manager" : "primary-physician",
+    source: "encounter-derived",
+    displayRole: ownerMode === "responsible" ? "责任医生" : "主诊医生"
+  };
 }
 
-function buildPatientHierarchy(patients) {
+function buildPatientHierarchy(patients, options = {}) {
   const hospitals = new Map();
+  const ownerMode = options.ownerMode ?? "primary";
+  const selectedId = options.selectedId ?? null;
 
   for (const patient of patients ?? []) {
     const hospital = getHospitalById(patient.hospitalId) ?? { name: patient.hospitalName, id: patient.hospitalId };
-    const attendingDoctor = getAttendingDoctor(patient.hospitalId, patient.id);
+    const attendingDoctor = getPatientOwner(patient, ownerMode);
     const hospitalEntry =
       hospitals.get(hospital.id) ??
       {
@@ -588,6 +1007,7 @@ function buildPatientHierarchy(patients) {
         key: doctorKey,
         name: attendingDoctor.name,
         department: attendingDoctor.department,
+        displayRole: attendingDoctor.displayRole,
         patients: []
       };
 
@@ -599,51 +1019,71 @@ function buildPatientHierarchy(patients) {
   return [...hospitals.values()]
     .map((hospital) => ({
       ...hospital,
-      doctors: [...hospital.doctors.values()].sort((left, right) => right.patients.length - left.patients.length)
+      summary: summarizeHierarchyPatients([...hospital.doctors.values()].flatMap((doctor) => doctor.patients)),
+      defaultOpen:
+        [...hospital.doctors.values()].some((doctor) => doctor.patients.some((patient) => patient.id === selectedId)) ||
+        hospital.doctors.size <= 2,
+      doctors: [...hospital.doctors.values()]
+        .map((doctor) => ({
+          ...doctor,
+          summary: summarizeHierarchyPatients(doctor.patients),
+          defaultOpen:
+            doctor.patients.some((patient) => patient.id === selectedId) || doctor.patients.length <= 4
+        }))
+        .sort((left, right) => right.patients.length - left.patients.length)
     }))
     .sort((left, right) => {
-      const leftCount = left.doctors.reduce((total, doctor) => total + doctor.patients.length, 0);
-      const rightCount = right.doctors.reduce((total, doctor) => total + doctor.patients.length, 0);
-      return rightCount - leftCount;
+      return right.summary.patientCount - left.summary.patientCount;
     });
 }
 
 function renderHierarchicalPatientList(patients, selectedId, options) {
-  const hierarchy = buildPatientHierarchy(patients);
+  const hierarchy = buildPatientHierarchy(patients, {
+    ownerMode: options.ownerMode,
+    selectedId
+  });
   const renderPatient = options.renderPatient;
 
   return hierarchy
     .map(
       (hospital) => `
-        <div class="entity-group">
-          <div class="entity-group-head">
+        <details class="entity-group" ${hospital.defaultOpen ? "open" : ""}>
+          <summary class="entity-group-head">
             <div>
               <strong>${hospital.name}</strong>
               <div class="dim">${hospital.level}</div>
             </div>
-            <span class="mini-tag">${hospital.doctors.reduce((total, doctor) => total + doctor.patients.length, 0)} 人</span>
-          </div>
+            <div class="entity-counts">
+              <span class="mini-tag">${hospital.summary.patientCount} 人</span>
+              <span class="mini-tag ${hospital.summary.highRiskCount ? "high" : ""}">高风险 ${hospital.summary.highRiskCount}</span>
+              <span class="mini-tag ${hospital.summary.overdueCount ? "critical" : ""}">逾期 ${hospital.summary.overdueCount}</span>
+            </div>
+          </summary>
           <div class="entity-subgroup-list">
             ${hospital.doctors
               .map(
                 (doctor) => `
-                  <div class="entity-subgroup">
-                    <div class="entity-subgroup-head">
+                  <details class="entity-subgroup" ${doctor.defaultOpen ? "open" : ""}>
+                    <summary class="entity-subgroup-head">
                       <div>
                         <strong>${doctor.name}</strong>
-                        <div class="dim">${doctor.department}</div>
+                        <div class="dim">${doctor.displayRole} · ${doctor.department}</div>
                       </div>
-                      <span class="mini-tag">${doctor.patients.length} 人</span>
-                    </div>
+                      <div class="entity-counts">
+                        <span class="mini-tag">${doctor.summary.patientCount} 人</span>
+                        <span class="mini-tag ${doctor.summary.highRiskCount ? "high" : ""}">高风险 ${doctor.summary.highRiskCount}</span>
+                        <span class="mini-tag ${doctor.summary.overdueCount ? "critical" : ""}">逾期 ${doctor.summary.overdueCount}</span>
+                      </div>
+                    </summary>
                     <div class="entity-patient-list">
                       ${doctor.patients.map((patient) => renderPatient(patient, patient.id === selectedId)).join("")}
                     </div>
-                  </div>
+                  </details>
                 `
               )
               .join("")}
           </div>
-        </div>
+        </details>
       `
     )
     .join("");
@@ -683,6 +1123,7 @@ function renderDashboard() {
 function renderPatients() {
   if (!patientList || !patientTemplate) return;
   patientList.innerHTML = renderHierarchicalPatientList(state.dashboard?.patients ?? [], state.patientId, {
+    ownerMode: state.filters.workbenchRole === "health-manager" ? "responsible" : "primary",
     renderPatient: (patient, isActive) => `
       <button class="patient-item ${isActive ? "active" : ""}" data-dashboard-patient="${patient.id}">
         <div class="patient-item-head">
@@ -773,6 +1214,7 @@ function computeHospitalInsights() {
 
 function renderHospitalOverview() {
   const insights = computeHospitalInsights();
+  const districtPopulation = state.populationDistrictCohort?.publicProfile?.totalPopulation ?? 0;
   const selectedHospitalId = state.filters.hospitalId || insights[0]?.hospital.id;
   const activeInsight = insights.find((item) => item.hospital.id === selectedHospitalId) ?? insights[0] ?? null;
 
@@ -822,6 +1264,7 @@ function renderHospitalOverview() {
         <div class="dim">${activeInsight.hospital.level ?? "医院"} · ${activeInsight.hospital.category ?? ""} · ${activeInsight.hospital.networkRole ?? ""}</div>
         <div class="stat-grid">
           ${statChip("管理患者", activeInsight.patientCount)}
+          ${statChip("全区覆盖", districtPopulation ? coveragePercentage(activeInsight.patientCount, districtPopulation) : "0%")}
           ${statChip("起效率", activeInsight.effectiveRate)}
           ${statChip("干预前均分", activeInsight.averageBefore)}
           ${statChip("干预后均分", activeInsight.averageAfter)}
@@ -849,6 +1292,491 @@ function renderHospitalOverview() {
       </div>
     `
     : `<div class="note-block">暂无栖霞区医院统计。</div>`;
+}
+
+function renderQixiaPublicProfile() {
+  if (!qixiaPublicProfile) return;
+  const profile = state.populationDistrictCohort?.publicProfile ?? null;
+
+  qixiaPublicProfile.innerHTML = profile
+    ? `
+      <div class="public-profile-grid">
+        <div class="plan-block">
+          <h4>${profile.districtName}人口底盘</h4>
+          <div class="stat-grid">
+            ${statChip("常住人口", profile.totalPopulationLabel)}
+            ${statChip("纳管人数", `${profile.managedPatientCount} 人`)}
+            ${statChip("纳管覆盖率", `${profile.managedCoverageRate}%`)}
+            ${statChip("统计口径", profile.totalPopulationAsOf)}
+          </div>
+          <ul class="mini-list">
+            ${profile.notes.map((note) => `<li>${note}</li>`).join("")}
+          </ul>
+        </div>
+        <div class="plan-block">
+          <h4>性别结构</h4>
+          <div class="public-breakdown-list">${renderPublicBreakdownRows(profile.sexDistribution)}</div>
+          <h4>年龄结构</h4>
+          <div class="public-breakdown-list">${renderPublicBreakdownRows(profile.ageDistribution)}</div>
+        </div>
+        <div class="plan-block">
+          <h4>公开健康指标</h4>
+          <div class="public-indicator-list">
+            ${profile.ageHighlights
+              .concat(profile.healthIndicators)
+              .map(
+                (item) => `
+                  <div class="public-indicator-card">
+                    <div class="public-indicator-head">
+                      <strong>${item.title}</strong>
+                      <span class="mini-tag">${item.value}</span>
+                    </div>
+                    <div class="dim">${item.detail}</div>
+                    <a class="source-link" href="${item.sourceUrl}" target="_blank" rel="noreferrer">${item.sourceLabel} · ${item.sourceDate}</a>
+                  </div>
+                `
+              )
+              .join("")}
+          </div>
+          <div class="plan-block public-assets-block">
+            <h4>公开资料接入字典</h4>
+            <div class="public-assets-grid">
+              ${profile.systemUsableAssets
+                .map(
+                  (asset) => `
+                    <div class="public-asset-card">
+                      <div class="public-indicator-head">
+                        <strong>${asset.title}</strong>
+                        <span class="mini-tag">${asset.value}</span>
+                      </div>
+                      <div class="dim">${asset.integrationNote}</div>
+                      <div class="asset-meta">
+                        <span>可进入模块</span>
+                        <div class="asset-chip-list">
+                          ${asset.usableModules.map((module) => `<span class="asset-chip">${module}</span>`).join("")}
+                        </div>
+                      </div>
+                      <div class="asset-meta">
+                        <span>目标字段</span>
+                        <div class="asset-code-list">
+                          ${asset.usableFields.map((field) => `<code>${field}</code>`).join("")}
+                        </div>
+                      </div>
+                      <a class="source-link" href="${asset.sourceUrl}" target="_blank" rel="noreferrer">${asset.sourceLabel}</a>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          </div>
+          <div class="source-list">
+            ${profile.sources
+              .map(
+                (source) => `
+                  <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">${source.label}</a>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+      </div>
+    `
+    : `<div class="note-block">暂无公开区情人口画像数据。</div>`;
+}
+
+function buildPublicDataModules(publicData) {
+  const counts = new Map();
+  for (const asset of publicData?.systemUsableAssets ?? []) {
+    for (const module of asset.usableModules) {
+      counts.set(module, (counts.get(module) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .map(([label, count]) => ({ label, count, id: slugify(label) }))
+    .sort((left, right) => right.count - left.count || left.label.localeCompare(right.label, "zh-CN"));
+}
+
+function renderPublicDataConfig() {
+  if (!isPublicDataConfigPage) return;
+  const publicData = state.publicSourceData;
+  if (!publicData) return;
+
+  const assets = publicData.systemUsableAssets ?? [];
+  const sources = publicData.sources ?? [];
+  const modules = buildPublicDataModules(publicData);
+  const selectedView = publicDataViewFilter?.value ?? "asset";
+  const selectedSource = publicDataSourceFilter?.value ?? "all";
+  const selectedModule = publicDataModuleFilter?.value ?? "all";
+
+  if (publicDataSummary) {
+    publicDataSummary.innerHTML = `
+      ${statChip("区县", publicData.district)}
+      ${statChip("人口底数", publicData.summary.totalPopulationLabel)}
+      ${statChip("公开来源", `${sources.length} 条`)}
+      ${statChip("可接入资产", `${assets.length} 条`)}
+      ${statChip("系统模块", `${modules.length} 个`)}
+    `;
+  }
+
+  if (publicDataSourcesNav) {
+    publicDataSourcesNav.innerHTML = sources
+      .map(
+        (source, index) => `
+          <div class="metric-card">
+            <div class="block-label">来源 ${index + 1}</div>
+            <strong>${source.label}</strong>
+            <div class="dim">${source.note}</div>
+          </div>
+        `
+      )
+      .join("");
+  }
+
+  if (publicDataSourceFilter && publicDataSourceFilter.options.length === 0) {
+    publicDataSourceFilter.innerHTML = `
+      <option value="all">全部来源</option>
+      ${sources.map((source) => `<option value="${source.label}">${source.label}</option>`).join("")}
+    `;
+  }
+  if (publicDataSourceFilter) {
+    publicDataSourceFilter.value = selectedSource;
+  }
+
+  if (publicDataModuleFilter && publicDataModuleFilter.options.length === 0) {
+    publicDataModuleFilter.innerHTML = `
+      <option value="all">全部模块</option>
+      ${modules.map((module) => `<option value="${module.label}">${module.label}</option>`).join("")}
+    `;
+  }
+  if (publicDataModuleFilter) {
+    publicDataModuleFilter.value = selectedModule;
+  }
+
+  if (publicDataAssetsPanel) {
+    publicDataAssetsPanel.innerHTML = `
+      <div class="plan-block">
+        <h4>当前接入范围</h4>
+        <div class="stat-grid">
+          ${statChip("常住人口", publicData.summary.totalPopulationLabel)}
+          ${statChip("年龄结构", `${publicData.ageDistribution.length} 档`)}
+          ${statChip("公开指标", `${publicData.publicIndicators.length} 条`)}
+          ${statChip("映射资产", `${assets.length} 条`)}
+        </div>
+      </div>
+      <div class="plan-block">
+        <h4>模块分布</h4>
+        <div class="asset-chip-list">
+          ${modules.map((module) => `<span class="asset-chip">${module.label} · ${module.count}</span>`).join("")}
+        </div>
+      </div>
+      <div class="plan-block">
+        <h4>整理原则</h4>
+        <ul class="mini-list">
+          ${publicData.summary.notes.map((note) => `<li>${note}</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }
+
+  if (publicDataSourcesPanel) {
+    publicDataSourcesPanel.innerHTML = sources
+      .map(
+        (source) => `
+          <div class="public-indicator-card">
+            <div class="public-indicator-head">
+              <strong>${source.label}</strong>
+              <span class="mini-tag">${assets.filter((asset) => asset.sourceLabel === source.label).length} 条资产</span>
+            </div>
+            <div class="dim">${source.note}</div>
+            <a class="source-link" href="${source.url}" target="_blank" rel="noreferrer">${source.url}</a>
+          </div>
+        `
+      )
+      .join("");
+  }
+
+  const filteredAssets = assets.filter((asset) => {
+    if (selectedSource !== "all" && asset.sourceLabel !== selectedSource) return false;
+    if (selectedModule !== "all" && !asset.usableModules.includes(selectedModule)) return false;
+    return true;
+  });
+
+  if (publicDataFilteredPanel) {
+    if (selectedView === "source") {
+      const filteredSources = sources.filter((source) => selectedSource === "all" || source.label === selectedSource);
+      publicDataFilteredPanel.innerHTML = filteredSources
+        .map(
+          (source) => `
+            <div class="plan-block">
+              <h4>${source.label}</h4>
+              <div class="dim">${source.note}</div>
+              <div class="asset-chip-list">
+                ${assets
+                  .filter((asset) => asset.sourceLabel === source.label)
+                  .map((asset) => `<span class="asset-chip">${asset.title}</span>`)
+                  .join("")}
+              </div>
+            </div>
+          `
+        )
+        .join("");
+    } else if (selectedView === "module") {
+      const filteredModules = modules.filter((module) => selectedModule === "all" || module.label === selectedModule);
+      publicDataFilteredPanel.innerHTML = filteredModules
+        .map(
+          (module) => `
+            <div class="plan-block">
+              <h4>${module.label}</h4>
+              <div class="dim">当前共有 ${module.count} 条公开资料资产可进入该模块。</div>
+              <div class="asset-chip-list">
+                ${assets
+                  .filter((asset) => asset.usableModules.includes(module.label))
+                  .map((asset) => `<span class="asset-chip">${asset.title}</span>`)
+                  .join("")}
+              </div>
+            </div>
+          `
+        )
+        .join("");
+    } else {
+      publicDataFilteredPanel.innerHTML = filteredAssets.length
+        ? `
+            <div class="public-assets-grid">
+              ${filteredAssets
+                .map(
+                  (asset) => `
+                    <div class="public-asset-card">
+                      <div class="public-indicator-head">
+                        <strong>${asset.title}</strong>
+                        <span class="mini-tag">${asset.value}</span>
+                      </div>
+                      <div class="dim">${asset.integrationNote}</div>
+                      <div class="asset-meta">
+                        <span>来源</span>
+                        <a class="source-link" href="${asset.sourceUrl}" target="_blank" rel="noreferrer">${asset.sourceLabel}</a>
+                      </div>
+                      <div class="asset-meta">
+                        <span>可进入模块</span>
+                        <div class="asset-chip-list">
+                          ${asset.usableModules.map((module) => `<span class="asset-chip">${module}</span>`).join("")}
+                        </div>
+                      </div>
+                      <div class="asset-meta">
+                        <span>目标字段</span>
+                        <div class="asset-code-list">
+                          ${asset.usableFields.map((field) => `<code>${field}</code>`).join("")}
+                        </div>
+                      </div>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          `
+        : `<div class="note-block">当前筛选条件下没有匹配的公开资料资产。</div>`;
+    }
+  }
+
+  if (publicDataMappingPanel) {
+    publicDataMappingPanel.innerHTML = filteredAssets.length
+      ? filteredAssets
+          .map(
+            (asset, index) => `
+              <div class="plan-block">
+                <h4>映射草案 ${index + 1} · ${asset.title}</h4>
+                <div class="mini-list">
+                  <li>公开字段：${asset.value}</li>
+                  <li>拟接入表：${asset.usableModules[0] ?? "区级总览"} / ${asset.usableFields[0] ?? "待定字段"}</li>
+                  <li>区卫健委真实字段：<code>pending_wjw_${slugify(asset.title)}</code></li>
+                  <li>医院真实字段：<code>pending_hospital_${slugify(asset.title)}</code></li>
+                  <li>同步策略：先保留公开口径，后续以真实字段覆盖并保留来源映射。</li>
+                </div>
+              </div>
+            `
+          )
+          .join("")
+      : `<div class="note-block">当前筛选条件下没有可生成的映射草案。</div>`;
+  }
+}
+
+function renderExecutiveCockpit() {
+  const cohort = state.populationDistrictCohort ?? state.populationCohort;
+  if (!cohort) return;
+
+  if (districtExecutivePanel) {
+    const ops = cohort.districtOperations;
+    districtExecutivePanel.innerHTML = `
+      <div class="plan-block">
+        <h4>${ops.districtName} 区级慢病运营总览</h4>
+        <div class="stat-grid">
+          ${statChip("常住人口", cohort.publicProfile.totalPopulationLabel)}
+          ${statChip("纳管人数", `${ops.managedPatientCount} 人`)}
+          ${statChip("纳管覆盖率", formatRateValue(ops.managedCoverageRate))}
+          ${statChip("医院覆盖率", formatRateValue(ops.hospitalCoverageRate))}
+          ${statChip("主诊覆盖率", formatRateValue(ops.primaryDoctorCoverageRate))}
+          ${statChip("责任覆盖率", formatRateValue(ops.responsibleClinicianCoverageRate))}
+        </div>
+      </div>
+      <div class="plan-block">
+        <h4>角色覆盖结构</h4>
+        <div class="metric-ribbon">
+          <div class="metric-ribbon-item">
+            <span>专科医生覆盖</span>
+            <strong>${formatRateValue(ops.specialistDoctorCoverageRate)}</strong>
+          </div>
+          <div class="metric-ribbon-item">
+            <span>全科医生覆盖</span>
+            <strong>${formatRateValue(ops.generalPractitionerCoverageRate)}</strong>
+          </div>
+          <div class="metric-ribbon-item">
+            <span>健康管理师覆盖</span>
+            <strong>${formatRateValue(ops.healthManagerCoverageRate)}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="plan-block">
+        <h4>协同闭环</h4>
+        <ul class="mini-list">
+          <li>闭环率：${formatRateValue(cohort.summary.closedLoopRate)}</li>
+          <li>建议转诊：${cohort.referralMetrics.referralSuggestedCount} 人</li>
+          <li>完成转诊：${cohort.referralMetrics.referralCompletedCount} 人</li>
+          <li>会诊触发：${cohort.referralMetrics.consultationCount} 人</li>
+          <li>MDT 复核：${cohort.referralMetrics.mdtReviewCount} 人</li>
+        </ul>
+      </div>
+    `;
+  }
+
+  if (hospitalBenchmarkPanel) {
+    hospitalBenchmarkPanel.innerHTML = cohort.hospitalPerformanceRanking
+      .slice(0, 6)
+      .map(
+        (item) => `
+          <div class="benchmark-row">
+            <div class="benchmark-rank">${String(item.rank).padStart(2, "0")}</div>
+            <div class="benchmark-copy">
+              <strong>${item.hospitalName}</strong>
+              <div class="dim">${item.patientCount} 人 · 高风险 ${item.highRiskCount} · 强化管理 ${item.intensiveManagementCount}</div>
+              <div class="tag-strip">
+                <span class="mini-tag">起效率 ${formatRateValue(item.effectiveRate)}</span>
+                <span class="mini-tag">闭环率 ${formatRateValue(item.closedLoopRate)}</span>
+                <span class="mini-tag">人均负荷 ${item.averagePatientsPerClinician}</span>
+              </div>
+            </div>
+          </div>
+        `
+      )
+      .join("");
+  }
+
+  if (modelGovernancePanel) {
+    const governance = cohort.modelGovernance;
+    modelGovernancePanel.innerHTML = `
+      <div class="plan-block">
+        <h4>模型治理摘要</h4>
+        <div class="stat-grid">
+          ${statChip("模型数", governance.modelCount)}
+          ${statChip("一致性均分", governance.consensusScore)}
+          ${statChip("分歧率", formatRateValue(governance.disagreementRate))}
+          ${statChip("稳定模型", governance.stableModelCount)}
+          ${statChip("观察模型", governance.watchModelCount)}
+          ${statChip("排查模型", governance.investigateModelCount)}
+        </div>
+      </div>
+      <div class="governance-grid">
+        ${governance.items
+          .map(
+            (item) => `
+              <article class="governance-card ${item.governanceStatus}">
+                <div class="governance-head">
+                  <strong>${item.model}</strong>
+                  <span class="mini-tag ${item.governanceStatus === "investigate" ? "critical" : item.governanceStatus === "watch" ? "high" : ""}">${governanceStatusLabel(item.governanceStatus)}</span>
+                </div>
+                <div class="dim">${item.note}</div>
+                <ul class="mini-list">
+                  <li>均分：${item.averageScore}</li>
+                  <li>高风险：${item.highRiskCount} 人</li>
+                  <li>覆盖率：${formatRateValue(item.coverageRate)}</li>
+                  <li>分歧率：${formatRateValue(item.disagreementRate)}</li>
+                </ul>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    `;
+  }
+}
+
+function renderFollowupOps(assignments, filteredAssignments) {
+  const cohort = state.populationCohort ?? state.populationDistrictCohort;
+  if (!cohort) return;
+  const workload = cohort.roleWorkload.find((item) => item.role === mapWorkbenchToFollowupRole(state.filters.workbenchRole));
+
+  if (followupOpsPanel) {
+    const overdueCount = filteredAssignments.filter((item) => item.status === "overdue").length;
+    const atRiskCount = filteredAssignments.filter((item) => item.status === "at-risk").length;
+    const doneCount = filteredAssignments.filter((item) => item.status === "done").length;
+    followupOpsPanel.innerHTML = `
+      <div class="plan-block">
+        <h4>${isClinicianFollowupsPage ? "医生执行中枢" : "医院督办中枢"}</h4>
+        <div class="stat-grid">
+          ${statChip("当前任务", filteredAssignments.length)}
+          ${statChip("逾期", overdueCount)}
+          ${statChip("临近逾期", atRiskCount)}
+          ${statChip("已完成", doneCount)}
+          ${statChip("闭环率", formatRateValue(cohort.referralMetrics.closedLoopRate))}
+          ${statChip("转诊完成", `${cohort.referralMetrics.referralCompletedCount}/${cohort.referralMetrics.referralSuggestedCount}`)}
+        </div>
+      </div>
+      <div class="plan-block">
+        <h4>三级协同漏斗</h4>
+        <div class="funnel-strip">
+          ${cohort.coordinationFunnel.stages
+            .map(
+              (stage) => `
+                <div class="funnel-step">
+                  <span>${stage.label}</span>
+                  <strong>${stage.count}</strong>
+                  <div class="dim">${formatRateValue(stage.rate)}</div>
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+  }
+
+  if (followupWorkloadPanel) {
+    followupWorkloadPanel.innerHTML = `
+      <div class="governance-grid">
+        ${cohort.roleWorkload
+          .map(
+            (item) => `
+              <article class="governance-card ${workload?.role === item.role ? "active-workload" : ""}">
+                <div class="governance-head">
+                  <strong>${item.roleLabel}</strong>
+                  <span class="mini-tag ${item.overdueTaskCount ? "critical" : item.atRiskTaskCount ? "high" : ""}">压力 ${item.pressureIndex}</span>
+                </div>
+                <ul class="mini-list">
+                  <li>医生/管理师：${item.clinicianCount}</li>
+                  <li>覆盖患者：${item.patientCount}</li>
+                  <li>逾期：${item.overdueTaskCount}</li>
+                  <li>临近逾期：${item.atRiskTaskCount}</li>
+                  <li>人均患者：${item.averagePatientsPerClinician}</li>
+                </ul>
+                <div class="dim">重点责任人：${item.topClinicians
+                  .slice(0, 2)
+                  .map((clinician) => `${clinician.clinicianName}(${clinician.patientCount})`)
+                  .join(" · ") || "暂无"}</div>
+              </article>
+            `
+          )
+          .join("")}
+      </div>
+    `;
+  }
 }
 
 function renderReminderCenter() {
@@ -920,23 +1848,17 @@ function renderReminderCenter() {
   `;
 }
 
-function getRoleScopedClinicians(hospitalId) {
-  return state.allClinicians.filter(
-    (clinician) =>
-      clinician.workbenchRole === state.filters.workbenchRole &&
-      (!hospitalId || clinician.hospitalIds.includes(hospitalId))
-  );
-}
-
 function deriveFollowupAssignments() {
   const role = mapWorkbenchToFollowupRole(state.filters.workbenchRole);
   const patients = getCurrentPopulationPatients();
 
-  return patients.flatMap((patient, patientIndex) => {
+  return patients.flatMap((patient) => {
     const plan = patient.roleFollowupPlans.find((item) => item.role === role);
     if (!plan) return [];
-    const clinicians = getRoleScopedClinicians(patient.hospitalId);
-    const assignedClinician = clinicians[patientIndex % Math.max(1, clinicians.length)] ?? null;
+    const assignedClinician =
+      state.filters.workbenchRole === "health-manager"
+        ? getPatientOwner(patient, "responsible")
+        : getPatientOwner(patient, "primary");
 
     return plan.todoList.map((todo) => ({
       ...todo,
@@ -944,8 +1866,8 @@ function deriveFollowupAssignments() {
       patientName: patient.name,
       hospitalId: patient.hospitalId,
       hospitalName: patient.hospitalName,
-      clinicianName: assignedClinician?.name ?? `${labelWorkbenchRole(state.filters.workbenchRole)}待分配`,
-      clinicianDepartment: assignedClinician?.department ?? plan.title,
+      clinicianName: assignedClinician.name,
+      clinicianDepartment: assignedClinician.department,
       roleTitle: plan.title,
       nextFollowUpDate: patient.nextFollowUpDate,
       adherenceSummary: patient.adherenceSummary
@@ -1115,6 +2037,33 @@ function exportOverdueFollowups() {
   downloadTextFile(filename, rows, "text/csv;charset=utf-8");
 }
 
+function ensureSidebarNavigation() {
+  const navItems = [
+    { href: "./index.html", label: "区级总览" },
+    { href: "./followups-hospital.html", label: "医院管理视图" },
+    { href: "./followups-clinician.html", label: "医生工作视图" },
+    { href: "./public-data-config.html", label: "公开资料配置" }
+  ];
+
+  document.querySelectorAll(".sidebar-nav").forEach((nav) => {
+    const existingLinks = new Set([...nav.querySelectorAll("a")].map((link) => link.getAttribute("href")));
+    for (const item of navItems) {
+      if (existingLinks.has(item.href)) continue;
+      const link = document.createElement("a");
+      link.className = "sidebar-nav-link";
+      link.href = item.href;
+      link.textContent = item.label;
+      nav.append(link);
+    }
+
+    nav.querySelectorAll("a").forEach((link) => {
+      const href = link.getAttribute("href") ?? "";
+      const isActive = window.location.pathname.endsWith(href.replace("./", "/"));
+      link.classList.toggle("active", isActive);
+    });
+  });
+}
+
 function renderFollowupCenter() {
   if (!isFollowupsPage || !followupSummary || !followupGroups) return;
 
@@ -1216,6 +2165,8 @@ function renderFollowupCenter() {
       })
     : orderedGroups;
 
+  renderFollowupOps(assignments, filteredAssignments);
+
   followupGroups.innerHTML = orderedEntries.length
     ? orderedEntries
         .map(([groupName, items]) => {
@@ -1279,27 +2230,41 @@ function renderFollowupCenter() {
               itemsByDoctor.set(doctorKey, existing);
             }
 
+            const hospitalPatientCount = new Set(items.map((item) => item.patientId)).size;
+            const hospitalOverdueCount = items.filter((item) => item.status === "overdue").length;
+
             return `
               <article class="followup-group-card">
-                <div class="followup-group-head">
-                  <div>
-                    <strong>${groupName}</strong>
-                    <div class="dim">患者与任务已按就诊医生归集</div>
-                  </div>
-                  <span class="mini-tag">${items.length} 项</span>
-                </div>
+                <details class="entity-group" open>
+                  <summary class="entity-group-head">
+                    <div>
+                      <strong>${groupName}</strong>
+                      <div class="dim">患者与任务已按主诊/责任医生归集</div>
+                    </div>
+                    <div class="entity-counts">
+                      <span class="mini-tag">${hospitalPatientCount} 人</span>
+                      <span class="mini-tag">${items.length} 项</span>
+                      <span class="mini-tag ${hospitalOverdueCount ? "critical" : ""}">逾期 ${hospitalOverdueCount}</span>
+                    </div>
+                  </summary>
                 <div class="entity-subgroup-list">
                   ${[...itemsByDoctor.entries()]
                     .map(
                       ([doctorKey, doctorItems]) => `
-                        <div class="entity-subgroup">
-                          <div class="entity-subgroup-head">
+                        <details class="entity-subgroup" open>
+                          <summary class="entity-subgroup-head">
                             <div>
                               <strong>${doctorItems[0].clinicianName}</strong>
                               <div class="dim">${doctorItems[0].clinicianDepartment}</div>
                             </div>
-                            <span class="mini-tag">${doctorItems.length} 项</span>
-                          </div>
+                            <div class="entity-counts">
+                              <span class="mini-tag">${new Set(doctorItems.map((item) => item.patientId)).size} 人</span>
+                              <span class="mini-tag">${doctorItems.length} 项</span>
+                              <span class="mini-tag ${
+                                doctorItems.some((item) => item.status === "overdue") ? "critical" : ""
+                              }">逾期 ${doctorItems.filter((item) => item.status === "overdue").length}</span>
+                            </div>
+                          </summary>
                           <div class="followup-task-list">
                             ${doctorItems
                               .slice(0, 8)
@@ -1319,11 +2284,12 @@ function renderFollowupCenter() {
                               )
                               .join("")}
                           </div>
-                        </div>
+                        </details>
                       `
                     )
                     .join("")}
                 </div>
+                </details>
               </article>
             `;
           }
@@ -1420,8 +2386,10 @@ function renderPopulation() {
     `
     <div class="plan-block">
       <h4>${cohort.hospitalLabel}</h4>
-      <div class="dim">已模拟 ${cohort.patientCount} 位慢病管理对象，每位患者均生成模型预测与证据链。</div>
+      <div class="dim">当前纳管 ${cohort.patientCount} 位对象，按 ${cohort.publicProfile.totalPopulationLabel} 常住人口为全区口径展示覆盖率与管理规模。</div>
       <div class="stat-grid">
+        ${statChip("常住人口底数", cohort.publicProfile.totalPopulationLabel)}
+        ${statChip("纳管覆盖率", `${cohort.publicProfile.managedCoverageRate}%`)}
         ${statChip("高风险", cohort.summary.highRiskCount)}
         ${statChip("危重", cohort.summary.criticalRiskCount)}
         ${statChip("强化管理", cohort.summary.intensiveManagementCount)}
@@ -1439,11 +2407,14 @@ function renderPopulation() {
 
   setElementHtml(populationRadar, renderRadarChart("栖霞区慢病风险平均画像", districtCohort.averageRadar));
   if (hospitalOverviewGrid && hospitalDetailPanel) renderHospitalOverview();
+  if (qixiaPublicProfile) renderQixiaPublicProfile();
+  renderExecutiveCockpit();
   if (reminderCenter) renderReminderCenter();
 
   setElementHtml(
     populationList,
     renderHierarchicalPatientList(cohort.patients, state.populationPatientId, {
+      ownerMode: state.filters.workbenchRole === "health-manager" ? "responsible" : "primary",
       renderPatient: (patient, isActive) => `
         <button class="population-row ${isActive ? "active" : ""}" data-population-id="${patient.id}">
           <div class="population-row-main">
@@ -2728,18 +3699,32 @@ followupClinicianFilter?.addEventListener("change", () => {
   renderFollowupCenter();
 });
 
+publicDataViewFilter?.addEventListener("change", () => {
+  renderPublicDataConfig();
+});
+
+publicDataSourceFilter?.addEventListener("change", () => {
+  renderPublicDataConfig();
+});
+
+publicDataModuleFilter?.addEventListener("change", () => {
+  renderPublicDataConfig();
+});
+
 exportFollowupsBtn?.addEventListener("click", () => {
   exportOverdueFollowups();
 });
 
 async function init() {
-  const [hospitals, mappings, allClinicians, medclawOverview, ecosystemOverview, githubOverview] = await Promise.all([
+  ensureSidebarNavigation();
+  const [hospitals, mappings, allClinicians, medclawOverview, ecosystemOverview, githubOverview, publicSourceData] = await Promise.all([
     api("/api/hospitals"),
     api("/api/his/mappings"),
     api("/api/clinicians"),
     api("/api/medclaw/overview"),
     api("/api/ecosystem/overview"),
-    api("/api/github-capabilities/overview")
+    api("/api/github-capabilities/overview"),
+    api("/api/public-sources/qixia")
   ]);
   state.hospitals = qixiaHospitalsOnly(hospitals);
   state.mappings = mappings;
@@ -2747,6 +3732,11 @@ async function init() {
   state.medclawOverview = medclawOverview;
   state.ecosystemOverview = ecosystemOverview;
   state.githubOverview = githubOverview;
+  state.publicSourceData = publicSourceData;
+  if (isPublicDataConfigPage) {
+    renderPublicDataConfig();
+    return;
+  }
   if (isHospitalFollowupsPage) state.followupGroupBy = "hospital";
   if (isClinicianFollowupsPage) {
     state.followupGroupBy = "clinician";
@@ -2759,6 +3749,9 @@ async function init() {
   state.patientId = state.dashboard?.patients[0]?.id ?? state.populationCohort?.patients?.[0]?.id ?? null;
   if (isHomePage) {
     await loadWorkspace();
+  }
+  if (isPublicDataConfigPage) {
+    renderPublicDataConfig();
   }
 }
 

@@ -16,6 +16,7 @@
         mode: "static",
         snapshotPath: "./demo-data/pages-snapshot.json",
         populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json",
         repo: "MoKangMedical/chronicdiseasemanagement",
         projectName: "慢康智枢 ChroniCare OS",
         readOnlyMessage: "GitHub Pages 演示站为只读模式"
@@ -44,6 +45,7 @@
           <a class="sidebar-nav-link" href="./index.html">区级总览</a>
           <a class="sidebar-nav-link" href="./followups-hospital.html">医院管理视图</a>
           <a class="sidebar-nav-link active" href="./followups-clinician.html">医生工作视图</a>
+          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
         </nav>
 
         <div class="sidebar-block">
@@ -58,6 +60,28 @@
       </aside>
 
       <main class="main-panel">
+        <section class="page-banner page-banner-workbench">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">Clinician Workbench</div>
+            <h2>医生工作台</h2>
+            <p>面向主诊医生、全科医生与健康管理师的日常工作页面，强调我的待办、我负责的患者、已完成复评和按人归类的随访督办。</p>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">页面定位</span>
+              <strong>医生工作台</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">操作焦点</span>
+              <strong>我的待办 / 我的患者</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">协同方式</span>
+              <strong>主诊 / 责任 / 随访</strong>
+            </div>
+          </div>
+        </section>
+
         <header class="hero">
           <div class="hero-copy">
             <p class="eyebrow">Clinician Work View</p>
@@ -113,6 +137,24 @@
               <h3>当前医生逾期待办</h3>
             </div>
             <div id="reminder-center" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-followup-ops">
+          <article class="panel panel-feature">
+            <div class="panel-head">
+              <span class="panel-kicker">医生运营驾驶舱</span>
+              <h3>我的患者、我的任务、我的压力量化</h3>
+            </div>
+            <div id="followup-ops-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">角色负荷</span>
+              <h3>当前筛选下的角色工作负载</h3>
+            </div>
+            <div id="followup-workload-panel" class="care-plan-summary"></div>
           </article>
         </section>
 
