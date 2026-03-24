@@ -279,6 +279,93 @@ const publicDataModuleFilter = document.querySelector("#public-data-module-filte
 const publicDataExportJsonBtn = document.querySelector("#public-data-export-json");
 const publicDataExportXlsxBtn = document.querySelector("#public-data-export-xlsx");
 
+const interactiveSurfaceSelector = [
+  ".page-banner",
+  ".hero",
+  ".panel",
+  ".metric-card",
+  ".patient-item",
+  ".population-row",
+  ".overview-visual-card",
+  ".dynamic-metric-card",
+  ".story-card",
+  ".wallboard-ribbon-card",
+  ".hospital-card",
+  ".entity-group",
+  ".entity-subgroup",
+  ".overview-funnel-stage",
+  ".followup-group-card",
+  ".followup-task",
+  ".benchmark-row"
+].join(", ");
+
+const interactiveSurfaceRegistry = new WeakSet();
+let revealObserver = null;
+
+if (typeof document !== "undefined" && document.body) {
+  document.body.dataset.motionReady = "true";
+}
+
+function bindInteractiveSurfaces(root = document) {
+  root.querySelectorAll(interactiveSurfaceSelector).forEach((node) => {
+    if (interactiveSurfaceRegistry.has(node)) return;
+    interactiveSurfaceRegistry.add(node);
+    node.style.setProperty("--pointer-x", "50%");
+    node.style.setProperty("--pointer-y", "50%");
+    node.addEventListener("pointermove", (event) => {
+      const rect = node.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      node.style.setProperty("--pointer-x", `${Math.max(0, Math.min(100, x)).toFixed(1)}%`);
+      node.style.setProperty("--pointer-y", `${Math.max(0, Math.min(100, y)).toFixed(1)}%`);
+    });
+    node.addEventListener("pointerleave", () => {
+      node.style.setProperty("--pointer-x", "50%");
+      node.style.setProperty("--pointer-y", "50%");
+    });
+  });
+}
+
+function ensureRevealObserver() {
+  if (revealObserver || !("IntersectionObserver" in window)) return;
+  revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("is-visible");
+        revealObserver.unobserve(entry.target);
+      });
+    },
+    {
+      threshold: 0.16,
+      rootMargin: "0px 0px -6% 0px"
+    }
+  );
+}
+
+function registerRevealTargets(root = document) {
+  const targets = [...root.querySelectorAll("[data-reveal]")];
+  if (!targets.length) return;
+  if (!("IntersectionObserver" in window)) {
+    targets.forEach((node) => node.classList.add("is-visible"));
+    return;
+  }
+  ensureRevealObserver();
+  targets.forEach((node, index) => {
+    if (!node.dataset.revealRegistered) {
+      node.dataset.revealRegistered = "true";
+      node.style.transitionDelay = `${Math.min(index * 70, 280)}ms`;
+      revealObserver.observe(node);
+    }
+  });
+}
+
+function refreshInterfacePolish() {
+  bindInteractiveSurfaces(document);
+  registerRevealTargets(document);
+}
+
 function formatLevel(level) {
   return {
     low: "Low",
@@ -688,9 +775,9 @@ function renderOverviewBand() {
     overviewFilterReset.hidden = !hasOverviewSelection();
   }
   if (heroSubtitle) {
-    heroSubtitle.textContent = `区级总览视图 | ${labelWorkbenchRole(state.filters.workbenchRole)} | ${
+    heroSubtitle.textContent = `${labelWorkbenchRole(state.filters.workbenchRole)} · ${
       state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"}` : "栖霞区全域"
-    } | ${getOverviewSelectionLabel()}`;
+    } · ${getOverviewSelectionLabel()} · 点击顶部图表即可联动医院网络`;
   }
 
   if (overviewRiskRadar) {
@@ -700,6 +787,7 @@ function renderOverviewBand() {
         const nextDomain = node.getAttribute("data-overview-domain") || "";
         state.overviewSelectedDomain = state.overviewSelectedDomain === nextDomain ? "" : nextDomain;
         renderPopulation();
+        renderPatients();
       });
     });
   }
@@ -715,6 +803,7 @@ function renderOverviewBand() {
         const nextStage = node.getAttribute("data-overview-funnel-stage") || "";
         state.overviewSelectedFunnelStage = state.overviewSelectedFunnelStage === nextStage ? "" : nextStage;
         renderPopulation();
+        renderPatients();
       });
     });
   }
@@ -724,8 +813,11 @@ function renderOverviewBand() {
       state.overviewSelectedDomain = "";
       state.overviewSelectedFunnelStage = "";
       renderPopulation();
+      renderPatients();
     };
   }
+
+  refreshInterfacePolish();
 }
 
 async function api(path, options = {}) {
@@ -1617,6 +1709,7 @@ function renderPatients() {
           `
         })
       : `<div class="note-block">当前联动筛选下暂无患者队列。</div>`;
+    refreshInterfacePolish();
     return;
   }
 
@@ -1639,6 +1732,8 @@ function renderPatients() {
       await loadWorkspace();
     });
   });
+
+  refreshInterfacePolish();
 }
 
 function computeHospitalInsights() {
@@ -1767,17 +1862,17 @@ function renderDynamicCommandStage() {
   districtLiveStage.innerHTML = `
     <div class="dynamic-stage-grid">
       <div class="dynamic-stage-metrics">
-        <article class="dynamic-metric-card accent-blue">
+        <article class="dynamic-metric-card accent-blue" data-reveal="fast">
           <span>常住人口底数</span>
           ${counterMarkup(cohort.publicProfile?.totalPopulation ?? 0, { format: "compact" })}
           <small>${cohort.publicProfile?.totalPopulationLabel ?? "-"}</small>
         </article>
-        <article class="dynamic-metric-card accent-cyan">
+        <article class="dynamic-metric-card accent-cyan" data-reveal="fast">
           <span>当前联动纳管人数</span>
           ${counterMarkup(scopedPatients.length ?? 0, { format: "compact" })}
           <small>${hasOverviewSelection() ? "已按顶部联动筛选收敛" : "当前按栖霞区总人口作为管理口径"}</small>
         </article>
-        <article class="dynamic-metric-card accent-indigo">
+        <article class="dynamic-metric-card accent-indigo" data-reveal="fast">
           <span>高风险慢病人群</span>
           ${counterMarkup(
             scopedPatients.filter((patient) => patient.overallRiskLevel === "high" || patient.overallRiskLevel === "critical").length,
@@ -1785,7 +1880,7 @@ function renderDynamicCommandStage() {
           )}
           <small>区级优先队列与转诊会诊入口</small>
         </article>
-        <article class="dynamic-metric-card accent-emerald">
+        <article class="dynamic-metric-card accent-emerald" data-reveal="fast">
           <span>闭环执行率</span>
           ${counterMarkup(cohort.summary?.closedLoopRate ?? 0, { format: "percent", suffix: "%" })}
           <small>反映区级连续管理与复评执行情况</small>
@@ -1875,7 +1970,7 @@ function renderDynamicCommandStage() {
 
   districtFlowStory.innerHTML = `
     <div class="dynamic-story-grid">
-      <article class="story-card">
+      <article class="story-card" data-reveal="fast">
         <div class="story-head">
           <span class="mini-tag">病种热力</span>
           <strong>区级慢病负荷</strong>
@@ -1899,7 +1994,7 @@ function renderDynamicCommandStage() {
         </div>
       </article>
 
-      <article class="story-card">
+      <article class="story-card" data-reveal="fast">
         <div class="story-head">
           <span class="mini-tag">协同漏斗</span>
           <strong>筛查到闭环</strong>
@@ -1919,7 +2014,7 @@ function renderDynamicCommandStage() {
         </div>
       </article>
 
-      <article class="story-card">
+      <article class="story-card" data-reveal="fast">
         <div class="story-head">
           <span class="mini-tag">治疗包响应</span>
           <strong>${activeInsight?.hospital.name ?? "当前医院"}重点包型</strong>
@@ -1943,7 +2038,7 @@ function renderDynamicCommandStage() {
         </div>
       </article>
 
-      <article class="story-card">
+      <article class="story-card" data-reveal="fast">
         <div class="story-head">
           <span class="mini-tag">联动说明</span>
           <strong>筛选结果与首页作用域</strong>
@@ -1981,6 +2076,7 @@ function renderDynamicCommandStage() {
   animateCounters(districtFlowStory);
   activateProgressBars(districtLiveStage);
   activateProgressBars(districtFlowStory);
+  refreshInterfacePolish();
 }
 
 function renderWallboardHero() {
@@ -2027,6 +2123,7 @@ function renderWallboardHero() {
   `;
 
   animateCounters(wallboardHeroRibbon);
+  refreshInterfacePolish();
 }
 
 function startWallboardRotation() {
@@ -2080,7 +2177,7 @@ function renderHospitalOverview() {
   hospitalOverviewGrid.innerHTML = insights
     .map(
       (insight) => `
-        <button class="hospital-card ${insight.hospital.id === selectedHospitalId ? "active" : ""}" data-hospital-card="${insight.hospital.id}">
+        <button class="hospital-card ${insight.hospital.id === selectedHospitalId ? "active" : ""}" data-hospital-card="${insight.hospital.id}" data-reveal="fast">
           <div class="hospital-card-head">
             <div>
               <strong>${insight.hospital.name}</strong>
@@ -2113,7 +2210,7 @@ function renderHospitalOverview() {
       renderFilters();
       await refreshDashboard();
       await loadPopulation();
-      await loadWorkspace();
+      if (patientName) await loadWorkspace();
     });
   });
 
@@ -2152,6 +2249,8 @@ function renderHospitalOverview() {
       </div>
     `
     : `<div class="note-block">暂无栖霞区医院统计。</div>`;
+
+  refreshInterfacePolish();
 }
 
 function renderQixiaPublicProfile() {
@@ -3404,6 +3503,8 @@ function renderFollowupCenter() {
       renderFollowupCenter();
     });
   });
+
+  refreshInterfacePolish();
 }
 
 function animateInterventionRadar(patient, fromVector, toVector, label) {
@@ -4845,6 +4946,7 @@ async function init() {
   if (isHomePage && patientName) {
     await loadWorkspace();
   }
+  refreshInterfacePolish();
   if (isPublicDataConfigPage) {
     renderPublicDataConfig();
   }
