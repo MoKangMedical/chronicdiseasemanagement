@@ -31,6 +31,7 @@ const state = {
   publicDataDrafts: {},
   publicDataSelectedAsset: "",
   publicSourceData: null,
+  dynamicHospitalFocusId: "",
   githubPlan: null,
   populationDistrictCohort: null,
   populationCohort: null,
@@ -207,6 +208,8 @@ const githubCatalog = document.querySelector("#github-catalog");
 const githubPlan = document.querySelector("#github-plan");
 const populationSummary = document.querySelector("#population-summary");
 const populationRadar = document.querySelector("#population-radar");
+const districtLiveStage = document.querySelector("#district-live-stage");
+const districtFlowStory = document.querySelector("#district-flow-story");
 const hospitalOverviewGrid = document.querySelector("#hospital-overview-grid");
 const hospitalDetailPanel = document.querySelector("#hospital-detail-panel");
 const qixiaPublicProfile = document.querySelector("#qixia-public-profile");
@@ -521,6 +524,63 @@ function formatPersonCount(count) {
   return `${count.toLocaleString("zh-CN")} 人`;
 }
 
+function formatCompactMetric(count) {
+  if (!Number.isFinite(Number(count))) return String(count ?? "-");
+  const value = Number(count);
+  if (Math.abs(value) >= 100000000) return `${(value / 100000000).toFixed(2)} 亿`;
+  if (Math.abs(value) >= 10000) return `${(value / 10000).toFixed(2)} 万`;
+  return value.toLocaleString("zh-CN");
+}
+
+function counterMarkup(value, options = {}) {
+  const numericValue = Number(value);
+  if (!Number.isFinite(numericValue)) {
+    return `<strong>${value ?? "-"}</strong>`;
+  }
+  const { format = "integer", suffix = "", prefix = "" } = options;
+  return `<strong class="counter-value" data-count-to="${numericValue}" data-count-format="${format}" data-count-suffix="${suffix}" data-count-prefix="${prefix}">0</strong>`;
+}
+
+function formatCounterFrame(value, format = "integer") {
+  if (format === "percent") return Number(value).toFixed(value >= 100 ? 0 : 1);
+  if (format === "decimal") return Number(value).toFixed(1);
+  if (format === "compact") return formatCompactMetric(value);
+  return Math.round(Number(value)).toLocaleString("zh-CN");
+}
+
+function animateCounters(root) {
+  if (!root) return;
+  const counters = root.querySelectorAll("[data-count-to]");
+  counters.forEach((counter) => {
+    const endValue = Number(counter.getAttribute("data-count-to"));
+    if (!Number.isFinite(endValue)) return;
+    const format = counter.getAttribute("data-count-format") || "integer";
+    const suffix = counter.getAttribute("data-count-suffix") || "";
+    const prefix = counter.getAttribute("data-count-prefix") || "";
+    const start = performance.now();
+    const duration = 1100;
+    const animate = (now) => {
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = endValue * eased;
+      counter.textContent = `${prefix}${formatCounterFrame(current, format)}${suffix}`;
+      if (progress < 1) {
+        window.requestAnimationFrame(animate);
+      }
+    };
+    window.requestAnimationFrame(animate);
+  });
+}
+
+function activateProgressBars(root) {
+  if (!root) return;
+  window.requestAnimationFrame(() => {
+    root.querySelectorAll("[data-progress-width]").forEach((bar) => {
+      bar.style.setProperty("--progress-width", bar.getAttribute("data-progress-width") || "0%");
+    });
+  });
+}
+
 function renderPublicBreakdownRows(items) {
   return items
     .map(
@@ -578,7 +638,7 @@ function publicDataFilteredAssets(data) {
   );
 }
 
-function renderPublicDataConfig() {
+function renderPublicDataConfigLegacy() {
   const data = normalizePublicData();
   if (!publicDataConfigSummary || !publicDataSourceExplorer || !publicDataModuleExplorer || !publicDataAssetCatalog || !publicDataMappingDraft) {
     return;
@@ -647,16 +707,16 @@ function renderPublicDataConfig() {
 
   sourceFilter?.addEventListener("change", () => {
     state.publicDataSourceFilter = sourceFilter.value;
-    renderPublicDataConfig();
+    renderPublicDataConfigLegacy();
   });
   moduleFilter?.addEventListener("change", () => {
     state.publicDataModuleFilter = moduleFilter.value;
-    renderPublicDataConfig();
+    renderPublicDataConfigLegacy();
   });
   publicDataConfigToolbar.querySelectorAll("[data-public-view]").forEach((button) => {
     button.addEventListener("click", () => {
       state.publicDataView = button.getAttribute("data-public-view") || "source";
-      renderPublicDataConfig();
+      renderPublicDataConfigLegacy();
     });
   });
 
@@ -742,14 +802,14 @@ function renderPublicDataConfig() {
   publicDataSourceExplorer.querySelectorAll("[data-source-label]").forEach((button) => {
     button.addEventListener("click", () => {
       state.publicDataSourceFilter = button.getAttribute("data-source-label") || "all";
-      renderPublicDataConfig();
+      renderPublicDataConfigLegacy();
     });
   });
 
   publicDataModuleExplorer.querySelectorAll("[data-module-label]").forEach((button) => {
     button.addEventListener("click", () => {
       state.publicDataModuleFilter = button.getAttribute("data-module-label") || "all";
-      renderPublicDataConfig();
+      renderPublicDataConfigLegacy();
     });
   });
 }
@@ -1196,10 +1256,270 @@ function computeHospitalInsights() {
     .sort((left, right) => right.patientCount - left.patientCount);
 }
 
+function resolveActiveHospitalInsight(insights) {
+  if (!insights.length) return null;
+  const selectedHospitalId = state.dynamicHospitalFocusId || state.filters.hospitalId || insights[0]?.hospital.id;
+  return insights.find((item) => item.hospital.id === selectedHospitalId) ?? insights[0];
+}
+
+function renderDynamicCommandStage() {
+  if (!districtLiveStage || !districtFlowStory) return;
+  const cohort = state.populationDistrictCohort ?? state.populationCohort;
+  if (!cohort) return;
+
+  const insights = computeHospitalInsights();
+  const activeInsight = resolveActiveHospitalInsight(insights);
+  const selectedPatient =
+    cohort.patients.find((patient) => patient.id === state.populationPatientId) ?? cohort.patients[0] ?? null;
+  const activeCheckpoint = selectedPatient ? checkpointForWeek(selectedPatient, state.populationCheckpointWeek) : null;
+  const funnel = (cohort.coordinationFunnel ?? []).slice(0, 6);
+  const topDomains = (cohort.domainPrevalence ?? []).slice(0, 6);
+  const maxDomainCount = Math.max(...topDomains.map((item) => item.count), 1);
+  const spotlightHospitals = insights.slice(0, 6);
+  const packageHighlights = (activeInsight?.packageRatios ?? []).slice(0, 4);
+  const maxPackageCount = Math.max(...packageHighlights.map((item) => item.count), 1);
+  const publicAssets = (cohort.publicProfile?.systemUsableAssets ?? []).slice(0, 4);
+
+  districtLiveStage.innerHTML = `
+    <div class="dynamic-stage-grid">
+      <div class="dynamic-stage-metrics">
+        <article class="dynamic-metric-card accent-blue">
+          <span>常住人口底数</span>
+          ${counterMarkup(cohort.publicProfile?.totalPopulation ?? 0, { format: "compact" })}
+          <small>${cohort.publicProfile?.totalPopulationLabel ?? "-"}</small>
+        </article>
+        <article class="dynamic-metric-card accent-cyan">
+          <span>全量仿真管理人数</span>
+          ${counterMarkup(cohort.patientCount ?? 0, { format: "compact" })}
+          <small>当前按栖霞区总人口作为管理口径</small>
+        </article>
+        <article class="dynamic-metric-card accent-indigo">
+          <span>高风险慢病人群</span>
+          ${counterMarkup(cohort.summary?.highRiskCount ?? 0, { format: "compact" })}
+          <small>区级优先队列与转诊会诊入口</small>
+        </article>
+        <article class="dynamic-metric-card accent-emerald">
+          <span>闭环执行率</span>
+          ${counterMarkup(cohort.summary?.closedLoopRate ?? 0, { format: "percent", suffix: "%" })}
+          <small>反映区级连续管理与复评执行情况</small>
+        </article>
+      </div>
+
+      <div class="dynamic-stage-network">
+        <div class="network-orbit">
+          <div class="network-core">
+            <div class="network-core-ring"></div>
+            <div class="network-core-copy">
+              <span>栖霞区慢病指挥中枢</span>
+              <strong>${activeInsight?.hospital.name ?? "全区协同"}</strong>
+              <small>${activeInsight ? `${activeInsight.patientCount.toLocaleString("zh-CN")} 人管理中 · 起效率 ${activeInsight.effectiveRate}` : "点击节点切换医院焦点"}</small>
+            </div>
+          </div>
+          <div class="orbit-node-list">
+            ${spotlightHospitals
+              .map((insight, index) => {
+                const angle = (Math.PI * 2 * index) / Math.max(spotlightHospitals.length, 1) - Math.PI / 2;
+                const x = 50 + Math.cos(angle) * 36;
+                const y = 50 + Math.sin(angle) * 36;
+                const topDomain = insight.diseaseRatios[0];
+                return `
+                  <button
+                    class="orbit-node ${activeInsight?.hospital.id === insight.hospital.id ? "active" : ""}"
+                    data-dynamic-hospital="${insight.hospital.id}"
+                    style="left:${x}%;top:${y}%;--node-accent:${insight.hospital.accent || "#1e40af"}"
+                  >
+                    <span class="orbit-node-dot"></span>
+                    <span class="orbit-node-name">${insight.hospital.name}</span>
+                    <span class="orbit-node-meta">${topDomain ? `${topDomain.label} ${topDomain.ratio}` : `${insight.patientCount} 人`}</span>
+                  </button>
+                `;
+              })
+              .join("")}
+          </div>
+        </div>
+
+        <div class="dynamic-stage-highlight">
+          ${
+            activeInsight
+              ? `
+                <div class="highlight-head">
+                  <div>
+                    <span class="mini-tag">${activeInsight.hospital.networkRole ?? activeInsight.hospital.level ?? "医院"}</span>
+                    <h4>${activeInsight.hospital.name}</h4>
+                  </div>
+                  <strong>${coveragePercentage(activeInsight.patientCount, cohort.publicProfile?.totalPopulation ?? 0)}</strong>
+                </div>
+                <div class="highlight-bars">
+                  <div class="highlight-bar-row">
+                    <span>管理患者</span>
+                    <div class="progress-track"><i data-progress-width="${coveragePercentage(activeInsight.patientCount, cohort.patientCount)}"></i></div>
+                    <strong>${formatCompactMetric(activeInsight.patientCount)}</strong>
+                  </div>
+                  <div class="highlight-bar-row">
+                    <span>病种聚焦</span>
+                    <div class="progress-track"><i data-progress-width="${activeInsight.diseaseRatios[0]?.ratio ?? "0%"}"></i></div>
+                    <strong>${activeInsight.diseaseRatios[0]?.label ?? "待补充"}</strong>
+                  </div>
+                  <div class="highlight-bar-row">
+                    <span>起效率</span>
+                    <div class="progress-track"><i data-progress-width="${activeInsight.effectiveRate}"></i></div>
+                    <strong>${activeInsight.effectiveRate}</strong>
+                  </div>
+                </div>
+                <div class="highlight-asset-strip">
+                  ${publicAssets
+                    .map(
+                      (asset) => `
+                        <div class="highlight-asset-card">
+                          <span>${asset.title}</span>
+                          <strong>${asset.value}</strong>
+                        </div>
+                      `
+                    )
+                    .join("")}
+                </div>
+              `
+              : `<div class="note-block">暂无医院聚焦数据。</div>`
+          }
+        </div>
+      </div>
+    </div>
+  `;
+
+  districtFlowStory.innerHTML = `
+    <div class="dynamic-story-grid">
+      <article class="story-card">
+        <div class="story-head">
+          <span class="mini-tag">病种热力</span>
+          <strong>区级慢病负荷</strong>
+        </div>
+        <div class="story-bar-list">
+          ${topDomains
+            .map(
+              (item) => `
+                <div class="story-bar-item">
+                  <div class="story-bar-copy">
+                    <span>${item.label}</span>
+                    <strong>${formatCompactMetric(item.count)} 人</strong>
+                  </div>
+                  <div class="story-bar-track">
+                    <i data-progress-width="${((item.count / maxDomainCount) * 100).toFixed(1)}%"></i>
+                  </div>
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+      </article>
+
+      <article class="story-card">
+        <div class="story-head">
+          <span class="mini-tag">协同漏斗</span>
+          <strong>筛查到闭环</strong>
+        </div>
+        <div class="story-funnel">
+          ${funnel
+            .map(
+              (stage, index) => `
+                <div class="funnel-stage ${index === 0 ? "active" : ""}">
+                  <span>${stage.stage}</span>
+                  ${counterMarkup(stage.count ?? 0, { format: "compact" })}
+                  <small>${stage.description ?? stage.note ?? "区级协同阶段"}</small>
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+      </article>
+
+      <article class="story-card">
+        <div class="story-head">
+          <span class="mini-tag">治疗包响应</span>
+          <strong>${activeInsight?.hospital.name ?? "当前医院"}重点包型</strong>
+        </div>
+        <div class="story-bar-list">
+          ${packageHighlights
+            .map(
+              (item) => `
+                <div class="story-bar-item">
+                  <div class="story-bar-copy">
+                    <span>${item.title}</span>
+                    <strong>${item.ratio}</strong>
+                  </div>
+                  <div class="story-bar-track warm">
+                    <i data-progress-width="${((item.count / maxPackageCount) * 100).toFixed(1)}%"></i>
+                  </div>
+                </div>
+              `
+            )
+            .join("")}
+        </div>
+      </article>
+
+      <article class="story-card">
+        <div class="story-head">
+          <span class="mini-tag">阶段改善</span>
+          <strong>${selectedPatient?.name ?? "当前患者"} 4/8/12 周</strong>
+        </div>
+        ${
+          selectedPatient && activeCheckpoint
+            ? `
+              <div class="journey-stage-strip">
+                ${selectedPatient.interventionProjection.timelineCheckpoints
+                  .map(
+                    (checkpoint) => `
+                      <button class="journey-stage-card ${checkpoint.week === state.populationCheckpointWeek ? "active" : ""}" data-checkpoint-week="${checkpoint.week}">
+                        <span>${checkpoint.label}</span>
+                        <strong>${checkpoint.overallScore}</strong>
+                        <small>${formatLevel(checkpoint.overallLevel)}</small>
+                      </button>
+                    `
+                  )
+                  .join("")}
+              </div>
+              <div class="journey-explainer">
+                <div class="journey-track">
+                  <i class="journey-track-progress" style="--journey-progress:${(activeCheckpoint.week / 12) * 100}%"></i>
+                </div>
+                <div class="journey-copy">
+                  <strong>${selectedPatient.hospitalName}</strong>
+                  <div class="dim">${selectedPatient.improvementRecords.find((item) => item.week === activeCheckpoint.week)?.explanation ?? selectedPatient.interventionProjection.recommendations[0]}</div>
+                </div>
+              </div>
+            `
+            : `<div class="note-block">暂无患者阶段改善数据。</div>`
+        }
+      </article>
+    </div>
+  `;
+
+  districtLiveStage.querySelectorAll("[data-dynamic-hospital]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.dynamicHospitalFocusId = node.getAttribute("data-dynamic-hospital") || "";
+      renderDynamicCommandStage();
+      renderHospitalOverview();
+    });
+  });
+
+  districtFlowStory.querySelectorAll("[data-checkpoint-week]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const nextWeek = Number(node.getAttribute("data-checkpoint-week"));
+      if (!Number.isFinite(nextWeek)) return;
+      state.populationCheckpointWeek = nextWeek;
+      renderPopulation();
+    });
+  });
+
+  animateCounters(districtLiveStage);
+  animateCounters(districtFlowStory);
+  activateProgressBars(districtLiveStage);
+  activateProgressBars(districtFlowStory);
+}
+
 function renderHospitalOverview() {
   const insights = computeHospitalInsights();
   const districtPopulation = state.populationDistrictCohort?.publicProfile?.totalPopulation ?? 0;
-  const selectedHospitalId = state.filters.hospitalId || insights[0]?.hospital.id;
+  const selectedHospitalId = state.dynamicHospitalFocusId || state.filters.hospitalId || insights[0]?.hospital.id;
   const activeInsight = insights.find((item) => item.hospital.id === selectedHospitalId) ?? insights[0] ?? null;
 
   hospitalOverviewGrid.innerHTML = insights
@@ -1234,6 +1554,7 @@ function renderHospitalOverview() {
   hospitalOverviewGrid.querySelectorAll("[data-hospital-card]").forEach((node) => {
     node.addEventListener("click", async () => {
       state.filters.hospitalId = node.getAttribute("data-hospital-card") || "";
+      state.dynamicHospitalFocusId = state.filters.hospitalId;
       renderFilters();
       await refreshDashboard();
       await loadPopulation();
@@ -2140,18 +2461,6 @@ function renderClinicianTabs() {
   });
 }
 
-function downloadTextFile(filename, content, mimeType) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  document.body.append(anchor);
-  anchor.click();
-  anchor.remove();
-  URL.revokeObjectURL(url);
-}
-
 function exportOverdueFollowups() {
   const overdueAssignments = deriveFollowupAssignments().filter((item) => {
     if (item.status !== "overdue") return false;
@@ -2613,6 +2922,7 @@ function renderPopulation() {
   setElementHtml(populationRadar, renderRadarChart("栖霞区慢病风险平均画像", districtCohort.averageRadar));
   if (hospitalOverviewGrid && hospitalDetailPanel) renderHospitalOverview();
   if (qixiaPublicProfile) renderQixiaPublicProfile();
+  renderDynamicCommandStage();
   renderExecutiveCockpit();
   if (reminderCenter) renderReminderCenter();
 
@@ -3873,6 +4183,7 @@ createMeetingBtn?.addEventListener("click", async () => {
 
 hospitalFilter?.addEventListener("change", async () => {
   state.filters.hospitalId = hospitalFilter.value;
+  state.dynamicHospitalFocusId = hospitalFilter.value;
   state.followupClinician = "";
   await refreshDashboard();
   await loadPopulation();
