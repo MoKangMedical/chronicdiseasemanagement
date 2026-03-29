@@ -32,7 +32,7 @@
   </head>
   <body data-page="followups-clinician">
     <div class="shell">
-      <aside class="sidebar">
+      <header class="sidebar app-topbar">
         <div class="brand">
           <div class="brand-mark">慢病</div>
           <div>
@@ -47,46 +47,18 @@
           <a class="sidebar-nav-link active" href="./followups-clinician.html">医生工作视图</a>
           <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
         </nav>
+      </header>
 
-        <div class="sidebar-block">
-          <div class="block-label">当前筛选</div>
-          <div id="summary-metrics" class="metric-stack"></div>
-        </div>
-
-        <div class="sidebar-block">
-          <div class="block-label">患者管理列表</div>
-          <div id="population-list" class="population-list"></div>
-        </div>
-      </aside>
-
-      <main class="main-panel">
-        <section class="page-banner page-banner-workbench">
-          <div class="page-banner-copy">
-            <div class="page-banner-kicker">Clinician Workbench</div>
-            <h2>医生工作台</h2>
-            <p>面向主诊医生、全科医生与健康管理师的日常工作页面，强调我的待办、我负责的患者、已完成复评和按人归类的随访督办。</p>
-          </div>
-          <div class="page-banner-chips">
-            <div class="banner-chip">
-              <span class="banner-chip-label">页面定位</span>
-              <strong>医生工作台</strong>
-            </div>
-            <div class="banner-chip">
-              <span class="banner-chip-label">操作焦点</span>
-              <strong>我的待办 / 我的患者</strong>
-            </div>
-            <div class="banner-chip">
-              <span class="banner-chip-label">协同方式</span>
-              <strong>主诊 / 责任 / 随访</strong>
-            </div>
-          </div>
-        </section>
-
-        <header class="hero">
+      <main class="main-panel clinician-workbench-page">
+        <header class="hero hero-workbench clinician-command-header">
           <div class="hero-copy">
-            <p class="eyebrow">Clinician Work View</p>
-            <h2>医生工作视图</h2>
+            <p class="eyebrow">Clinician Follow-up Workbench</p>
+            <h2>医生临床随访工作台</h2>
             <p id="hero-subtitle" class="hero-subtitle"></p>
+            <div class="hero-meta-strip">
+              <span id="management-scope-summary" class="hero-meta-chip">当前视角加载中</span>
+              <span id="management-updated-at" class="hero-meta-chip">更新时间加载中</span>
+            </div>
           </div>
           <div class="hero-tools">
             <div class="filter-strip">
@@ -106,14 +78,6 @@
                 <span>随访医生</span>
                 <select id="followup-clinician-filter"></select>
               </label>
-              <label class="filter-field">
-                <span>任务状态</span>
-                <select id="followup-status-filter">
-                  <option value="overdue">仅看逾期</option>
-                  <option value="active">逾期 + 临近逾期</option>
-                  <option value="all">全部任务</option>
-                </select>
-              </label>
             </div>
             <div class="hero-actions">
               <button id="export-followups-btn" class="primary-button">导出当前逾期待办 Excel</button>
@@ -122,106 +86,89 @@
           </div>
         </header>
 
-        <section class="grid grid-followup-overview">
-          <article class="panel">
+        <section class="clinician-layout" data-reveal>
+          <aside class="panel clinician-lane clinician-lane-left">
             <div class="panel-head">
-              <span class="panel-kicker">随访统计</span>
-              <h3>医生维度督办摘要</h3>
-            </div>
-            <div id="followup-summary" class="care-plan-summary"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">提醒中心</span>
-              <h3>当前医生逾期待办</h3>
-            </div>
-            <div id="reminder-center" class="care-plan-summary"></div>
-          </article>
-        </section>
-
-        <section class="grid grid-followup-ops">
-          <article class="panel panel-feature">
-            <div class="panel-head">
-              <span class="panel-kicker">医生运营驾驶舱</span>
-              <h3>我的患者、我的任务、我的压力量化</h3>
-            </div>
-            <div id="followup-ops-panel" class="care-plan-summary"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">角色负荷</span>
-              <h3>当前筛选下的角色工作负载</h3>
-            </div>
-            <div id="followup-workload-panel" class="care-plan-summary"></div>
-          </article>
-        </section>
-
-        <section class="grid grid-followup-tabs">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">医生任务视图</span>
-              <h3>我的待办 / 我负责的患者 / 已完成复评</h3>
+              <span class="panel-kicker">分角色工作台</span>
+              <h3>实时风险队列</h3>
             </div>
             <div id="clinician-tabs" class="tab-strip"></div>
-          </article>
-        </section>
+            <div id="population-list" class="clinician-patient-stream"></div>
+          </aside>
 
-        <section class="grid grid-followup-groups">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">任务分组</span>
-              <h3>按随访医生归类的任务板</h3>
-            </div>
-            <div id="followup-groups" class="followup-groups"></div>
-          </article>
-        </section>
+          <section class="clinician-lane clinician-lane-center">
+            <div class="clinician-center-top">
+              <article class="panel">
+                <div class="panel-head">
+                  <span class="panel-kicker">患者画像</span>
+                  <h3 id="population-patient-title">当前患者核心画像</h3>
+                </div>
+                <div id="patient-overview" class="care-plan-summary"></div>
+              </article>
 
-        <section class="grid grid-followup-detail">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">患者阶段追踪</span>
-              <h3 id="population-patient-title">选择患者查看随访详情</h3>
+              <article class="panel">
+                <div class="panel-head">
+                  <span class="panel-kicker">精准风险分层</span>
+                  <h3>慢病域风险与驱动因子</h3>
+                </div>
+                <div id="risk-domain-grid" class="risk-domain-grid clinician-risk-grid"></div>
+              </article>
             </div>
-            <div id="population-patient-profile" class="care-plan-summary"></div>
-            <div id="population-intervention-summary" class="care-plan-summary"></div>
-            <div id="population-intervention-radar" class="radar-panel"></div>
-          </article>
 
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">指标改善</span>
-              <h3>4 / 8 / 12 周进展与解释</h3>
-            </div>
-            <div id="population-improvements" class="therapy-package-grid"></div>
-          </article>
-        </section>
+            <article class="panel clinician-integrated-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">整合管理</span>
+                <h3>疗程、用药、康复情况</h3>
+              </div>
+              <div id="care-plan-summary" class="care-plan-summary"></div>
+              <div id="population-intervention-summary" class="care-plan-summary"></div>
+              <div id="population-intervention-radar" class="radar-panel"></div>
+            </article>
 
-        <section class="grid grid-population-followup">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">管理留痕</span>
-              <h3>整理过程与随访时间轴</h3>
-            </div>
-            <div id="population-process" class="care-plan-summary"></div>
-          </article>
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">行为干预</span>
+                <h3>疗法包执行与阶段改善</h3>
+              </div>
+              <div id="therapy-package-grid" class="therapy-package-grid"></div>
+              <div id="population-improvements" class="therapy-package-grid"></div>
+            </article>
+          </section>
 
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">角色分工</span>
-              <h3>三甲、全科、健康管理协同督办</h3>
-            </div>
-            <div id="population-role-followups" class="therapy-package-grid"></div>
-          </article>
+          <aside class="clinician-lane clinician-lane-right">
+            <article class="panel clinician-tool-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">AI 病历</span>
+                <h3>病历全自动生成草案</h3>
+              </div>
+              <div id="record-draft" class="district-module-body"></div>
+            </article>
 
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">单患者风险</span>
-              <h3>当前患者慢病画像</h3>
-            </div>
-            <div id="population-patient-radar" class="radar-panel"></div>
-          </article>
+            <article class="panel clinician-tool-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">辅助诊断</span>
+                <h3>诊断建议与病情预测</h3>
+              </div>
+              <div id="diagnosis-support" class="district-module-body"></div>
+            </article>
+
+            <article class="panel clinician-tool-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">证据来源</span>
+                <h3>单人预测临床证据链</h3>
+              </div>
+              <div id="population-evidence" class="district-module-body"></div>
+            </article>
+
+            <article class="panel clinician-tool-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">MDT 在线讨论</span>
+                <h3 id="active-meeting-title">会诊房间及协作消息</h3>
+              </div>
+              <div id="meeting-list" class="meeting-list"></div>
+              <div id="meeting-detail" class="meeting-detail empty-state">会议消息、结论和追踪动作会显示在这里。</div>
+            </article>
+          </aside>
         </section>
       </main>
     </div>

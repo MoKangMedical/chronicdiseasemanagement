@@ -55,9 +55,18 @@ const state = {
     workbenchRole: "health-manager"
   },
   followupGroupBy: "hospital",
-  followupStatus: "overdue",
+  followupStatus: "active",
   followupClinician: "",
-  clinicianTab: "my-todos"
+  clinicianTab: "my-todos",
+  hospitalWorkbenchEntityView: "hospital",
+  hospitalWorkbenchSelectedEntityType: "",
+  hospitalWorkbenchSelectedEntity: "",
+  patientViewMode: "anomaly",
+  patientRiskFilter: "high",
+  patientDiseaseFilter: "",
+  patientSortBy: "priority",
+  patientPage: 1,
+  selectedPatientTableIds: []
 };
 
 function deepClone(value) {
@@ -70,6 +79,16 @@ function filterKey(hospitalId, workbenchRole) {
 
 function workspaceKey(patientId, workbenchRole) {
   return `${patientId}|${workbenchRole || "all"}`;
+}
+
+function shouldLoadWorkspacePage() {
+  return isHomePage || isClinicianFollowupsPage;
+}
+
+function syncActivePatient(patientId) {
+  if (!patientId) return;
+  state.populationPatientId = patientId;
+  state.patientId = patientId;
 }
 
 async function loadSnapshot() {
@@ -267,6 +286,22 @@ const followupStatusFilter = document.querySelector("#followup-status-filter");
 const followupClinicianFilter = document.querySelector("#followup-clinician-filter");
 const exportFollowupsBtn = document.querySelector("#export-followups-btn");
 const clinicianTabs = document.querySelector("#clinician-tabs");
+const managementScopeSummary = document.querySelector("#management-scope-summary");
+const managementUpdatedAt = document.querySelector("#management-updated-at");
+const managementKpiCards = document.querySelector("#management-kpi-cards");
+const managementTaskCards = document.querySelector("#management-task-cards");
+const entityViewToggle = document.querySelector("#entity-view-toggle");
+const managementFocusBoard = document.querySelector("#management-focus-board");
+const managementFocusDetail = document.querySelector("#management-focus-detail");
+const patientViewFilter = document.querySelector("#patient-view-filter");
+const patientRiskFilter = document.querySelector("#patient-risk-filter");
+const patientDiagnosisFilter = document.querySelector("#patient-diagnosis-filter");
+const patientSortFilter = document.querySelector("#patient-sort-filter");
+const patientTable = document.querySelector("#patient-table");
+const patientTableSummary = document.querySelector("#patient-table-summary");
+const patientTablePagination = document.querySelector("#patient-table-pagination");
+const exportSelectedPatientsBtn = document.querySelector("#export-selected-patients-btn");
+const clearPatientSelectionBtn = document.querySelector("#clear-patient-selection-btn");
 const publicDataSummary = document.querySelector("#public-data-summary");
 const publicDataSourcesNav = document.querySelector("#public-data-sources-nav");
 const publicDataAssetsPanel = document.querySelector("#public-data-assets-panel");
@@ -293,7 +328,11 @@ const interactiveSurfaceSelector = [
   ".hospital-card",
   ".entity-group",
   ".entity-subgroup",
+  ".workspace-section",
   ".overview-funnel-stage",
+  ".management-kpi-card",
+  ".task-priority-card",
+  ".focus-table-row",
   ".followup-group-card",
   ".followup-task",
   ".benchmark-row"
@@ -1679,6 +1718,8 @@ function renderFilters() {
   roleFilter.value = state.filters.workbenchRole;
   if (followupGroupFilter) followupGroupFilter.value = state.followupGroupBy;
   if (followupStatusFilter) followupStatusFilter.value = state.followupStatus;
+  if (patientViewFilter) patientViewFilter.value = state.patientViewMode;
+  if (patientSortFilter) patientSortFilter.value = state.patientSortBy;
 }
 
 function renderDashboard() {
@@ -3054,6 +3095,1233 @@ function deriveFollowupAssignments() {
   });
 }
 
+function isHighRiskLevel(level) {
+  return level === "high" || level === "critical";
+}
+
+function riskRank(level) {
+  return {
+    critical: 4,
+    high: 3,
+    medium: 2,
+    low: 1
+  }[level] ?? 0;
+}
+
+function taskStatusRank(status) {
+  return {
+    overdue: 4,
+    "at-risk": 3,
+    pending: 2,
+    done: 1,
+    none: 0
+  }[status] ?? 0;
+}
+
+function getRoleFollowupPlan(patient) {
+  const role = mapWorkbenchToFollowupRole(state.filters.workbenchRole);
+  return patient.roleFollowupPlans?.find((item) => item.role === role) ?? null;
+}
+
+function summarizePatientFollowups(patient) {
+  const plan = getRoleFollowupPlan(patient);
+  const summary = {
+    total: 0,
+    overdue: 0,
+    atRisk: 0,
+    pending: 0,
+    done: 0,
+    overallStatus: "none"
+  };
+
+  for (const todo of plan?.todoList ?? []) {
+    summary.total += 1;
+    if (todo.status === "overdue") summary.overdue += 1;
+    else if (todo.status === "at-risk") summary.atRisk += 1;
+    else if (todo.status === "pending") summary.pending += 1;
+    else if (todo.status === "done") summary.done += 1;
+  }
+
+  summary.overallStatus = summary.overdue
+    ? "overdue"
+    : summary.atRisk
+      ? "at-risk"
+      : summary.pending
+        ? "pending"
+        : summary.done
+          ? "done"
+          : "none";
+
+  return summary;
+}
+
+function compactDiagnosis(patient) {
+  const diagnoses = patient.diagnoses ?? [];
+  return {
+    primary: diagnoses[0] ?? "待补充诊断",
+    extraCount: Math.max(0, diagnoses.length - 1)
+  };
+}
+
+function getWorkbenchOwnerMode() {
+  return state.filters.workbenchRole === "health-manager" ? "responsible" : "primary";
+}
+
+function getWorkbenchOwnerKey(patient) {
+  const owner = getPatientOwner(patient, getWorkbenchOwnerMode());
+  return `${owner.name}|${owner.department}`;
+}
+
+function getPatientPriorityScore(patient) {
+  const followup = summarizePatientFollowups(patient);
+  return riskRank(getPatientRiskLevel(patient)) * 100 + taskStatusRank(followup.overallStatus) * 20 + patient.age / 10;
+}
+
+function getPatientTaskStatusPill(status) {
+  if (status === "overdue") return "critical";
+  if (status === "at-risk") return "medium";
+  if (status === "pending") return "low";
+  if (status === "done") return "low";
+  return "medium";
+}
+
+function getEntityAlertLevel({ overdueCount, highRiskCount, patientCount, alertCount }) {
+  if (overdueCount > 0) return "critical";
+  if (highRiskCount >= Math.max(2, Math.ceil(patientCount * 0.25)) || alertCount > 0) return "high";
+  return "low";
+}
+
+function getSelectedEntityPatients(patients) {
+  if (!state.hospitalWorkbenchSelectedEntity) return patients;
+
+  if (state.hospitalWorkbenchSelectedEntityType === "hospital") {
+    return patients.filter((patient) => patient.hospitalId === state.hospitalWorkbenchSelectedEntity);
+  }
+
+  if (state.hospitalWorkbenchSelectedEntityType === "doctor") {
+    return patients.filter((patient) => getWorkbenchOwnerKey(patient) === state.hospitalWorkbenchSelectedEntity);
+  }
+
+  return patients;
+}
+
+function getClinicianScopedPatients(patients) {
+  if (!isClinicianFollowupsPage || !state.followupClinician) return patients;
+  return patients.filter((patient) => getPatientOwner(patient, getWorkbenchOwnerMode()).name === state.followupClinician);
+}
+
+function getWorkbenchScopedAssignments(assignments) {
+  if (!isClinicianFollowupsPage || !state.followupClinician) return assignments;
+  return assignments.filter((item) => item.clinicianName === state.followupClinician);
+}
+
+function hasCompletedReassessment(patient) {
+  return (patient.careProcess ?? []).some((entry) => entry.phase === "reassessment");
+}
+
+function getDiagnosisOptions(patients) {
+  return [...new Set(patients.flatMap((patient) => patient.diagnoses ?? []))].sort((left, right) =>
+    left.localeCompare(right, "zh-CN")
+  );
+}
+
+function patientMatchesViewMode(patient, followupSummary) {
+  if (state.patientViewMode === "all") return true;
+  return isHighRiskLevel(getPatientRiskLevel(patient)) || followupSummary.overdue > 0 || followupSummary.atRisk > 0;
+}
+
+function patientMatchesFollowupStatus(followupSummary) {
+  if (state.followupStatus === "all") return true;
+  if (state.followupStatus === "active") return followupSummary.overdue > 0 || followupSummary.atRisk > 0;
+  return followupSummary.overallStatus === state.followupStatus || (state.followupStatus === "overdue" && followupSummary.overdue > 0);
+}
+
+function patientMatchesRiskFilter(patient) {
+  if (!state.patientRiskFilter || state.patientRiskFilter === "all") return true;
+  const level = getPatientRiskLevel(patient);
+  if (state.patientRiskFilter === "high") return isHighRiskLevel(level);
+  return level === state.patientRiskFilter;
+}
+
+function patientMatchesDiagnosisFilter(patient) {
+  if (!state.patientDiseaseFilter || state.patientDiseaseFilter === "all") return true;
+  return (patient.diagnoses ?? []).includes(state.patientDiseaseFilter);
+}
+
+function getHospitalWorkbenchPatients(patients) {
+  let result = getSelectedEntityPatients(patients).filter((patient) => {
+    const followupSummary = summarizePatientFollowups(patient);
+    return (
+      patientMatchesViewMode(patient, followupSummary) &&
+      patientMatchesFollowupStatus(followupSummary) &&
+      patientMatchesRiskFilter(patient) &&
+      patientMatchesDiagnosisFilter(patient)
+    );
+  });
+
+  if (isClinicianFollowupsPage) {
+    if (state.clinicianTab === "completed-reassessments") {
+      result = result.filter((patient) => hasCompletedReassessment(patient));
+    } else if (state.clinicianTab === "my-patients") {
+      result = result.filter((patient) => getClinicianScopedPatients([patient]).length > 0);
+    }
+  }
+
+  result = result.sort((left, right) => {
+    if (state.patientSortBy === "risk") {
+      return riskRank(getPatientRiskLevel(right)) - riskRank(getPatientRiskLevel(left));
+    }
+    if (state.patientSortBy === "age") {
+      return right.age - left.age;
+    }
+    if (state.patientSortBy === "doctor") {
+      return getPatientOwner(left, getWorkbenchOwnerMode()).name.localeCompare(
+        getPatientOwner(right, getWorkbenchOwnerMode()).name,
+        "zh-CN"
+      );
+    }
+    return getPatientPriorityScore(right) - getPatientPriorityScore(left);
+  });
+
+  return result;
+}
+
+function buildManagementEntityRows(patients, assignments) {
+  if (state.hospitalWorkbenchEntityView === "doctor") {
+    const grouped = new Map();
+    for (const patient of patients) {
+      const owner = getPatientOwner(patient, getWorkbenchOwnerMode());
+      const key = `${owner.name}|${owner.department}`;
+      const entry =
+        grouped.get(key) ??
+        {
+          key,
+          type: "doctor",
+          name: owner.name,
+          subtitle: `${owner.department} · ${patient.hospitalName}`,
+          patientIds: new Set(),
+          highRiskCount: 0,
+          overdueCount: 0,
+          alertCount: 0
+        };
+      entry.patientIds.add(patient.id);
+      if (isHighRiskLevel(getPatientRiskLevel(patient))) entry.highRiskCount += 1;
+      const followupSummary = summarizePatientFollowups(patient);
+      entry.overdueCount += followupSummary.overdue;
+      entry.alertCount += followupSummary.atRisk;
+      grouped.set(key, entry);
+    }
+
+    return [...grouped.values()]
+      .map((entry) => ({
+        ...entry,
+        patientCount: entry.patientIds.size,
+        level: getEntityAlertLevel({
+          overdueCount: entry.overdueCount,
+          highRiskCount: entry.highRiskCount,
+          patientCount: entry.patientIds.size,
+          alertCount: entry.alertCount
+        })
+      }))
+      .sort((left, right) => right.overdueCount - left.overdueCount || right.highRiskCount - left.highRiskCount);
+  }
+
+  const grouped = new Map();
+  for (const patient of patients) {
+    const hospital = getHospitalById(patient.hospitalId) ?? { id: patient.hospitalId, name: patient.hospitalName, level: "医院" };
+    const entry =
+      grouped.get(hospital.id) ??
+      {
+        key: hospital.id,
+        type: "hospital",
+        name: hospital.name,
+        subtitle: hospital.level ?? hospital.category ?? "医院",
+        patientIds: new Set(),
+        highRiskCount: 0,
+        overdueCount: 0,
+        alertCount: 0
+      };
+    entry.patientIds.add(patient.id);
+    if (isHighRiskLevel(getPatientRiskLevel(patient))) entry.highRiskCount += 1;
+    const followupSummary = summarizePatientFollowups(patient);
+    entry.overdueCount += followupSummary.overdue;
+    entry.alertCount += followupSummary.atRisk;
+    grouped.set(hospital.id, entry);
+  }
+
+  return [...grouped.values()]
+    .map((entry) => ({
+      ...entry,
+      patientCount: entry.patientIds.size,
+      level: getEntityAlertLevel({
+        overdueCount: entry.overdueCount,
+        highRiskCount: entry.highRiskCount,
+        patientCount: entry.patientIds.size,
+        alertCount: entry.alertCount
+      })
+    }))
+    .sort((left, right) => right.overdueCount - left.overdueCount || right.highRiskCount - left.highRiskCount);
+}
+
+function getSelectedManagementEntity(rows) {
+  if (!rows.length) return null;
+  const selected = rows.find((row) => row.key === state.hospitalWorkbenchSelectedEntity);
+  return selected ?? rows[0];
+}
+
+function buildTaskPriorityCards(patients, assignments, mode = "hospital") {
+  const overdueAssignments = assignments.filter((item) => item.status === "overdue");
+  const highRiskPatients = patients.filter((patient) => isHighRiskLevel(getPatientRiskLevel(patient)));
+  const doctorRows = buildManagementEntityRows(patients, assignments).filter((row) => row.type === "doctor");
+  const overloadedDoctors = doctorRows.filter((row) => row.overdueCount > 0 || row.patientCount >= 4);
+  const completedReassessments = patients.filter((patient) => hasCompletedReassessment(patient));
+
+  if (mode === "clinician") {
+    return [
+      {
+        key: "overdue",
+        title: "优先处理我的逾期随访",
+        count: overdueAssignments.length,
+        note: "先处理已过截止日的任务，避免患者脱落和复评延期。",
+        level: overdueAssignments.length ? "critical" : "low",
+        actionLabel: "立即查看",
+        target: "patient"
+      },
+      {
+        key: "high-risk",
+        title: "关注高风险患者",
+        count: highRiskPatients.length,
+        note: "高风险对象优先进入干预、复评和 MDT 协同。",
+        level: highRiskPatients.length ? "high" : "low",
+        actionLabel: "查看患者",
+        target: "patient"
+      },
+      {
+        key: "completed-reassessments",
+        title: "查看已完成复评",
+        count: completedReassessments.length,
+        note: "快速回顾已完成复评的人群，确认是否需要继续强化干预。",
+        level: completedReassessments.length ? "low" : "low",
+        actionLabel: "查看复评",
+        target: "patient"
+      }
+    ];
+  }
+
+  return [
+    {
+      key: "overdue",
+      title: "优先处理逾期随访",
+      count: overdueAssignments.length,
+      note: "先处理已过截止日的任务，避免管理闭环断点。",
+      level: overdueAssignments.length ? "critical" : "low",
+      actionLabel: "立即查看",
+      target: "patient"
+    },
+    {
+      key: "high-risk",
+      title: "关注高风险患者",
+      count: highRiskPatients.length,
+      note: "高风险和多病共管对象需要优先进入干预与复评。",
+      level: highRiskPatients.length ? "high" : "low",
+      actionLabel: "查看患者",
+      target: "patient"
+    },
+    {
+      key: "workload",
+      title: "查看医生工作负荷异常",
+      count: overloadedDoctors.length,
+      note: "优先关注逾期集中、患者负荷偏高的责任医生。",
+      level: overloadedDoctors.length ? "high" : "low",
+      actionLabel: "查看医生",
+      target: "entity"
+    }
+  ];
+}
+
+function applyHospitalWorkbenchFocus(focus) {
+  state.selectedPatientTableIds = [];
+  state.patientPage = 1;
+
+  if (focus === "overdue") {
+    state.followupStatus = "overdue";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "all";
+  } else if (focus === "high-risk") {
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "high";
+  } else if (focus === "workload") {
+    state.hospitalWorkbenchEntityView = "doctor";
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+  } else {
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "high";
+  }
+
+  renderFilters();
+  renderFollowupCenter();
+}
+
+function applyClinicianWorkbenchFocus(focus) {
+  state.selectedPatientTableIds = [];
+  state.patientPage = 1;
+
+  if (focus === "overdue") {
+    state.clinicianTab = "my-todos";
+    state.followupStatus = "overdue";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "all";
+  } else if (focus === "high-risk") {
+    state.clinicianTab = "my-patients";
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "high";
+  } else if (focus === "completed-reassessments") {
+    state.clinicianTab = "completed-reassessments";
+    state.followupStatus = "all";
+    state.patientViewMode = "all";
+    state.patientRiskFilter = "all";
+  } else {
+    state.clinicianTab = "my-todos";
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "high";
+  }
+
+  renderFilters();
+  renderFollowupCenter();
+}
+
+function scrollToWorkbenchSection(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function formatUpdatedAt() {
+  const source = state.publicSourceData?.updatedAt;
+  if (source) return `数据更新：${source}`;
+  return `数据更新：${new Date().toLocaleString("zh-CN", { hour12: false })}`;
+}
+
+function renderManagementKpis(patients, assignments, options = {}) {
+  if (!managementKpiCards) return;
+  const mode = options.mode ?? "hospital";
+  if (mode === "hospital") {
+    const cohort = state.populationCohort ?? state.populationDistrictCohort;
+    const insights = computeHospitalInsights();
+    const activeInsight = resolveActiveHospitalInsight(insights);
+    const scopedHospitalIds = state.filters.hospitalId
+      ? [state.filters.hospitalId]
+      : [...new Set((patients ?? []).map((patient) => patient.hospitalId))];
+    const doctorAndManagerCount = state.allClinicians.filter(
+      (clinician) =>
+        clinician.hospitalIds.some((hospitalId) => scopedHospitalIds.includes(hospitalId)) &&
+        ["specialist-doctor", "general-practitioner", "health-manager"].includes(clinician.workbenchRole)
+    ).length;
+    const cards = [
+      {
+        label: "患者数",
+        value: formatCompactMetric(activeInsight?.patientCount ?? patients.length),
+        note: activeInsight ? `${activeInsight.hospital.name} 当前纳管规模` : `${qixiaDistrictName}医院网络当前纳管规模`
+      },
+      {
+        label: "起效率",
+        value: activeInsight?.effectiveRate ?? "0%",
+        note: "风险分值下降至少 8 分或风险等级下降"
+      },
+      {
+        label: "覆盖率",
+        value: cohort?.publicProfile?.totalPopulation
+          ? coveragePercentage(activeInsight?.patientCount ?? patients.length, cohort.publicProfile.totalPopulation)
+          : "0%",
+        note: "基于区级公开人口底盘与当前纳管口径"
+      },
+      {
+        label: "院内可用医生与管理师",
+        value: formatCompactMetric(doctorAndManagerCount),
+        note: state.filters.hospitalId ? "当前医院可调用角色数" : `${qixiaDistrictName}全域可调用角色数`
+      }
+    ];
+
+    managementKpiCards.innerHTML = cards
+      .map(
+        (item) => `
+          <article class="management-kpi-card low static">
+            <div class="management-kpi-label">
+              <span>${item.label}</span>
+              <span class="status-pill low">概览</span>
+            </div>
+            <div class="management-kpi-value">
+              <strong>${item.value}</strong>
+            </div>
+            <div class="management-kpi-note">${item.note}</div>
+          </article>
+        `
+      )
+      .join("");
+    return;
+  }
+
+  const highRiskPatients = patients.filter((patient) => isHighRiskLevel(getPatientRiskLevel(patient))).length;
+  const overdueAssignments = assignments.filter((item) => item.status === "overdue").length;
+  const alertAssignments = assignments.filter((item) => item.status === "at-risk").length;
+  const kpis = [
+    {
+      key: "patients",
+      label: mode === "clinician" ? "我负责的患者数" : "管理患者数",
+      value: patients.length,
+      note:
+        mode === "clinician"
+          ? state.followupClinician
+            ? `${state.followupClinician} 当前范围`
+            : "当前医生工作范围"
+          : state.filters.hospitalId
+            ? "当前机构视图"
+            : `${qixiaDistrictName}范围内`,
+      level: "low"
+    },
+    {
+      key: "high-risk",
+      label: "高风险患者数",
+      value: highRiskPatients,
+      note: `${patients.length ? Math.round((highRiskPatients / patients.length) * 100) : 0}% 需优先干预`,
+      level: highRiskPatients ? "high" : "low"
+    },
+    {
+      key: "overdue",
+      label: "逾期随访数",
+      value: overdueAssignments,
+      note: overdueAssignments ? "建议立即进入任务清单" : "当前无逾期",
+      level: overdueAssignments ? "critical" : "low"
+    },
+    {
+      key: "alerts",
+      label: "待处理预警数",
+      value: alertAssignments,
+      note: alertAssignments ? "包含临近逾期和待干预对象" : "当前预警较少",
+      level: alertAssignments ? "high" : "low"
+    }
+  ];
+
+  managementKpiCards.innerHTML = kpis
+    .map(
+      (item) => `
+        <button class="management-kpi-card ${item.level}" data-management-focus="${item.key}">
+          <div class="management-kpi-label">
+            <span>${item.label}</span>
+            <span class="status-pill ${item.level === "critical" ? "critical" : item.level === "high" ? "high" : "low"}">${item.level === "critical" ? "优先" : item.level === "high" ? "关注" : "概览"}</span>
+          </div>
+          <div class="management-kpi-value">
+            <strong>${formatCompactMetric(item.value)}</strong>
+          </div>
+          <div class="management-kpi-note">${item.note}</div>
+        </button>
+      `
+    )
+    .join("");
+
+  managementKpiCards.querySelectorAll("[data-management-focus]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const focus = node.getAttribute("data-management-focus");
+      if (focus === "patients") {
+        if (mode === "clinician") {
+          state.clinicianTab = "my-patients";
+        }
+        state.patientViewMode = "all";
+        state.followupStatus = "all";
+        state.patientRiskFilter = "all";
+        state.patientPage = 1;
+        renderFilters();
+        renderFollowupCenter();
+        scrollToWorkbenchSection("patient-workbench-section");
+        return;
+      }
+      if (mode === "clinician") applyClinicianWorkbenchFocus(focus);
+      else applyHospitalWorkbenchFocus(focus);
+      scrollToWorkbenchSection("patient-workbench-section");
+    });
+  });
+}
+
+function renderTaskPriorityZone(patients, assignments, options = {}) {
+  if (!managementTaskCards) return;
+  const mode = options.mode ?? "hospital";
+  const cards = buildTaskPriorityCards(patients, assignments, mode);
+  managementTaskCards.innerHTML = cards
+    .map(
+      (card) => `
+        <article class="task-priority-card ${card.level}">
+          <div class="task-priority-head">
+            <div>
+              <strong>${card.title}</strong>
+              <p>${card.note}</p>
+            </div>
+            <div class="task-priority-count">${formatCompactMetric(card.count)}</div>
+          </div>
+          <div class="task-priority-footer">
+            <span class="mini-tag ${card.level === "critical" ? "critical" : card.level === "high" ? "high" : ""}">
+              ${card.level === "critical" ? "立即处理" : card.level === "high" ? "优先关注" : "常规"}
+            </span>
+            <button class="task-priority-button" data-priority-focus="${card.key}" data-priority-target="${card.target}">
+              ${card.actionLabel}
+            </button>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  managementTaskCards.querySelectorAll("[data-priority-focus]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const focus = node.getAttribute("data-priority-focus");
+      const target = node.getAttribute("data-priority-target");
+      if (mode === "clinician") applyClinicianWorkbenchFocus(focus);
+      else applyHospitalWorkbenchFocus(focus);
+      scrollToWorkbenchSection(target === "entity" ? "management-focus-section" : "patient-workbench-section");
+    });
+  });
+}
+
+function renderEntityViewToggle() {
+  if (!entityViewToggle) return;
+  const views = [
+    { key: "hospital", label: "按机构看" },
+    { key: "doctor", label: "按医生看" }
+  ];
+  entityViewToggle.innerHTML = views
+    .map(
+      (view) => `
+        <button class="entity-toggle-button ${state.hospitalWorkbenchEntityView === view.key ? "active" : ""}" data-entity-view="${view.key}">
+          ${view.label}
+        </button>
+      `
+    )
+    .join("");
+
+  entityViewToggle.querySelectorAll("[data-entity-view]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const nextView = node.getAttribute("data-entity-view");
+      if (!nextView || nextView === state.hospitalWorkbenchEntityView) return;
+      state.hospitalWorkbenchEntityView = nextView;
+      state.hospitalWorkbenchSelectedEntity = "";
+      state.hospitalWorkbenchSelectedEntityType = "";
+      state.selectedPatientTableIds = [];
+      state.patientPage = 1;
+      renderFollowupCenter();
+    });
+  });
+}
+
+function renderEntityPerformanceZone(patients, assignments, options = {}) {
+  if (!managementFocusBoard || !managementFocusDetail) return;
+  const mode = options.mode ?? "hospital";
+  renderEntityViewToggle();
+  const rows = buildManagementEntityRows(patients, assignments);
+  const activeRow = getSelectedManagementEntity(rows);
+  if (activeRow && activeRow.key !== state.hospitalWorkbenchSelectedEntity) {
+    state.hospitalWorkbenchSelectedEntity = activeRow.key;
+    state.hospitalWorkbenchSelectedEntityType = activeRow.type;
+  }
+
+  managementFocusBoard.innerHTML = rows.length
+    ? `
+      <div class="focus-table">
+        <div class="focus-table-head">
+          <span>${state.hospitalWorkbenchEntityView === "hospital" ? "机构" : "医生"}</span>
+          <span>${state.hospitalWorkbenchEntityView === "hospital" ? "等级" : "科室"}</span>
+          <span>患者</span>
+          <span>高风险</span>
+          <span>逾期</span>
+          <span>操作</span>
+        </div>
+        ${rows
+          .map(
+            (row) => `
+              <div class="focus-table-row ${activeRow?.key === row.key ? "active" : ""}" data-focus-row="${row.key}" data-focus-type="${row.type}">
+                <div class="focus-entity-main">
+                  <strong>${row.name}</strong>
+                  <div class="dim">${row.subtitle}</div>
+                </div>
+                <span class="mini-tag ${row.level === "critical" ? "critical" : row.level === "high" ? "high" : ""}">
+                  ${row.type === "hospital" ? row.subtitle : row.subtitle.split(" · ")[0]}
+                </span>
+                <strong>${row.patientCount}</strong>
+                <strong>${row.highRiskCount}</strong>
+                <strong>${row.overdueCount}</strong>
+                <div class="focus-table-action">
+                  <button class="focus-row-button" data-focus-detail="${row.key}" data-focus-type="${row.type}">查看详情</button>
+                </div>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+    `
+    : `<div class="note-block">当前范围内暂无可展示的机构或医生表现数据。</div>`;
+
+  const selectedPatients = activeRow
+    ? getSelectedEntityPatients(patients.filter((patient) => {
+        if (activeRow.type === "hospital") return patient.hospitalId === activeRow.key;
+        return getWorkbenchOwnerKey(patient) === activeRow.key;
+      }))
+    : [];
+
+  managementFocusDetail.innerHTML = activeRow
+    ? `
+      <div class="focus-detail-card">
+        <h4>${activeRow.name}</h4>
+        <div class="dim">${activeRow.subtitle}</div>
+        <div class="focus-stat-list">
+          <div class="focus-stat-item"><span>管理患者</span><strong>${activeRow.patientCount}</strong></div>
+          <div class="focus-stat-item"><span>高风险人数</span><strong>${activeRow.highRiskCount}</strong></div>
+          <div class="focus-stat-item"><span>逾期任务</span><strong>${activeRow.overdueCount}</strong></div>
+          <div class="focus-stat-item"><span>待处理预警</span><strong>${activeRow.alertCount}</strong></div>
+        </div>
+      </div>
+      <div class="focus-detail-card">
+        <h4>建议动作</h4>
+        <ul class="mini-list">
+          <li>优先查看 ${activeRow.overdueCount ? "逾期任务" : "高风险患者"}，避免管理闭环延迟。</li>
+          <li>${activeRow.type === "hospital" ? "下钻到该机构患者列表" : "下钻到该医生名下患者列表"}，收敛当天处理范围。</li>
+          <li>${mode === "clinician" ? "结合我的待办和复评结果，判断是否需要强化干预或升级 MDT。" : "必要时导出逾期待办，安排责任医生和健康管理师当天完成回访。"}</li>
+        </ul>
+        <button class="task-priority-button" data-open-selected-entity>只看该${activeRow.type === "hospital" ? "机构" : "医生"}患者</button>
+      </div>
+    `
+    : `<div class="note-block">请选择一个机构或医生查看详细表现。</div>`;
+
+  managementFocusBoard.querySelectorAll("[data-focus-detail], [data-focus-row]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.hospitalWorkbenchSelectedEntity = node.getAttribute("data-focus-detail") || node.getAttribute("data-focus-row") || "";
+      state.hospitalWorkbenchSelectedEntityType = node.getAttribute("data-focus-type") || "";
+      state.patientPage = 1;
+      renderFollowupCenter();
+    });
+  });
+
+  managementFocusDetail.querySelector("[data-open-selected-entity]")?.addEventListener("click", () => {
+    state.patientPage = 1;
+    scrollToWorkbenchSection("patient-workbench-section");
+    renderFollowupCenter();
+  });
+}
+
+function syncPatientWorkbenchFilters(patients) {
+  if (patientViewFilter) patientViewFilter.value = state.patientViewMode;
+
+  if (patientRiskFilter) {
+    patientRiskFilter.innerHTML = `
+      <option value="all">全部风险等级</option>
+      <option value="critical">仅危急</option>
+      <option value="high">高风险及以上</option>
+      <option value="medium">仅中风险</option>
+      <option value="low">仅低风险</option>
+    `;
+    patientRiskFilter.value = state.patientRiskFilter;
+  }
+
+  if (patientDiagnosisFilter) {
+    const options = getDiagnosisOptions(patients);
+    patientDiagnosisFilter.innerHTML = [
+      `<option value="all">全部病种</option>`,
+      ...options.map((item) => `<option value="${item}">${item}</option>`)
+    ].join("");
+    patientDiagnosisFilter.value = state.patientDiseaseFilter || "all";
+  }
+
+  if (patientSortFilter) patientSortFilter.value = state.patientSortBy;
+  if (followupStatusFilter) followupStatusFilter.value = state.followupStatus;
+}
+
+function exportSelectedPatients(selectedPatients) {
+  if (!selectedPatients.length) return;
+  const exportDate = new Date().toISOString().slice(0, 10);
+  const rows = [
+    ["姓名", "机构", "责任医生", "风险等级", "主要诊断", "年龄", "随访状态", "下次随访"],
+    ...selectedPatients.map((patient) => {
+      const owner = getPatientOwner(patient, getWorkbenchOwnerMode());
+      const diagnosis = compactDiagnosis(patient);
+      const followup = summarizePatientFollowups(patient);
+      return [
+        patient.name,
+        patient.hospitalName,
+        owner.name,
+        formatLevel(getPatientRiskLevel(patient)),
+        diagnosis.primary,
+        `${patient.age}`,
+        formatTodoStatus(followup.overallStatus),
+        patient.nextFollowUpDate
+      ];
+    })
+  ];
+
+  if (typeof window !== "undefined" && window.XLSX) {
+    const worksheet = window.XLSX.utils.aoa_to_sheet(rows);
+    worksheet["!cols"] = [{ wch: 10 }, { wch: 18 }, { wch: 12 }, { wch: 10 }, { wch: 24 }, { wch: 8 }, { wch: 12 }, { wch: 14 }];
+    const workbook = window.XLSX.utils.book_new();
+    window.XLSX.utils.book_append_sheet(workbook, worksheet, "患者清单");
+    window.XLSX.writeFile(workbook, `patient-workbench-selected-${exportDate}.xlsx`);
+    return;
+  }
+
+  const csv = rows
+    .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(","))
+    .join("\n");
+  downloadTextFile(`patient-workbench-selected-${exportDate}.csv`, csv, "text/csv;charset=utf-8");
+}
+
+function renderPatientTableZone(patients, options = {}) {
+  if (!patientTable || !patientTableSummary || !patientTablePagination) return;
+  const mode = options.mode ?? "hospital";
+  syncPatientWorkbenchFilters(patients);
+  const visiblePatients = getHospitalWorkbenchPatients(patients);
+  const pageSize = 8;
+  const totalPages = Math.max(1, Math.ceil(visiblePatients.length / pageSize));
+  state.patientPage = Math.max(1, Math.min(state.patientPage, totalPages));
+  const start = (state.patientPage - 1) * pageSize;
+  const pageItems = visiblePatients.slice(start, start + pageSize);
+  const selectedIds = new Set(state.selectedPatientTableIds);
+
+  patientTableSummary.innerHTML = `
+    <div class="entity-counts">
+      <span class="mini-tag">${visiblePatients.length} 人</span>
+      <span class="mini-tag ${state.patientViewMode === "anomaly" ? "high" : ""}">${state.patientViewMode === "anomaly" ? "异常优先" : "全部患者"}</span>
+      <span class="mini-tag ${state.followupStatus !== "all" ? "critical" : ""}">${state.followupStatus === "all" ? "全部任务" : state.followupStatus === "active" ? "逾期 + 临近逾期" : "仅逾期"}</span>
+      ${mode === "clinician" ? `<span class="mini-tag">${clinicianTabLabel(state.clinicianTab)}</span>` : ""}
+    </div>
+    <div class="dim">${mode === "clinician" ? "默认先显示与当前医生最相关的异常患者；可切到“我负责的患者”或“已完成复评”。" : "默认只显示异常患者。点击风险卡、任务卡或机构/医生行，可直接下钻到已筛选列表。"}</div>
+  `;
+
+  const selectedPatients = visiblePatients.filter((patient) => selectedIds.has(patient.id));
+  clearPatientSelectionBtn && (clearPatientSelectionBtn.disabled = !selectedPatients.length);
+  exportSelectedPatientsBtn && (exportSelectedPatientsBtn.disabled = !selectedPatients.length);
+
+  patientTable.innerHTML = `
+    <div class="patient-batch-bar">
+      <div class="dim">已选择 ${selectedPatients.length} 位患者，可直接批量导出当前处理清单。</div>
+      <div class="patient-batch-actions">
+        <span class="mini-tag">${state.patientPage} / ${totalPages} 页</span>
+      </div>
+    </div>
+    <div class="patient-table-frame">
+      <table class="patient-table">
+        <thead>
+          <tr>
+            <th style="width:40px;"></th>
+            <th>姓名</th>
+            <th>风险等级</th>
+            <th>主要诊断</th>
+            <th>年龄</th>
+            <th>责任医生 / 所属机构</th>
+            <th>最近随访状态</th>
+            <th style="text-align:right;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${
+            pageItems.length
+              ? pageItems
+                  .map((patient) => {
+                    const owner = getPatientOwner(patient, getWorkbenchOwnerMode());
+                    const diagnosis = compactDiagnosis(patient);
+                    const followup = summarizePatientFollowups(patient);
+                    return `
+                      <tr class="${state.populationPatientId === patient.id ? "selected" : ""}">
+                        <td><input type="checkbox" data-patient-select="${patient.id}" ${selectedIds.has(patient.id) ? "checked" : ""} /></td>
+                        <td>
+                          <div class="patient-row-main">
+                            <strong>${patient.name}</strong>
+                            <div class="dim">${patient.managementTier} · 下次随访 ${patient.nextFollowUpDate}</div>
+                          </div>
+                        </td>
+                        <td><span class="status-pill ${getPatientRiskLevel(patient)}">${formatLevel(getPatientRiskLevel(patient))}</span></td>
+                        <td>
+                          <div class="patient-diagnosis-cell">
+                            <span>${diagnosis.primary}</span>
+                            ${diagnosis.extraCount ? `<span class="diagnosis-more-tag">+${diagnosis.extraCount}</span>` : ""}
+                          </div>
+                        </td>
+                        <td>${patient.age} 岁</td>
+                        <td>
+                          <div class="patient-row-main">
+                            <strong>${owner.name}</strong>
+                            <div class="dim">${patient.hospitalName}</div>
+                          </div>
+                        </td>
+                        <td><span class="status-pill ${getPatientTaskStatusPill(followup.overallStatus)}">${formatTodoStatus(followup.overallStatus)}</span></td>
+                        <td>
+                          <div class="patient-row-actions">
+                            <button class="patient-row-button secondary" data-open-patient="${patient.id}">查看</button>
+                          </div>
+                        </td>
+                      </tr>
+                    `;
+                  })
+                  .join("")
+              : `<tr><td colspan="8"><div class="note-block">当前筛选条件下没有匹配患者。</div></td></tr>`
+          }
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  patientTablePagination.innerHTML = `
+    <div class="dim">显示 ${visiblePatients.length ? start + 1 : 0}-${Math.min(start + pageSize, visiblePatients.length)} / ${visiblePatients.length}</div>
+    <div class="pagination-controls">
+      <button class="pagination-button" data-page-action="prev" ${state.patientPage <= 1 ? "disabled" : ""}>上一页</button>
+      <button class="pagination-button" data-page-action="next" ${state.patientPage >= totalPages ? "disabled" : ""}>下一页</button>
+    </div>
+  `;
+
+  patientTable.querySelectorAll("[data-open-patient]").forEach((node) => {
+    node.addEventListener("click", async () => {
+      syncActivePatient(node.getAttribute("data-open-patient"));
+      renderPopulation();
+      renderFollowupCenter();
+      if (shouldLoadWorkspacePage()) await loadWorkspace();
+    });
+  });
+
+  patientTable.querySelectorAll("[data-patient-select]").forEach((node) => {
+    node.addEventListener("change", () => {
+      const id = node.getAttribute("data-patient-select");
+      if (!id) return;
+      const next = new Set(state.selectedPatientTableIds);
+      if (node.checked) next.add(id);
+      else next.delete(id);
+      state.selectedPatientTableIds = [...next];
+      renderFollowupCenter();
+    });
+  });
+
+  patientTablePagination.querySelectorAll("[data-page-action]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const action = node.getAttribute("data-page-action");
+      state.patientPage += action === "next" ? 1 : -1;
+      renderFollowupCenter();
+    });
+  });
+
+  if (exportSelectedPatientsBtn) {
+    exportSelectedPatientsBtn.onclick = () => {
+      exportSelectedPatients(selectedPatients);
+    };
+  }
+
+  if (clearPatientSelectionBtn) {
+    clearPatientSelectionBtn.onclick = () => {
+      state.selectedPatientTableIds = [];
+      renderFollowupCenter();
+    };
+  }
+}
+
+function renderHospitalWorkbench() {
+  const assignments = deriveFollowupAssignments();
+  const patients = getCurrentPopulationPatients();
+  setElementText(
+    heroSubtitle,
+    `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}${labelWorkbenchRole(state.filters.workbenchRole)} · 默认先看异常，再看全量`
+  );
+  setElementText(
+    managementScopeSummary,
+    `当前视角：${state.filters.hospitalId ? getHospitalById(state.filters.hospitalId)?.name ?? "指定医院" : `${qixiaDistrictName}全域`} · ${labelWorkbenchRole(state.filters.workbenchRole)}`
+  );
+  setElementText(managementUpdatedAt, formatUpdatedAt());
+
+  renderManagementKpis(patients, assignments, { mode: "hospital" });
+  renderHospitalDashboardPanels();
+  renderTaskPriorityZone(patients, assignments, { mode: "hospital" });
+  renderEntityPerformanceZone(patients, assignments, { mode: "hospital" });
+  renderPatientTableZone(patients, { mode: "hospital" });
+  refreshInterfacePolish();
+}
+
+function renderClinicianWorkbench() {
+  const allAssignments = deriveFollowupAssignments();
+  syncFollowupClinicianFilter(allAssignments);
+  const assignments = getWorkbenchScopedAssignments(allAssignments);
+  const patients = getClinicianScopedPatients(getCurrentPopulationPatients());
+
+  setElementText(
+    heroSubtitle,
+    `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}${labelWorkbenchRole(state.filters.workbenchRole)}${state.followupClinician ? ` · ${state.followupClinician}` : ""} · 默认先看异常任务`
+  );
+  setElementText(
+    managementScopeSummary,
+    `当前视角：${state.filters.hospitalId ? getHospitalById(state.filters.hospitalId)?.name ?? "指定医院" : `${qixiaDistrictName}全域`} · ${labelWorkbenchRole(state.filters.workbenchRole)}${state.followupClinician ? ` · ${state.followupClinician}` : ""}`
+  );
+  setElementText(managementUpdatedAt, formatUpdatedAt());
+
+  renderClinicianTabs();
+  renderManagementKpis(patients, assignments, { mode: "clinician" });
+  renderTaskPriorityZone(patients, assignments, { mode: "clinician" });
+  renderEntityPerformanceZone(patients, assignments, { mode: "clinician" });
+  renderPatientTableZone(patients, { mode: "clinician" });
+  if (state.populationCohort) {
+    renderPopulation();
+  }
+  renderClinicianClinicalWorkbench();
+  refreshInterfacePolish();
+}
+
+function renderHospitalDashboardPanels() {
+  const cohort = state.populationCohort ?? state.populationDistrictCohort;
+  if (!cohort) return;
+  const insights = computeHospitalInsights();
+  const activeInsight = resolveActiveHospitalInsight(insights);
+
+  if (hospitalDetailPanel) {
+    hospitalDetailPanel.innerHTML = activeInsight
+      ? `
+        <div class="plan-block plan-block-highlight">
+          <h4>${activeInsight.hospital.name}</h4>
+          <div class="dim">${activeInsight.hospital.level ?? "医院"} · ${activeInsight.hospital.category ?? ""} · ${activeInsight.hospital.networkRole ?? ""}</div>
+          <div class="stat-grid">
+            ${statChip("管理患者", activeInsight.patientCount)}
+            ${statChip("起效率", activeInsight.effectiveRate)}
+            ${statChip("前评分均值", activeInsight.averageBefore)}
+            ${statChip("后评分均值", activeInsight.averageAfter)}
+          </div>
+        </div>
+        <div class="hospital-analytics-split">
+          <div class="plan-block">
+            <h4>疾病比例</h4>
+            <div class="story-bar-list">
+              ${activeInsight.diseaseRatios
+                .map(
+                  (item) => `
+                    <div class="story-bar-item">
+                      <div class="story-bar-copy">
+                        <span>${item.label}</span>
+                        <strong>${item.ratio}</strong>
+                      </div>
+                      <div class="story-bar-track"><i data-progress-width="${item.ratio}"></i></div>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          </div>
+          <div class="plan-block">
+            <h4>治疗包类型与比例</h4>
+            <div class="story-bar-list">
+              ${activeInsight.packageRatios
+                .map(
+                  (item) => `
+                    <div class="story-bar-item">
+                      <div class="story-bar-copy">
+                        <span>${item.title}</span>
+                        <strong>${item.ratio}</strong>
+                      </div>
+                      <div class="story-bar-track warm"><i data-progress-width="${item.ratio}"></i></div>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          </div>
+        </div>
+      `
+      : `<div class="note-block">当前没有可展示的医院详情。</div>`;
+    activateProgressBars(hospitalDetailPanel);
+  }
+
+  if (medclawOverviewPanel || medclawGuardrails) {
+    const scopedHospital = activeInsight?.hospital?.name ?? `${qixiaDistrictName}医院网络`;
+    setElementHtml(
+      medclawOverviewPanel,
+      `
+        <div class="plan-block">
+          <h4>${state.medclawOverview?.name ?? "MedClaw"}</h4>
+          <div class="dim">${state.medclawOverview?.tagline ?? "面向医院级临床场景的智能边界平台"}</div>
+          <ul class="mini-list">
+            ${(state.medclawOverview?.modules ?? []).map((item) => `<li>${item}</li>`).join("")}
+          </ul>
+        </div>
+        <div class="plan-block">
+          <h4>当前作用域</h4>
+          <ul class="mini-list">
+            <li>医院：${scopedHospital}</li>
+            <li>角色：${labelWorkbenchRole(state.filters.workbenchRole)}</li>
+            <li>定位：医院级智能边界、只读审计、临床协同增强</li>
+          </ul>
+        </div>
+      `
+    );
+    setElementHtml(
+      medclawGuardrails,
+      `
+        <div class="plan-block">
+          <h4>临床边界</h4>
+          <ul class="mini-list">
+            <li>只读临床数据，不回写原始病历与检查。</li>
+            <li>按院内角色隔离访问范围，管理台只展示当前医院范围。</li>
+            <li>围绕影像解析、病历草拟、辅助诊断和审计留痕提供能力。</li>
+          </ul>
+        </div>
+      `
+    );
+  }
+}
+
+function renderClinicianClinicalWorkbench() {
+  if (!isClinicianFollowupsPage || !state.workspace) return;
+  const workspace = state.workspace;
+  const medclawWorkspace = state.medclawWorkspace;
+  const patient = workspace.patient;
+  const liveRisk = workspace.liveRiskAssessment;
+  const carePlan = workspace.latestCarePlan?.content ?? null;
+  const cohortPatient = (state.populationCohort?.patients ?? []).find((item) => item.id === state.populationPatientId) ?? null;
+
+  setElementHtml(
+    patientOverview,
+    [
+      statChip("姓名", patient.name),
+      statChip("医院", patient.hospitalName),
+      statChip("年龄", `${patient.age} 岁`),
+      statChip("实时风险", formatLevel(liveRisk.level)),
+      statChip("血压", `${patient.vitals.systolicBp}/${patient.vitals.diastolicBp}`),
+      statChip("睡眠", `${patient.lifestyle.averageSleepHours}h`)
+    ].join("")
+  );
+
+  setElementHtml(
+    riskDomainGrid,
+    liveRisk.domainAssessments
+      .map(
+        (domain) => `
+          <article class="risk-card">
+            <div class="status-pill ${domain.level}">${domain.label} · ${formatLevel(domain.level)}</div>
+            <h4>${domain.score} 分</h4>
+            <div class="dim">${domain.summary}</div>
+            <ul class="mini-list">${domain.drivers.map((driver) => `<li>${driver}</li>`).join("")}</ul>
+          </article>
+        `
+      )
+      .join("")
+  );
+
+  const medications = patient.medications ?? [];
+  const careGoals = carePlan?.careGoals ?? [];
+  const rehabSignals = cohortPatient
+    ? [
+        cohortPatient.adherenceSummary,
+        `下次随访：${cohortPatient.nextFollowUpDate}`,
+        `管理层级：${cohortPatient.managementTier}`,
+        ...(cohortPatient.topDomains ?? []).map((domain) => `重点慢病：${labelRiskDomain(domain)}`)
+      ]
+    : ["当前正在读取康复与随访信号"];
+
+  setElementHtml(
+    carePlanSummary,
+    `
+      <div class="plan-block">
+        <h4>疗程</h4>
+        <ul class="mini-list">${careGoals.length ? careGoals.map((goal) => `<li>${goal}</li>`).join("") : "<li>待生成整合疗程目标</li>"}</ul>
+      </div>
+      <div class="plan-block">
+        <h4>用药</h4>
+        <ul class="mini-list">
+          ${
+            medications.length
+              ? medications.map((item) => `<li>${item.name} · ${item.dose} · 依从性 ${item.adherence}</li>`).join("")
+              : "<li>当前未记录用药方案</li>"
+          }
+        </ul>
+      </div>
+      <div class="plan-block">
+        <h4>康复情况</h4>
+        <ul class="mini-list">${rehabSignals.map((item) => `<li>${item}</li>`).join("")}</ul>
+      </div>
+    `
+  );
+
+  setElementHtml(
+    therapyPackageGrid,
+    (carePlan?.therapyPackages ?? []).length
+      ? carePlan.therapyPackages
+          .map(
+            (pkg) => `
+              <button class="package-card package-card-action">
+                <div class="panel-kicker">${pkg.title}</div>
+                <h4>${pkg.content.title ?? pkg.title}</h4>
+                <div class="dim">${pkg.content.rationale ?? ""}</div>
+                <ul class="mini-list">${(pkg.content.interventions ?? []).map((item) => `<li>${item}</li>`).join("")}</ul>
+              </button>
+            `
+          )
+          .join("")
+      : `<div class="note-block">当前患者尚未生成行为干预疗法包。</div>`
+  );
+
+  const recordDraftContent = medclawWorkspace?.recordDraft ?? null;
+  setElementHtml(
+    recordDraft,
+    recordDraftContent
+      ? `
+        <div class="plan-block">
+          <h4>主诉</h4>
+          <div class="dim">${recordDraftContent.chiefComplaint}</div>
+        </div>
+        <div class="plan-block">
+          <h4>现病史</h4>
+          <div class="dim">${recordDraftContent.presentIllness}</div>
+        </div>
+        <div class="plan-block">
+          <h4>查体与检查</h4>
+          <ul class="mini-list">
+            <li>${recordDraftContent.physicalExam}</li>
+            <li>${recordDraftContent.auxiliaryExams}</li>
+          </ul>
+        </div>
+      `
+      : `<div class="note-block">当前未生成 AI 病历草案。</div>`
+  );
+
+  const diagnosisSupportContent = medclawWorkspace?.diagnosisSupport ?? null;
+  setElementHtml(
+    diagnosisSupport,
+    diagnosisSupportContent
+      ? `
+        <div class="plan-block">
+          <h4>诊断建议</h4>
+          <ul class="mini-list">
+            ${diagnosisSupportContent.suggestions
+              .map(
+                (item) =>
+                  `<li>${item.diagnosis}（置信度 ${Math.round(item.confidence * 100)}%）：${item.rationale.join("；")}</li>`
+              )
+              .join("")}
+          </ul>
+        </div>
+        <div class="plan-block">
+          <h4>病情预测</h4>
+          <ul class="mini-list">${diagnosisSupportContent.predictions
+            .map((item) => `<li>${item.metric}：${item.value}；${item.explanation}</li>`)
+            .join("")}</ul>
+        </div>
+        ${
+          medclawWorkspace?.kgFollowup
+            ? `
+              <div class="plan-block">
+                <h4>KG-Followup 追问</h4>
+                <ul class="mini-list">
+                  ${medclawWorkspace.kgFollowup.questions.slice(0, 5).map((item) => `<li>${item.question}</li>`).join("")}
+                </ul>
+              </div>
+            `
+            : ""
+        }
+      `
+      : `<div class="note-block">当前未生成辅助诊断与病情预测建议。</div>`
+  );
+
+  renderMeetings();
+}
+
 function getVisibleFollowupAssignments() {
   const assignments = deriveFollowupAssignments();
   return assignments.filter((item) => {
@@ -3110,6 +4378,19 @@ function renderClinicianTabs() {
   clinicianTabs.querySelectorAll("[data-clinician-tab]").forEach((node) => {
     node.addEventListener("click", () => {
       state.clinicianTab = node.getAttribute("data-clinician-tab") || "my-todos";
+      state.selectedPatientTableIds = [];
+      state.patientPage = 1;
+      if (state.clinicianTab === "my-todos") {
+        state.patientViewMode = "anomaly";
+        state.followupStatus = "active";
+      } else if (state.clinicianTab === "my-patients") {
+        state.patientViewMode = "all";
+        state.followupStatus = "all";
+      } else if (state.clinicianTab === "completed-reassessments") {
+        state.patientViewMode = "all";
+        state.followupStatus = "all";
+      }
+      renderFilters();
       renderFollowupCenter();
     });
   });
@@ -3232,7 +4513,16 @@ function ensureSidebarNavigation() {
 }
 
 function renderFollowupCenter() {
-  if (!isFollowupsPage || !followupSummary || !followupGroups) return;
+  if (!isFollowupsPage) return;
+  if (isHospitalFollowupsPage) {
+    renderHospitalWorkbench();
+    return;
+  }
+  if (isClinicianFollowupsPage) {
+    renderClinicianWorkbench();
+    return;
+  }
+  if (!followupSummary || !followupGroups) return;
 
   const assignments = deriveFollowupAssignments();
   syncFollowupClinicianFilter(assignments);
@@ -3497,10 +4787,11 @@ function renderFollowupCenter() {
     : `<div class="note-block">当前筛选条件下没有匹配的${isClinicianFollowupsPage ? clinicianTabLabel(state.clinicianTab) : "随访任务"}。</div>`;
 
   followupGroups.querySelectorAll("[data-followup-patient]").forEach((node) => {
-    node.addEventListener("click", () => {
-      state.populationPatientId = node.getAttribute("data-followup-patient");
+    node.addEventListener("click", async () => {
+      syncActivePatient(node.getAttribute("data-followup-patient"));
       renderPopulation();
       renderFollowupCenter();
+      if (shouldLoadWorkspacePage()) await loadWorkspace();
     });
   });
 
@@ -3584,9 +4875,12 @@ function renderPopulation() {
   renderExecutiveCockpit();
   if (reminderCenter) renderReminderCenter();
 
+  const queuePatients = isClinicianFollowupsPage
+    ? getHospitalWorkbenchPatients(getClinicianScopedPatients(cohort.patients)).slice(0, 18)
+    : cohort.patients;
   setElementHtml(
     populationList,
-    renderHierarchicalPatientList(cohort.patients, state.populationPatientId, {
+    renderHierarchicalPatientList(queuePatients, state.populationPatientId, {
       ownerMode: state.filters.workbenchRole === "health-manager" ? "responsible" : "primary",
       renderPatient: (patient, isActive) => `
         <button class="population-row ${isActive ? "active" : ""}" data-population-id="${patient.id}">
@@ -3605,10 +4899,11 @@ function renderPopulation() {
   );
 
   populationList?.querySelectorAll("[data-population-id]").forEach((node) => {
-    node.addEventListener("click", () => {
-      state.populationPatientId = node.getAttribute("data-population-id");
+    node.addEventListener("click", async () => {
+      syncActivePatient(node.getAttribute("data-population-id"));
       renderPopulation();
       renderFollowupCenter();
+      if (shouldLoadWorkspacePage()) await loadWorkspace();
     });
   });
 
@@ -3879,7 +5174,7 @@ function renderPopulation() {
 }
 
 function renderCommandCenter() {
-  if (!commandCenterNetwork || !commandCenterQueue || !commandCenterKpis) return;
+  if (!commandCenterNetwork && !commandCenterQueue && !commandCenterKpis) return;
   const selectedHospital = state.hospitals.find((hospital) => hospital.id === state.filters.hospitalId);
   const networkHospitals = selectedHospital?.district
     ? state.hospitals.filter((hospital) => hospital.district === selectedHospital.district)
@@ -3921,7 +5216,8 @@ function renderCommandCenter() {
   const specialists = state.allClinicians.filter((clinician) => clinician.workbenchRole === "specialist-doctor").length;
   const healthManagers = state.allClinicians.filter((clinician) => clinician.workbenchRole === "health-manager").length;
 
-  commandCenterNetwork.innerHTML = `
+  if (commandCenterNetwork) {
+    commandCenterNetwork.innerHTML = `
     <div class="network-stage">
       ${tiers
         .map(
@@ -3958,8 +5254,10 @@ function renderCommandCenter() {
       </div>
     </div>
   `;
+  }
 
-  commandCenterQueue.innerHTML = queuePatients
+  if (commandCenterQueue) {
+    commandCenterQueue.innerHTML = queuePatients
     .map((patient, index) => {
       const topPrediction = [...patient.predictions].sort((left, right) => right.score - left.score)[0];
       return `
@@ -3978,8 +5276,10 @@ function renderCommandCenter() {
       `;
     })
     .join("");
+  }
 
-  commandCenterKpis.innerHTML = `
+  if (commandCenterKpis) {
+    commandCenterKpis.innerHTML = `
     <div class="plan-block">
       <h4>协同总览</h4>
       <div class="stat-grid">
@@ -4004,6 +5304,7 @@ function renderCommandCenter() {
       <div class="dim">${selectedHospital ? `当前医院：${selectedHospital.name}` : "当前展示：栖霞区三级诊疗协同网络"}</div>
     </div>
   `;
+  }
 }
 
 function renderWorkspace() {
@@ -4772,7 +6073,11 @@ async function loadWorkspace() {
   state.adapterOutput = adapterOutput;
   state.predictionSuite = predictionSuite;
   renderPatients();
-  renderWorkspace();
+  if (isClinicianFollowupsPage) {
+    renderClinicianClinicalWorkbench();
+  } else {
+    renderWorkspace();
+  }
 }
 
 async function loadPopulation() {
@@ -4827,7 +6132,7 @@ runWorkflowBtn?.addEventListener("click", async () => {
     await api(`/api/workflows/chronic-care/run/${state.patientId}`, { method: "POST" });
     await refreshDashboard();
     await loadPopulation();
-    if (isHomePage && patientName) await loadWorkspace();
+    if (shouldLoadWorkspacePage()) await loadWorkspace();
   } finally {
     runWorkflowBtn.disabled = false;
     runWorkflowBtn.textContent = "启动慢病工作流";
@@ -4843,24 +6148,38 @@ createMeetingBtn?.addEventListener("click", async () => {
     body: JSON.stringify({ topic })
   });
   await refreshDashboard();
-  if (isHomePage && patientName) await loadWorkspace();
+  if (shouldLoadWorkspacePage()) await loadWorkspace();
 });
 
 hospitalFilter?.addEventListener("change", async () => {
   state.filters.hospitalId = hospitalFilter.value;
   state.dynamicHospitalFocusId = hospitalFilter.value;
   state.followupClinician = "";
+  state.hospitalWorkbenchSelectedEntity = "";
+  state.hospitalWorkbenchSelectedEntityType = "";
+  state.selectedPatientTableIds = [];
+  state.patientPage = 1;
   await refreshDashboard();
   await loadPopulation();
-  if (isHomePage && patientName) await loadWorkspace();
+  if (shouldLoadWorkspacePage()) {
+    state.patientId = state.populationPatientId ?? state.patientId;
+    await loadWorkspace();
+  }
 });
 
 roleFilter?.addEventListener("change", async () => {
   state.filters.workbenchRole = roleFilter.value;
   state.followupClinician = "";
+  state.hospitalWorkbenchSelectedEntity = "";
+  state.hospitalWorkbenchSelectedEntityType = "";
+  state.selectedPatientTableIds = [];
+  state.patientPage = 1;
   await refreshDashboard();
   await loadPopulation();
-  if (isHomePage && patientName) await loadWorkspace();
+  if (shouldLoadWorkspacePage()) {
+    state.patientId = state.populationPatientId ?? state.patientId;
+    await loadWorkspace();
+  }
 });
 
 followupGroupFilter?.addEventListener("change", () => {
@@ -4871,12 +6190,45 @@ followupGroupFilter?.addEventListener("change", () => {
 
 followupStatusFilter?.addEventListener("change", () => {
   state.followupStatus = followupStatusFilter.value;
+  state.patientPage = 1;
+  state.selectedPatientTableIds = [];
   renderFilters();
   renderFollowupCenter();
 });
 
 followupClinicianFilter?.addEventListener("change", () => {
   state.followupClinician = followupClinicianFilter.value;
+  state.hospitalWorkbenchSelectedEntity = "";
+  state.hospitalWorkbenchSelectedEntityType = "";
+  state.selectedPatientTableIds = [];
+  state.patientPage = 1;
+  renderFollowupCenter();
+});
+
+patientViewFilter?.addEventListener("change", () => {
+  state.patientViewMode = patientViewFilter.value;
+  state.patientPage = 1;
+  state.selectedPatientTableIds = [];
+  renderFollowupCenter();
+});
+
+patientRiskFilter?.addEventListener("change", () => {
+  state.patientRiskFilter = patientRiskFilter.value;
+  state.patientPage = 1;
+  state.selectedPatientTableIds = [];
+  renderFollowupCenter();
+});
+
+patientDiagnosisFilter?.addEventListener("change", () => {
+  state.patientDiseaseFilter = patientDiagnosisFilter.value === "all" ? "" : patientDiagnosisFilter.value;
+  state.patientPage = 1;
+  state.selectedPatientTableIds = [];
+  renderFollowupCenter();
+});
+
+patientSortFilter?.addEventListener("change", () => {
+  state.patientSortBy = patientSortFilter.value;
+  state.patientPage = 1;
   renderFollowupCenter();
 });
 
@@ -4933,17 +6285,26 @@ async function init() {
     renderPublicDataConfig();
     return;
   }
-  if (isHospitalFollowupsPage) state.followupGroupBy = "hospital";
+  if (isHospitalFollowupsPage) {
+    state.followupGroupBy = "hospital";
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "high";
+  }
   if (isClinicianFollowupsPage) {
     state.followupGroupBy = "clinician";
     state.filters.workbenchRole = "specialist-doctor";
+    state.hospitalWorkbenchEntityView = "doctor";
+    state.followupStatus = "active";
+    state.patientViewMode = "anomaly";
+    state.patientRiskFilter = "high";
   }
   renderFilters();
   renderMappings();
   await refreshDashboard();
   await loadPopulation();
-  state.patientId = state.dashboard?.patients[0]?.id ?? state.populationCohort?.patients?.[0]?.id ?? null;
-  if (isHomePage && patientName) {
+  state.patientId = state.populationPatientId ?? state.dashboard?.patients[0]?.id ?? state.populationCohort?.patients?.[0]?.id ?? null;
+  if (shouldLoadWorkspacePage()) {
     await loadWorkspace();
   }
   refreshInterfacePolish();
@@ -4953,5 +6314,7 @@ async function init() {
 }
 
 init().catch((error) => {
-  heroSubtitle.textContent = `加载失败：${error.message}`;
+  if (heroSubtitle) {
+    heroSubtitle.textContent = `加载失败：${error.message}`;
+  }
 });

@@ -32,7 +32,7 @@
   </head>
   <body data-page="followups-hospital">
     <div class="shell">
-      <aside class="sidebar">
+      <header class="sidebar app-topbar">
         <div class="brand">
           <div class="brand-mark">慢病</div>
           <div>
@@ -47,46 +47,40 @@
           <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作视图</a>
           <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
         </nav>
+      </header>
 
-        <div class="sidebar-block">
-          <div class="block-label">当前筛选</div>
-          <div id="summary-metrics" class="metric-stack"></div>
-        </div>
-
-        <div class="sidebar-block">
-          <div class="block-label">患者管理列表</div>
-          <div id="population-list" class="population-list"></div>
-        </div>
-      </aside>
-
-      <main class="main-panel">
+      <main class="main-panel hospital-dashboard-page">
         <section class="page-banner page-banner-workbench">
           <div class="page-banner-copy">
-            <div class="page-banner-kicker">Hospital Operations Console</div>
-            <h2>医院管理台</h2>
-            <p>面向院级管理者的正式业务页面，围绕逾期任务、责任医生、患者进展与导出清单展开，强调督办闭环与院内协同。</p>
+            <div class="page-banner-kicker">Hospital B-side Management Board</div>
+            <h2>医院 B 端管理看板</h2>
+            <p>把医院详情、三级协同、绩效横向对比与 MedClaw 状态收束到一个适合 B 端督办与运营复盘的后台界面。</p>
           </div>
           <div class="page-banner-chips">
             <div class="banner-chip">
               <span class="banner-chip-label">页面定位</span>
-              <strong>医院级管理台</strong>
+              <strong>医院级运营后台</strong>
             </div>
             <div class="banner-chip">
               <span class="banner-chip-label">管理重点</span>
-              <strong>任务督办 / 责任到人</strong>
+              <strong>规模 / 起效 / 协同 / 绩效</strong>
             </div>
             <div class="banner-chip">
               <span class="banner-chip-label">输出</span>
-              <strong>Excel 导出 / 逾期待办</strong>
+              <strong>督办清单 / 对比分析</strong>
             </div>
           </div>
         </section>
 
-        <header class="hero">
+        <header class="hero hero-workbench">
           <div class="hero-copy">
-            <p class="eyebrow">Hospital Follow-up View</p>
-            <h2>医院管理视图</h2>
+            <p class="eyebrow">Hospital Operations Workbench</p>
+            <h2>医院 B 端管理看板</h2>
             <p id="hero-subtitle" class="hero-subtitle"></p>
+            <div class="hero-meta-strip">
+              <span id="management-scope-summary" class="hero-meta-chip">当前视角加载中</span>
+              <span id="management-updated-at" class="hero-meta-chip">更新时间加载中</span>
+            </div>
           </div>
           <div class="hero-tools">
             <div class="filter-strip">
@@ -102,14 +96,6 @@
                   <option value="health-manager" selected>健康管理师</option>
                 </select>
               </label>
-              <label class="filter-field">
-                <span>任务状态</span>
-                <select id="followup-status-filter">
-                  <option value="overdue">仅看逾期</option>
-                  <option value="active">逾期 + 临近逾期</option>
-                  <option value="all">全部任务</option>
-                </select>
-              </label>
             </div>
             <div class="hero-actions">
               <button id="export-followups-btn" class="primary-button">导出当前逾期待办 Excel</button>
@@ -118,97 +104,145 @@
           </div>
         </header>
 
-        <section class="grid grid-followup-overview">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">随访统计</span>
-              <h3>医院维度督办摘要</h3>
+        <section class="management-kpi-section" data-reveal>
+          <div class="management-kpi-head">
+            <div>
+              <p class="eyebrow">Top KPI Row</p>
+              <h3>患者数、起效率、覆盖率与人员底盘</h3>
+              <p class="dim">顶部仅保留 4 个核心指标卡，用于院级管理者快速判断规模、效果和可执行资源。</p>
             </div>
-            <div id="followup-summary" class="care-plan-summary"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">提醒中心</span>
-              <h3>当前医院逾期待办</h3>
-            </div>
-            <div id="reminder-center" class="care-plan-summary"></div>
-          </article>
+          </div>
+          <div id="management-kpi-cards" class="management-kpi-grid management-kpi-grid-4"></div>
         </section>
 
-        <section class="grid grid-followup-ops">
-          <article class="panel panel-feature">
-            <div class="panel-head">
-              <span class="panel-kicker">医院运营驾驶舱</span>
-              <h3>逾期压力、闭环效率、协同负荷</h3>
-            </div>
-            <div id="followup-ops-panel" class="care-plan-summary"></div>
-          </article>
+        <section class="hospital-management-grid" data-reveal>
+          <div class="hospital-management-main">
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">医院详情</span>
+                <h3>疾病比例、治疗包与起效率</h3>
+              </div>
+              <div id="hospital-detail-panel" class="district-module-body"></div>
+            </article>
 
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">角色负荷</span>
-              <h3>三类角色工作压力分布</h3>
-            </div>
-            <div id="followup-workload-panel" class="care-plan-summary"></div>
-          </article>
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">三级协同</span>
+                <h3>基层筛查 · 区级统筹 · 三级专科联动</h3>
+              </div>
+              <div id="command-center-network" class="district-module-body"></div>
+            </article>
+          </div>
+
+          <aside class="hospital-management-side">
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">医院绩效横向对比</span>
+                <h3>结构性负荷与闭环效率</h3>
+              </div>
+              <div id="hospital-benchmark-panel" class="district-module-body"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">MedClaw</span>
+                <h3>医院级临床智能边界</h3>
+              </div>
+              <div id="medclaw-overview" class="district-module-body"></div>
+              <div id="medclaw-guardrails" class="district-module-body"></div>
+            </article>
+          </aside>
         </section>
 
-        <section class="grid grid-followup-groups">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">任务分组</span>
-              <h3>按医院归类的任务板</h3>
+        <details class="workspace-section workspace-section-secondary" data-reveal>
+          <summary class="workspace-section-head">
+            <div class="workspace-section-copy">
+              <span class="panel-kicker">Operational Drill-down</span>
+              <h3>医院运营下钻与患者任务处理</h3>
+              <p>上方是 B 端后台看板，下方保留任务督办、责任医生与患者队列，便于从经营视图继续下钻执行。</p>
             </div>
-            <div id="followup-groups" class="followup-groups"></div>
-          </article>
-        </section>
+            <div class="workspace-section-pills">
+              <span class="workspace-pill secondary">默认收起</span>
+            </div>
+          </summary>
+          <div class="workspace-section-body">
+            <section class="panel management-task-panel">
+              <div class="management-section-head">
+                <div>
+                  <span class="panel-kicker">Task Priority Zone</span>
+                  <h3>今天优先处理什么</h3>
+                </div>
+              </div>
+              <div id="management-task-cards" class="task-priority-grid"></div>
+            </section>
 
-        <section class="grid grid-followup-detail">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">患者阶段追踪</span>
-              <h3 id="population-patient-title">选择患者查看随访详情</h3>
-            </div>
-            <div id="population-patient-profile" class="care-plan-summary"></div>
-            <div id="population-intervention-summary" class="care-plan-summary"></div>
-            <div id="population-intervention-radar" class="radar-panel"></div>
-          </article>
+            <section class="panel management-entity-panel">
+              <div class="management-section-head">
+                <div>
+                  <span class="panel-kicker">Institution / Doctor Performance</span>
+                  <h3>哪些机构或医生值得优先关注</h3>
+                </div>
+                <div id="entity-view-toggle" class="entity-view-toggle"></div>
+              </div>
+              <div class="management-focus-layout">
+                <div id="management-focus-board" class="management-focus-board"></div>
+                <aside id="management-focus-detail" class="management-focus-detail"></aside>
+              </div>
+            </section>
 
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">指标改善</span>
-              <h3>4 / 8 / 12 周进展与解释</h3>
-            </div>
-            <div id="population-improvements" class="therapy-package-grid"></div>
-          </article>
-        </section>
-
-        <section class="grid grid-population-followup">
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">管理留痕</span>
-              <h3>整理过程与随访时间轴</h3>
-            </div>
-            <div id="population-process" class="care-plan-summary"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">角色分工</span>
-              <h3>三甲、全科、健康管理协同督办</h3>
-            </div>
-            <div id="population-role-followups" class="therapy-package-grid"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">单患者风险</span>
-              <h3>当前患者慢病画像</h3>
-            </div>
-            <div id="population-patient-radar" class="radar-panel"></div>
-          </article>
-        </section>
+            <section id="patient-workbench-section" class="panel management-patient-panel">
+              <div class="management-section-head">
+                <div>
+                  <span class="panel-kicker">Patient Queue</span>
+                  <h3>异常患者列表</h3>
+                </div>
+              </div>
+              <div class="patient-toolbar">
+                <div class="filter-strip">
+                  <label class="filter-field">
+                    <span>患者范围</span>
+                    <select id="patient-view-filter">
+                      <option value="anomaly" selected>异常患者</option>
+                      <option value="all">全部患者</option>
+                    </select>
+                  </label>
+                  <label class="filter-field">
+                    <span>随访状态</span>
+                    <select id="followup-status-filter">
+                      <option value="active" selected>逾期 + 临近逾期</option>
+                      <option value="overdue">仅看逾期</option>
+                      <option value="all">全部任务</option>
+                    </select>
+                  </label>
+                  <label class="filter-field">
+                    <span>风险等级</span>
+                    <select id="patient-risk-filter"></select>
+                  </label>
+                  <label class="filter-field">
+                    <span>病种</span>
+                    <select id="patient-diagnosis-filter"></select>
+                  </label>
+                  <label class="filter-field">
+                    <span>排序方式</span>
+                    <select id="patient-sort-filter">
+                      <option value="priority" selected>按任务优先级</option>
+                      <option value="risk">按风险等级</option>
+                      <option value="age">按年龄</option>
+                      <option value="doctor">按责任医生</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="patient-toolbar-actions">
+                  <button id="export-selected-patients-btn" class="ghost-button nav-button" disabled>批量导出选中</button>
+                  <button id="clear-patient-selection-btn" class="ghost-button nav-button" disabled>清空选择</button>
+                </div>
+              </div>
+              <div id="patient-table-summary" class="patient-table-summary"></div>
+              <div id="patient-table" class="patient-table-shell"></div>
+              <div id="patient-table-pagination" class="patient-table-pagination"></div>
+            </section>
+          </div>
+        </details>
       </main>
     </div>
 

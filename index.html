@@ -31,151 +31,99 @@
   </head>
   <body data-page="home">
     <div class="shell">
-      <aside class="sidebar">
+      <header class="sidebar app-topbar">
         <div class="brand">
           <div class="brand-mark">慢病</div>
           <div>
             <h1>慢病风险分层、行为干预与 MDT 在线协作平台</h1>
-            <p>区级协同演示版</p>
+            <p>区级总览数据大屏</p>
           </div>
         </div>
 
         <nav class="sidebar-nav">
           <a class="sidebar-nav-link active" href="./index.html">区级总览</a>
           <a class="sidebar-nav-link" href="./followups-hospital.html">随访中心</a>
+          <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作台</a>
           <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
         </nav>
+      </header>
 
-        <div class="sidebar-block" data-reveal>
-          <div class="block-label">患者队列</div>
-          <div id="patient-list" class="patient-list"></div>
-        </div>
-      </aside>
-
-      <main class="main-panel">
-        <section class="page-banner page-banner-home" data-reveal>
-          <div class="page-banner-copy">
-            <div class="page-banner-kicker">District Chronic Care Command Center</div>
-            <h2>慢病风险分层、行为干预与 MDT 在线协作平台</h2>
-            <p>把栖霞区医院网络、三级协同与风险联动压缩到一个干净的区级首页里，患者级管理全部进入二级工作台。</p>
-            <div class="page-banner-pills">
-              <span class="banner-pill"><i class="live-pulse"></i>全域联动已开启</span>
-              <span class="banner-pill">15 家机构接入</span>
-              <span class="banner-pill">图表点击联动医院网络</span>
-            </div>
-            <div class="page-banner-actions">
-              <a id="display-mode-toggle" class="ghost-button banner-action" href="./index.html?display=wallboard">切换区级大屏模式</a>
-              <a class="ghost-button banner-action" href="./followups-hospital.html">进入医院管理视图</a>
-              <a class="ghost-button banner-action" href="./followups-clinician.html">进入医生工作视图</a>
-            </div>
-          </div>
-          <div id="wallboard-hero-ribbon" class="wallboard-hero-ribbon"></div>
-        </section>
-
-        <section class="overview-band" data-reveal>
-          <div class="overview-band-inner">
-            <div class="overview-band-head">
-              <div>
-                <p class="eyebrow">Overview Basket</p>
-                <h3>区级总览与关键指标一篮子</h3>
-                <p class="dim">将区级运营核心指标集中展示，统一蓝色背景，便于一眼把握全域运行态势。</p>
+      <main class="main-panel district-bigscreen">
+        <section class="district-screen-grid">
+          <aside class="district-column district-column-side" data-reveal>
+            <article class="panel district-module-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">区级运营驾驶舱</span>
+                <h3>纳管覆盖、风险压降、闭环执行</h3>
               </div>
-              <div class="overview-band-actions">
-                <div id="overview-band-tag" class="overview-band-tag">栖霞区全域 · 三级协同</div>
-                <button id="overview-filter-reset" class="overview-filter-reset" hidden>清除联动筛选</button>
+              <div id="district-executive-panel" class="district-module-body"></div>
+            </article>
+
+            <article class="panel district-module-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">病种负荷 Storyline</span>
+                <h3>协同漏斗与阶段改善</h3>
               </div>
-            </div>
-            <div class="overview-band-grid">
-              <div id="summary-metrics" class="metric-stack metric-stack-band"></div>
-              <div class="overview-visual-grid">
-                <article class="overview-visual-card">
-                  <div class="overview-visual-head">
-                    <span>风险分布雷达</span>
-                    <strong>七大慢病域风险画像</strong>
-                  </div>
-                  <div id="overview-risk-radar" class="overview-visual-body"></div>
-                </article>
-                <article class="overview-visual-card">
-                  <div class="overview-visual-head">
-                    <span>覆盖率进展</span>
-                    <strong>医院与角色协同覆盖</strong>
-                  </div>
-                  <div id="overview-coverage-trend" class="overview-visual-body"></div>
-                </article>
-                <article class="overview-visual-card">
-                  <div class="overview-visual-head">
-                    <span>闭环漏斗</span>
-                    <strong>筛查到复评转化</strong>
-                  </div>
-                  <div id="overview-closed-loop-funnel" class="overview-visual-body"></div>
-                </article>
+              <div id="population-summary" class="district-module-body district-module-summary"></div>
+              <div id="district-flow-story" class="district-module-body"></div>
+            </article>
+          </aside>
+
+          <section class="district-column district-column-center" data-reveal>
+            <article class="panel district-module-panel district-primary-panel">
+              <div class="panel-head panel-head-split">
+                <div>
+                  <span class="panel-kicker">栖霞区医院网络</span>
+                  <h3>医院分部与慢病管理规模</h3>
+                </div>
+                <div class="district-toolbar">
+                  <label class="filter-field compact">
+                    <span>医院</span>
+                    <select id="hospital-filter"></select>
+                  </label>
+                  <label class="filter-field compact">
+                    <span>角色</span>
+                    <select id="role-filter">
+                      <option value="specialist-doctor">专科医生</option>
+                      <option value="general-practitioner">全科医生</option>
+                      <option value="health-manager" selected>健康管理师</option>
+                    </select>
+                  </label>
+                  <a id="display-mode-toggle" class="ghost-button nav-button" href="./index.html?display=wallboard">切换区级大屏模式</a>
+                </div>
               </div>
-            </div>
-          </div>
-        </section>
+              <div id="district-live-stage" class="district-module-body"></div>
+            </article>
 
-        <header class="hero hero-compact" data-reveal>
-          <div class="hero-copy">
-            <p class="eyebrow">Clinical Intelligence Layer</p>
-            <h2>联动筛选与工作入口</h2>
-            <p id="hero-subtitle" class="hero-subtitle"></p>
-          </div>
-          <div class="hero-tools">
-            <div class="filter-strip">
-              <label class="filter-field">
-                <span>医院</span>
-                <select id="hospital-filter"></select>
-              </label>
-              <label class="filter-field">
-                <span>工作台角色</span>
-                <select id="role-filter">
-                  <option value="specialist-doctor">专科医生</option>
-                  <option value="general-practitioner">全科医生</option>
-                  <option value="health-manager" selected>健康管理师</option>
-                </select>
-              </label>
-            </div>
-            <div class="hero-actions">
-              <a class="ghost-button nav-button" href="./followups-hospital.html">进入随访中心</a>
-              <a class="ghost-button nav-button" href="./followups-clinician.html">进入医生工作视图</a>
-            </div>
-          </div>
-        </header>
+            <article class="panel district-module-panel district-command-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">区级动态指挥台</span>
+                <h3>区级协同、优先队列与动作底座</h3>
+              </div>
+              <div class="district-command-grid">
+                <div id="command-center-kpis" class="district-module-body"></div>
+                <div id="command-center-queue" class="district-module-body"></div>
+              </div>
+            </article>
+          </section>
 
-        <section class="grid grid-dynamic-command" data-reveal>
-          <article class="panel panel-dynamic-stage">
-            <div class="panel-head">
-              <span class="panel-kicker">Dynamic Command Stage</span>
-              <h3>区级动态指挥台</h3>
-            </div>
-            <div id="district-live-stage" class="district-live-stage"></div>
-          </article>
+          <aside class="district-column district-column-side" data-reveal>
+            <article class="panel district-module-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">公开区情口径</span>
+                <h3>8 类公开资产、人口结构与三级协同底图</h3>
+              </div>
+              <div id="qixia-public-profile" class="district-module-body"></div>
+            </article>
 
-          <article class="panel panel-dynamic-story">
-            <div class="panel-head">
-              <span class="panel-kicker">Disease Burden Storyline</span>
-              <h3>病种负荷、协同漏斗与阶段改善</h3>
-            </div>
-            <div id="district-flow-story" class="district-flow-story"></div>
-          </article>
-        </section>
-
-        <section class="grid grid-qixia-overview" data-reveal>
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">栖霞区医院网络</span>
-              <h3>医院分部与慢病管理规模</h3>
-            </div>
-            <div id="hospital-overview-grid" class="hospital-overview-grid"></div>
-          </article>
-
-          <article class="panel">
-            <div class="panel-head">
-              <span class="panel-kicker">医院详情</span>
-              <h3>患者数、疾病比例、治疗包与起效率</h3>
-            </div>
-            <div id="hospital-detail-panel" class="care-plan-summary"></div>
-          </article>
+            <article class="panel district-module-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">雷达总览</span>
+                <h3>最常见慢病风险平均画像</h3>
+              </div>
+              <div id="population-radar" class="district-module-body"></div>
+            </article>
+          </aside>
         </section>
       </main>
     </div>
@@ -189,7 +137,6 @@
         <div class="patient-item-body"></div>
       </button>
     </template>
-
     <script type="module" src="./app.js"></script>
   </body>
 </html>
