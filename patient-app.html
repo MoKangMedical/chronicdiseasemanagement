@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="zh-CN" data-app-mode="static">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1e40af" />
+    <title>慢病风险分层、行为干预与 MDT 在线协作平台 · 患者端</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      window.__APP_CONFIG__ = {
+        mode: "static",
+        snapshotPath: "./demo-data/pages-snapshot.json",
+        populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json",
+        repo: "MoKangMedical/chronicdiseasemanagement",
+        projectName: "慢病风险分层、行为干预与 MDT 在线协作平台",
+        readOnlyMessage: "GitHub Pages 演示站为只读模式"
+      };
+      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
+        mode: document.documentElement.dataset.appMode || "live",
+        snapshotPath: "./demo-data/pages-snapshot.json",
+        populationPath: "./demo-data/population-cohort.json"
+      };
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="patient-app">
+    <div class="shell">
+      <header class="sidebar app-topbar">
+        <div class="brand">
+          <div class="brand-mark">慢病</div>
+          <div>
+            <h1>慢病风险分层、行为干预与 MDT 在线协作平台</h1>
+            <p>患者端管理首页</p>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="sidebar-nav-link" href="./index.html">区级总览</a>
+          <a class="sidebar-nav-link" href="./followups-hospital.html">医院管理视图</a>
+          <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作视图</a>
+          <a class="sidebar-nav-link active" href="./patient-app.html">患者端</a>
+          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
+        </nav>
+      </header>
+
+      <main class="main-panel patient-app-page">
+        <section class="page-banner page-banner-workbench">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">Patient App Surface</div>
+            <h2>把患者端管理内容收成一个可执行首页</h2>
+            <p>患者端只保留看得懂、做得到、会提醒的内容，避免把医院工作台的信息直接搬给患者。</p>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">患者看到什么</span>
+              <strong>计划 · 记录 · 趋势 · 提醒</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">后台如何支撑</span>
+              <strong>管理包 · Agent · 随访协同</strong>
+            </div>
+          </div>
+        </section>
+
+        <header class="hero hero-workbench patient-app-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Patient Home Preview</p>
+            <h2>患者端首页预览</h2>
+            <p id="hero-subtitle" class="hero-subtitle"></p>
+          </div>
+          <div class="hero-tools">
+            <div class="filter-strip">
+              <label class="filter-field">
+                <span>医院</span>
+                <select id="hospital-filter"></select>
+              </label>
+            </div>
+            <div class="hero-actions">
+              <a class="ghost-button nav-button" href="./followups-clinician.html">查看医生工作视图</a>
+            </div>
+          </div>
+        </header>
+
+        <section class="patient-app-layout" data-reveal>
+          <aside class="panel patient-app-sidebar">
+            <div class="panel-head">
+              <span class="panel-kicker">Patient Queue</span>
+              <h3>按医院 / 主诊医生 / 患者查看</h3>
+            </div>
+            <div id="patient-app-list" class="patient-app-list"></div>
+          </aside>
+
+          <section class="patient-app-main">
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Patient Header</span>
+                <h3 id="patient-app-title">患者端管理首页</h3>
+              </div>
+              <div id="patient-app-meta" class="care-plan-summary"></div>
+              <div id="patient-app-identity"></div>
+            </article>
+
+            <section class="patient-app-home-grid">
+              <div id="patient-app-today-plan"></div>
+              <div class="patient-app-home-side">
+                <div id="patient-app-quick-actions" class="patient-app-actions-grid"></div>
+                <div id="patient-app-coach"></div>
+              </div>
+            </section>
+
+            <section class="patient-app-detail-grid">
+              <div id="patient-app-trends" class="patient-app-trends-grid"></div>
+              <div id="patient-app-actions"></div>
+              <div id="patient-app-reminders" class="patient-app-reminders-grid"></div>
+            </section>
+
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Management Programs</span>
+                <h3>患者端管理包</h3>
+              </div>
+              <div id="patient-app-programs" class="patient-app-program-grid"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Patient Agents</span>
+                <h3>患者端 5 个 Agent</h3>
+              </div>
+              <div id="patient-app-agents" class="patient-app-agent-grid"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Support Notes</span>
+                <h3>接入说明与医院协同关系</h3>
+              </div>
+              <div id="patient-app-support" class="care-plan-summary"></div>
+            </article>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

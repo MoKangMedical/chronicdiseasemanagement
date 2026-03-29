@@ -4261,6 +4261,207 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   transform: translateY(-2px);
 }
 
+.patient-app-page {
+  gap: 18px;
+}
+
+.patient-app-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 320px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.patient-app-sidebar {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 116px;
+}
+
+.patient-app-list {
+  display: grid;
+  gap: 10px;
+  max-height: calc(100vh - 210px);
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.patient-app-list::-webkit-scrollbar {
+  display: none;
+}
+
+.patient-app-main {
+  display: grid;
+  gap: 16px;
+}
+
+.patient-app-home-grid,
+.patient-app-detail-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.patient-app-home-grid {
+  grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.85fr);
+}
+
+.patient-app-home-side {
+  display: grid;
+  gap: 16px;
+}
+
+.patient-app-actions-grid,
+.patient-app-trends-grid,
+.patient-app-program-grid,
+.patient-app-agent-grid,
+.patient-app-reminders-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.patient-app-actions-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.patient-app-trends-grid,
+.patient-app-reminders-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.patient-app-program-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.patient-app-agent-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.patient-app-card,
+.patient-app-program-card,
+.patient-app-agent-card,
+.patient-app-action {
+  border-radius: 22px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  box-shadow: var(--shadow-sm);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.patient-app-card,
+.patient-app-program-card,
+.patient-app-agent-card {
+  padding: 18px;
+  background:
+    radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(191, 219, 254, 0.24), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 255, 0.94));
+}
+
+.patient-app-card-primary {
+  background:
+    linear-gradient(135deg, rgba(30, 64, 175, 0.98), rgba(37, 99, 235, 0.9)),
+    radial-gradient(circle at top right, rgba(125, 211, 252, 0.35), transparent 36%);
+  color: #eff6ff;
+  box-shadow: 0 24px 56px rgba(30, 64, 175, 0.2);
+}
+
+.patient-app-card-primary .panel-kicker,
+.patient-app-card-primary p,
+.patient-app-card-primary .mini-list {
+  color: rgba(219, 234, 254, 0.88);
+}
+
+.patient-app-card-primary h3 {
+  color: #f8fbff;
+}
+
+.patient-app-action {
+  display: grid;
+  gap: 4px;
+  padding: 14px 16px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.patient-app-action span {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.patient-app-card:hover,
+.patient-app-program-card:hover,
+.patient-app-agent-card:hover,
+.patient-app-action:hover {
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.1);
+}
+
+.patient-app-card-head,
+.patient-app-identity-strip,
+.patient-app-identity-stats {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.patient-app-identity-strip {
+  padding: 18px 20px;
+  border-radius: 24px;
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  background:
+    linear-gradient(135deg, rgba(239, 246, 255, 0.98), rgba(248, 250, 252, 0.96)),
+    radial-gradient(circle at top right, rgba(125, 211, 252, 0.2), transparent 40%);
+}
+
+.patient-app-identity-strip h3 {
+  margin: 4px 0 0;
+}
+
+.patient-app-identity-stats {
+  flex-direction: column;
+  min-width: 240px;
+}
+
+.patient-app-identity-stat {
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.patient-app-identity-stat span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.patient-app-identity-stat strong {
+  display: block;
+  margin-top: 4px;
+  color: var(--primary-dark);
+}
+
+.patient-app-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.patient-app-coach-prompt {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--primary-dark);
+  border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
 @media (max-width: 1320px) {
   .district-screen-grid,
   .hospital-management-grid,
@@ -4268,7 +4469,14 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   .clinician-center-top,
   .hospital-analytics-split,
   .district-command-grid,
-  .management-kpi-grid-4 {
+  .management-kpi-grid-4,
+  .patient-app-layout,
+  .patient-app-home-grid,
+  .patient-app-detail-grid,
+  .patient-app-program-grid,
+  .patient-app-agent-grid,
+  .patient-app-trends-grid,
+  .patient-app-reminders-grid {
     grid-template-columns: 1fr;
   }
 
@@ -4276,9 +4484,14 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
     min-height: auto;
   }
 
+  .patient-app-sidebar {
+    position: static;
+  }
+
   .clinician-lane-left,
   .clinician-lane-center,
-  .clinician-lane-right {
+  .clinician-lane-right,
+  .patient-app-list {
     overflow: visible;
   }
 }

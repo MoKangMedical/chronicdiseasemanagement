@@ -4,6 +4,7 @@ const pageQuery = new URLSearchParams(window.location.search);
 const isHomePage = pageMode === "home";
 const isHospitalFollowupsPage = pageMode === "followups-hospital";
 const isClinicianFollowupsPage = pageMode === "followups-clinician";
+const isPatientAppPage = pageMode === "patient-app";
 const isPublicDataConfigPage = pageMode === "public-data-config";
 const isFollowupsPage = isHospitalFollowupsPage || isClinicianFollowupsPage || pageMode === "followups";
 const isWallboardMode = isHomePage && pageQuery.get("display") === "wallboard";
@@ -251,6 +252,19 @@ const publicDataSourceExplorer = document.querySelector("#public-data-source-exp
 const publicDataModuleExplorer = document.querySelector("#public-data-module-explorer");
 const publicDataAssetCatalog = document.querySelector("#public-data-asset-catalog");
 const publicDataMappingDraft = document.querySelector("#public-data-mapping-draft");
+const patientAppList = document.querySelector("#patient-app-list");
+const patientAppTitle = document.querySelector("#patient-app-title");
+const patientAppMeta = document.querySelector("#patient-app-meta");
+const patientAppIdentity = document.querySelector("#patient-app-identity");
+const patientAppTodayPlan = document.querySelector("#patient-app-today-plan");
+const patientAppQuickActions = document.querySelector("#patient-app-quick-actions");
+const patientAppCoach = document.querySelector("#patient-app-coach");
+const patientAppTrends = document.querySelector("#patient-app-trends");
+const patientAppActions = document.querySelector("#patient-app-actions");
+const patientAppReminders = document.querySelector("#patient-app-reminders");
+const patientAppPrograms = document.querySelector("#patient-app-programs");
+const patientAppAgents = document.querySelector("#patient-app-agents");
+const patientAppSupport = document.querySelector("#patient-app-support");
 const districtExecutivePanel = document.querySelector("#district-executive-panel");
 const hospitalBenchmarkPanel = document.querySelector("#hospital-benchmark-panel");
 const modelGovernancePanel = document.querySelector("#model-governance-panel");
@@ -335,7 +349,11 @@ const interactiveSurfaceSelector = [
   ".focus-table-row",
   ".followup-group-card",
   ".followup-task",
-  ".benchmark-row"
+  ".benchmark-row",
+  ".patient-app-card",
+  ".patient-app-action",
+  ".patient-app-program-card",
+  ".patient-app-agent-card"
 ].join(", ");
 
 const interactiveSurfaceRegistry = new WeakSet();
@@ -1709,13 +1727,17 @@ function renderHierarchicalPatientList(patients, selectedId, options) {
 }
 
 function renderFilters() {
-  if (!hospitalFilter || !roleFilter) return;
-  hospitalFilter.innerHTML = [
-    `<option value="">栖霞区全域</option>`,
-    ...state.hospitals.map((hospital) => `<option value="${hospital.id}">${hospital.name}</option>`)
-  ].join("");
-  hospitalFilter.value = state.filters.hospitalId;
-  roleFilter.value = state.filters.workbenchRole;
+  if (!hospitalFilter && !roleFilter) return;
+  if (hospitalFilter) {
+    hospitalFilter.innerHTML = [
+      `<option value="">栖霞区全域</option>`,
+      ...state.hospitals.map((hospital) => `<option value="${hospital.id}">${hospital.name}</option>`)
+    ].join("");
+    hospitalFilter.value = state.filters.hospitalId;
+  }
+  if (roleFilter) {
+    roleFilter.value = state.filters.workbenchRole;
+  }
   if (followupGroupFilter) followupGroupFilter.value = state.followupGroupBy;
   if (followupStatusFilter) followupStatusFilter.value = state.followupStatus;
   if (patientViewFilter) patientViewFilter.value = state.patientViewMode;
@@ -1773,6 +1795,248 @@ function renderPatients() {
       await loadWorkspace();
     });
   });
+
+  refreshInterfacePolish();
+}
+
+function renderPatientApp() {
+  if (!isPatientAppPage) return;
+  const cohort = state.populationCohort ?? state.populationDistrictCohort;
+  const patients = cohort?.patients ?? [];
+  const selectedPatient = patients.find((patient) => patient.id === state.populationPatientId) ?? patients[0] ?? null;
+
+  if (selectedPatient && state.populationPatientId !== selectedPatient.id) {
+    state.populationPatientId = selectedPatient.id;
+  }
+
+  if (patientAppList) {
+    patientAppList.innerHTML = patients.length
+      ? renderHierarchicalPatientList(patients, state.populationPatientId, {
+          ownerMode: "primary",
+          renderPatient: (patient, isActive) => `
+            <button class="patient-item ${isActive ? "active" : ""}" data-patient-app-id="${patient.id}">
+              <div class="patient-item-head">
+                <strong class="patient-item-name">${patient.name}</strong>
+                <span class="pill ${patient.overallRiskLevel}">${formatLevel(patient.overallRiskLevel)}</span>
+              </div>
+              <div class="patient-item-body">${patient.diagnoses.slice(0, 2).join(" / ")} · ${patient.recommendedPackages[0] ?? "待生成治疗包"}</div>
+            </button>
+          `
+        })
+      : `<div class="note-block">当前医院范围内暂无患者端样本。</div>`;
+
+    patientAppList.querySelectorAll("[data-patient-app-id]").forEach((node) => {
+      node.addEventListener("click", () => {
+        syncActivePatient(node.getAttribute("data-patient-app-id"));
+        renderPatientApp();
+      });
+    });
+  }
+
+  if (!selectedPatient) {
+    setElementText(patientAppTitle, "暂无患者端样本");
+    setElementHtml(patientAppMeta, `<div class="note-block">请先选择一个接入医院或等待人群快照加载完成。</div>`);
+    setElementHtml(patientAppIdentity, "");
+    setElementHtml(patientAppTodayPlan, "");
+    setElementHtml(patientAppQuickActions, "");
+    setElementHtml(patientAppCoach, "");
+    setElementHtml(patientAppTrends, "");
+    setElementHtml(patientAppActions, "");
+    setElementHtml(patientAppReminders, "");
+    setElementHtml(patientAppPrograms, "");
+    setElementHtml(patientAppAgents, "");
+    setElementHtml(patientAppSupport, "");
+    refreshInterfacePolish();
+    return;
+  }
+
+  const workspace = selectedPatient.patientWorkspace;
+  const primaryDoctor = getPatientOwner(selectedPatient, "primary");
+  const responsibleClinician = getPatientOwner(selectedPatient, "responsible");
+
+  setElementText(patientAppTitle, `${selectedPatient.name} · 患者端管理首页`);
+  setElementHtml(
+    patientAppMeta,
+    `
+      <div class="stat-grid">
+        ${statChip("所属医院", selectedPatient.hospitalName)}
+        ${statChip("主诊医生", primaryDoctor.name)}
+        ${statChip("责任医生/管理师", responsibleClinician.name)}
+        ${statChip("下次随访", selectedPatient.nextFollowUpDate)}
+      </div>
+    `
+  );
+
+  setElementHtml(
+    patientAppIdentity,
+    `
+      <div class="patient-app-identity-strip">
+        <div>
+          <span class="panel-kicker">顶部身份条</span>
+          <h3>${workspace.identityBar.nickname}</h3>
+          <div class="patient-app-tag-row">
+            ${workspace.identityBar.diseaseTags.map((tag) => `<span class="asset-chip">${tag}</span>`).join("")}
+          </div>
+        </div>
+        <div class="patient-app-identity-stats">
+          <div class="patient-app-identity-stat">
+            <span>当前目标</span>
+            <strong>${workspace.identityBar.currentGoal}</strong>
+          </div>
+          <div class="patient-app-identity-stat">
+            <span>连续打卡</span>
+            <strong>${workspace.identityBar.streakDays} 天</strong>
+          </div>
+        </div>
+      </div>
+    `
+  );
+
+  setElementHtml(
+    patientAppTodayPlan,
+    `
+      <article class="patient-app-card patient-app-card-primary">
+        <div class="panel-kicker">今日健康计划主卡</div>
+        <h3>从今天开始，只做最关键的 4 件事</h3>
+        <ul class="mini-list">
+          <li>${workspace.todayPlan.breakfastSuggestion}</li>
+          <li>${workspace.todayPlan.activityGoal}</li>
+          <li>今日需记录：${workspace.todayPlan.recordTargets.join(" / ")}</li>
+          <li>注意事项：${workspace.todayPlan.attentionItem}</li>
+        </ul>
+      </article>
+    `
+  );
+
+  setElementHtml(
+    patientAppQuickActions,
+    workspace.quickActions
+      .map(
+        (action) => `
+          <button class="patient-app-action" type="button">
+            <strong>${action.label}</strong>
+            <span>${action.hint}</span>
+          </button>
+        `
+      )
+      .join("")
+  );
+
+  setElementHtml(
+    patientAppCoach,
+    `
+      <article class="patient-app-card">
+        <div class="panel-kicker">AI 教练卡</div>
+        <h3>一句建议 + 一键追问</h3>
+        <p>${workspace.aiCoach.message}</p>
+        <div class="patient-app-coach-prompt">${workspace.aiCoach.followUpPrompt}</div>
+      </article>
+    `
+  );
+
+  setElementHtml(
+    patientAppTrends,
+    workspace.trendSnapshots
+      .map(
+        (item) => `
+          <article class="patient-app-card">
+            <div class="patient-app-card-head">
+              <strong>${item.label}</strong>
+              <span class="status-pill ${item.trend === "improved" ? "low" : item.trend === "stable" ? "medium" : "high"}">${item.change}</span>
+            </div>
+            <h3>${item.current}</h3>
+          </article>
+        `
+      )
+      .join("")
+  );
+
+  setElementHtml(
+    patientAppActions,
+    `
+      <article class="patient-app-card">
+        <div class="panel-kicker">今日小行动</div>
+        <h3>把建议拆成能执行的小动作</h3>
+        <ul class="mini-list">
+          ${workspace.miniActions.map((item) => `<li><strong>${item.title}</strong>：${item.detail}</li>`).join("")}
+        </ul>
+      </article>
+    `
+  );
+
+  setElementHtml(
+    patientAppReminders,
+    workspace.reminders
+      .map(
+        (item) => `
+          <article class="patient-app-card">
+            <div class="patient-app-card-head">
+              <strong>${item.title}</strong>
+              <span class="status-pill ${item.level === "urgent" ? "high" : item.level === "watch" ? "medium" : "low"}">${item.level === "urgent" ? "重点" : item.level === "watch" ? "关注" : "提示"}</span>
+            </div>
+            <p>${item.detail}</p>
+          </article>
+        `
+      )
+      .join("")
+  );
+
+  setElementHtml(
+    patientAppPrograms,
+    workspace.managementPrograms
+      .map(
+        (program) => `
+          <article class="patient-app-program-card">
+            <div class="patient-app-card-head">
+              <strong>${program.title}</strong>
+              <span class="mini-tag">${program.targetConditions.length} 类对象</span>
+            </div>
+            <p>${program.summary}</p>
+            <div class="patient-app-tag-row">
+              ${program.targetConditions.map((condition) => `<span class="asset-chip">${condition}</span>`).join("")}
+            </div>
+            <div class="dim">${program.emphasis}</div>
+          </article>
+        `
+      )
+      .join("")
+  );
+
+  setElementHtml(
+    patientAppAgents,
+    workspace.supportAgents
+      .map(
+        (agent) => `
+          <article class="patient-app-agent-card">
+            <div class="panel-kicker">Patient Agent</div>
+            <h3>${agent.name}</h3>
+            <p>${agent.purpose}</p>
+            <ul class="mini-list">
+              ${agent.outputs.map((output) => `<li>${output}</li>`).join("")}
+            </ul>
+          </article>
+        `
+      )
+      .join("")
+  );
+
+  setElementHtml(
+    patientAppSupport,
+    `
+      <div class="plan-block">
+        <h4>患者端接入说明</h4>
+        <ul class="mini-list">
+          <li>患者端首页只保留身份条、今日计划、快捷记录、AI 教练、趋势快照、小行动和关键提醒。</li>
+          <li>医院与医生端看到的是督办与复评，患者端看到的是可执行的日常管理内容。</li>
+          <li>当前患者绑定主诊医生 ${primaryDoctor.name}，责任支持为 ${responsibleClinician.name}。</li>
+        </ul>
+      </div>
+    `
+  );
+
+  if (heroSubtitle) {
+    heroSubtitle.textContent = `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}患者端首页按管理包、Agent 和日常任务呈现`;
+  }
 
   refreshInterfacePolish();
 }
@@ -4490,6 +4754,7 @@ function ensureSidebarNavigation() {
     { href: "./index.html", label: "区级总览" },
     { href: "./followups-hospital.html", label: "医院管理视图" },
     { href: "./followups-clinician.html", label: "医生工作视图" },
+    { href: "./patient-app.html", label: "患者端" },
     { href: "./public-data-config.html", label: "公开资料配置" }
   ];
 
@@ -4874,6 +5139,7 @@ function renderPopulation() {
   renderWallboardHero();
   renderExecutiveCockpit();
   if (reminderCenter) renderReminderCenter();
+  if (isPatientAppPage) renderPatientApp();
 
   const queuePatients = isClinicianFollowupsPage
     ? getHospitalWorkbenchPatients(getClinicianScopedPatients(cohort.patients)).slice(0, 18)
