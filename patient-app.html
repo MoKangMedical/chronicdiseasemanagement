@@ -102,29 +102,43 @@
               <div id="patient-app-reminders" class="patient-app-reminders-grid"></div>
             </section>
 
-            <article class="panel">
-              <div class="panel-head">
-                <span class="panel-kicker">Management Programs</span>
-                <h3>患者端管理包</h3>
-              </div>
-              <div id="patient-app-programs" class="patient-app-program-grid"></div>
-            </article>
+            <details class="panel patient-app-support-panel" open>
+              <summary class="workspace-section-head">
+                <div class="workspace-section-copy">
+                  <span class="panel-kicker">Support Layer</span>
+                  <h3>管理包、Patient Agent 与医院协同说明</h3>
+                  <p>把支撑层收在底部，需要时再展开，不影响患者先完成今天的动作。</p>
+                </div>
+                <div class="workspace-section-pills">
+                  <span class="workspace-pill secondary">可展开</span>
+                </div>
+              </summary>
+              <div class="workspace-section-body patient-app-support-body">
+                <article class="panel patient-app-inner-panel">
+                  <div class="panel-head">
+                    <span class="panel-kicker">Management Programs</span>
+                    <h3>患者端管理包</h3>
+                  </div>
+                  <div id="patient-app-programs" class="patient-app-program-grid"></div>
+                </article>
 
-            <article class="panel">
-              <div class="panel-head">
-                <span class="panel-kicker">Patient Agents</span>
-                <h3>患者端 5 个 Agent</h3>
-              </div>
-              <div id="patient-app-agents" class="patient-app-agent-grid"></div>
-            </article>
+                <article class="panel patient-app-inner-panel">
+                  <div class="panel-head">
+                    <span class="panel-kicker">Patient Agents</span>
+                    <h3>患者端 5 个 Agent</h3>
+                  </div>
+                  <div id="patient-app-agents" class="patient-app-agent-grid"></div>
+                </article>
 
-            <article class="panel">
-              <div class="panel-head">
-                <span class="panel-kicker">Support Notes</span>
-                <h3>接入说明与医院协同关系</h3>
+                <article class="panel patient-app-inner-panel">
+                  <div class="panel-head">
+                    <span class="panel-kicker">Support Notes</span>
+                    <h3>接入说明与医院协同关系</h3>
+                  </div>
+                  <div id="patient-app-support" class="care-plan-summary"></div>
+                </article>
               </div>
-              <div id="patient-app-support" class="care-plan-summary"></div>
-            </article>
+            </details>
           </section>
         </section>
       </main>

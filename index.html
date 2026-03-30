@@ -49,131 +49,80 @@
         </nav>
       </header>
 
-      <main class="main-panel district-bigscreen business-home-page">
-        <header class="hero business-home-hero" data-reveal>
-          <div class="hero-copy">
-            <p class="eyebrow">District Chronic Care Command</p>
-            <h2>首页只看区级经营和协同，不在这里处理患者细节</h2>
-            <p id="hero-subtitle" class="hero-subtitle">
-              区级先看覆盖、风险、闭环和医院网络；患者随访、医生执行和患者日常管理统一进入对应二级工作台。
-            </p>
-          </div>
-          <div class="hero-tools">
-            <div class="filter-strip">
-              <label class="filter-field compact">
-                <span>医院</span>
-                <select id="hospital-filter"></select>
-              </label>
-              <label class="filter-field compact">
-                <span>角色</span>
-                <select id="role-filter">
-                  <option value="specialist-doctor">专科医生</option>
-                  <option value="general-practitioner">全科医生</option>
-                  <option value="health-manager" selected>健康管理师</option>
-                </select>
-              </label>
-            </div>
-            <div class="hero-actions business-home-actions">
-              <a class="primary-button nav-button" href="./followups-hospital.html">进入医院管理</a>
-              <a class="ghost-button nav-button" href="./followups-clinician.html">进入医生工作台</a>
-              <a class="ghost-button nav-button" href="./patient-app.html">查看患者端</a>
-              <a id="display-mode-toggle" class="ghost-button nav-button" href="./index.html?display=wallboard">切换区级大屏</a>
-            </div>
-          </div>
-        </header>
-
-        <section class="business-home-grid">
-          <section class="business-home-main" data-reveal>
+      <main class="main-panel district-bigscreen">
+        <section class="district-screen-grid">
+          <aside class="district-column district-column-side" data-reveal>
             <article class="panel district-module-panel">
               <div class="panel-head">
-                <span class="panel-kicker">区级总览</span>
-                <h3>今天先看结果，再安排执行</h3>
+                <span class="panel-kicker">区级运营驾驶舱</span>
+                <h3>纳管覆盖、风险压降、闭环执行</h3>
               </div>
               <div id="district-executive-panel" class="district-module-body"></div>
             </article>
 
-            <article class="panel district-module-panel district-primary-panel">
+            <article class="panel district-module-panel">
               <div class="panel-head">
+                <span class="panel-kicker">病种负荷 Storyline</span>
+                <h3>协同漏斗与阶段改善</h3>
+              </div>
+              <div id="population-summary" class="district-module-body district-module-summary"></div>
+              <div id="district-flow-story" class="district-module-body"></div>
+            </article>
+          </aside>
+
+          <section class="district-column district-column-center" data-reveal>
+            <article class="panel district-module-panel district-primary-panel">
+              <div class="panel-head panel-head-split">
                 <div>
                   <span class="panel-kicker">栖霞区医院网络</span>
-                  <h3>医院分布、纳管规模与当前焦点</h3>
+                  <h3>医院分部与慢病管理规模</h3>
+                </div>
+                <div class="district-toolbar">
+                  <label class="filter-field compact">
+                    <span>医院</span>
+                    <select id="hospital-filter"></select>
+                  </label>
+                  <label class="filter-field compact">
+                    <span>角色</span>
+                    <select id="role-filter">
+                      <option value="specialist-doctor">专科医生</option>
+                      <option value="general-practitioner">全科医生</option>
+                      <option value="health-manager" selected>健康管理师</option>
+                    </select>
+                  </label>
+                  <a id="display-mode-toggle" class="ghost-button nav-button" href="./index.html?display=wallboard">切换区级大屏模式</a>
                 </div>
               </div>
               <div id="district-live-stage" class="district-module-body"></div>
             </article>
 
-            <section class="business-home-bottom">
-              <article class="panel district-module-panel">
-                <div class="panel-head">
-                  <span class="panel-kicker">病种负荷</span>
-                  <h3>慢病结构与闭环阶段</h3>
-                </div>
-                <div id="population-summary" class="district-module-body district-module-summary"></div>
-                <div id="district-flow-story" class="district-module-body"></div>
-              </article>
-
-              <article class="panel district-module-panel">
-                <div class="panel-head">
-                  <span class="panel-kicker">风险画像</span>
-                  <h3>常见慢病平均风险雷达</h3>
-                </div>
-                <div id="population-radar" class="district-module-body"></div>
-              </article>
-
-              <article class="panel district-module-panel district-command-panel">
-                <div class="panel-head">
-                  <span class="panel-kicker">当前重点</span>
-                  <h3>区级协同、优先队列与督办动作</h3>
-                </div>
-                <div class="district-command-grid business-command-grid">
-                  <div id="command-center-kpis" class="district-module-body"></div>
-                  <div id="command-center-queue" class="district-module-body"></div>
-                </div>
-              </article>
-            </section>
-          </section>
-
-          <aside class="business-home-side" data-reveal>
-            <article class="panel district-module-panel business-entry-panel">
+            <article class="panel district-module-panel district-command-panel">
               <div class="panel-head">
-                <span class="panel-kicker">角色入口</span>
-                <h3>不同角色进入不同工作面</h3>
+                <span class="panel-kicker">区级动态指挥台</span>
+                <h3>区级协同、优先队列与动作底座</h3>
               </div>
-              <div class="business-entry-grid">
-                <a class="business-entry-card" href="./followups-hospital.html">
-                  <span class="mini-tag">Hospital</span>
-                  <strong>医院管理视图</strong>
-                  <p>看本院纳管人数、起效率、医生负荷和逾期待办。</p>
-                </a>
-                <a class="business-entry-card" href="./followups-clinician.html">
-                  <span class="mini-tag">Clinician</span>
-                  <strong>医生工作视图</strong>
-                  <p>看当天优先患者、风险解释、干预包和 MDT 协作。</p>
-                </a>
-                <a class="business-entry-card" href="./patient-app.html">
-                  <span class="mini-tag">Patient</span>
-                  <strong>患者端</strong>
-                  <p>只看今天要做什么、要记录什么、下次何时复评。</p>
-                </a>
-                <a class="business-entry-card" href="./public-data-config.html">
-                  <span class="mini-tag">Data</span>
-                  <strong>公开资料配置台</strong>
-                  <p>维护区级公开口径和待接 HIS / 卫健委字段映射。</p>
-                </a>
+              <div class="district-command-grid">
+                <div id="command-center-kpis" class="district-module-body"></div>
+                <div id="command-center-queue" class="district-module-body"></div>
               </div>
             </article>
+          </section>
 
-            <article class="panel district-module-panel business-principles-panel">
+          <aside class="district-column district-column-side" data-reveal>
+            <article class="panel district-module-panel">
               <div class="panel-head">
-                <span class="panel-kicker">业务原则</span>
-                <h3>让首页保持简洁和实用</h3>
+                <span class="panel-kicker">公开区情口径</span>
+                <h3>8 类公开资产、人口结构与三级协同底图</h3>
               </div>
-              <ul class="mini-list business-principle-list">
-                <li>首页只展示区级结果，不展示单患者随访细节。</li>
-                <li>医院页负责督办，医生页负责执行，患者页负责日常行为管理。</li>
-                <li>所有动作围绕覆盖率、风险压降、闭环率和逾期任务展开。</li>
-                <li>图表只保留能触发下一步工作的内容，不保留纯展示型模块。</li>
-              </ul>
+              <div id="qixia-public-profile" class="district-module-body"></div>
+            </article>
+
+            <article class="panel district-module-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">雷达总览</span>
+                <h3>最常见慢病风险平均画像</h3>
+              </div>
+              <div id="population-radar" class="district-module-body"></div>
             </article>
           </aside>
         </section>

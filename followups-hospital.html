@@ -86,9 +86,9 @@
         <section class="management-kpi-section" data-reveal>
           <div class="management-kpi-head">
             <div>
-              <p class="eyebrow">Top KPI</p>
-              <h3>本院今天先看规模、效果和可执行资源</h3>
-              <p class="dim">只保留院级管理最常用的核心指标，避免把患者级细节堆在首页。</p>
+              <p class="eyebrow">Top Row</p>
+              <h3>本院今天先看四个核心指标</h3>
+              <p class="dim">患者数、起效率、覆盖率和院内可用医生与管理师，作为 B 端管理入口。</p>
             </div>
           </div>
           <div id="management-kpi-cards" class="management-kpi-grid management-kpi-grid-4"></div>
@@ -107,7 +107,7 @@
             <article class="panel">
               <div class="panel-head">
                 <span class="panel-kicker">三级协同</span>
-                <h3>基层筛查、区级统筹与三级专科联动</h3>
+                <h3>基层筛查 · 区级统筹 · 三级专科联动</h3>
               </div>
               <div id="command-center-network" class="district-module-body"></div>
             </article>
@@ -132,96 +132,6 @@
             </article>
           </aside>
         </section>
-
-        <details class="workspace-section workspace-section-secondary" data-reveal>
-          <summary class="workspace-section-head">
-            <div class="workspace-section-copy">
-              <span class="panel-kicker">Operational Drill-down</span>
-              <h3>继续下钻到任务督办和患者处理</h3>
-              <p>上方看结果，下方做执行。医院管理者在这里追踪医生、患者和逾期任务。</p>
-            </div>
-            <div class="workspace-section-pills">
-              <span class="workspace-pill secondary">默认收起</span>
-            </div>
-          </summary>
-          <div class="workspace-section-body">
-            <section class="panel management-task-panel">
-              <div class="management-section-head">
-                <div>
-                  <span class="panel-kicker">Task Priority Zone</span>
-                  <h3>今天优先处理什么</h3>
-                </div>
-              </div>
-              <div id="management-task-cards" class="task-priority-grid"></div>
-            </section>
-
-            <section class="panel management-entity-panel">
-              <div class="management-section-head">
-                <div>
-                  <span class="panel-kicker">Institution / Doctor Performance</span>
-                  <h3>哪些机构或医生值得优先关注</h3>
-                </div>
-                <div id="entity-view-toggle" class="entity-view-toggle"></div>
-              </div>
-              <div class="management-focus-layout">
-                <div id="management-focus-board" class="management-focus-board"></div>
-                <aside id="management-focus-detail" class="management-focus-detail"></aside>
-              </div>
-            </section>
-
-            <section id="patient-workbench-section" class="panel management-patient-panel">
-              <div class="management-section-head">
-                <div>
-                  <span class="panel-kicker">Patient Queue</span>
-                  <h3>异常患者列表</h3>
-                </div>
-              </div>
-              <div class="patient-toolbar">
-                <div class="filter-strip">
-                  <label class="filter-field">
-                    <span>患者范围</span>
-                    <select id="patient-view-filter">
-                      <option value="anomaly" selected>异常患者</option>
-                      <option value="all">全部患者</option>
-                    </select>
-                  </label>
-                  <label class="filter-field">
-                    <span>随访状态</span>
-                    <select id="followup-status-filter">
-                      <option value="active" selected>逾期 + 临近逾期</option>
-                      <option value="overdue">仅看逾期</option>
-                      <option value="all">全部任务</option>
-                    </select>
-                  </label>
-                  <label class="filter-field">
-                    <span>风险等级</span>
-                    <select id="patient-risk-filter"></select>
-                  </label>
-                  <label class="filter-field">
-                    <span>病种</span>
-                    <select id="patient-diagnosis-filter"></select>
-                  </label>
-                  <label class="filter-field">
-                    <span>排序方式</span>
-                    <select id="patient-sort-filter">
-                      <option value="priority" selected>按任务优先级</option>
-                      <option value="risk">按风险等级</option>
-                      <option value="age">按年龄</option>
-                      <option value="doctor">按责任医生</option>
-                    </select>
-                  </label>
-                </div>
-                <div class="patient-toolbar-actions">
-                  <button id="export-selected-patients-btn" class="ghost-button nav-button" disabled>批量导出选中</button>
-                  <button id="clear-patient-selection-btn" class="ghost-button nav-button" disabled>清空选择</button>
-                </div>
-              </div>
-              <div id="patient-table-summary" class="patient-table-summary"></div>
-              <div id="patient-table" class="patient-table-shell"></div>
-              <div id="patient-table-pagination" class="patient-table-pagination"></div>
-            </section>
-          </div>
-        </details>
       </main>
     </div>
 
