@@ -832,9 +832,7 @@ function renderOverviewBand() {
     overviewFilterReset.hidden = !hasOverviewSelection();
   }
   if (heroSubtitle) {
-    heroSubtitle.textContent = `${labelWorkbenchRole(state.filters.workbenchRole)} · ${
-      state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"}` : "栖霞区全域"
-    } · ${getOverviewSelectionLabel()} · 点击顶部图表即可联动医院网络`;
+    heroSubtitle.textContent = `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"}` : "栖霞区全域"} · ${labelWorkbenchRole(state.filters.workbenchRole)}当前查看区级经营结果；患者级处理统一进入医院管理、医生工作台和患者端。`;
   }
 
   if (overviewRiskRadar) {
@@ -2035,7 +2033,7 @@ function renderPatientApp() {
   );
 
   if (heroSubtitle) {
-    heroSubtitle.textContent = `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}患者端首页按管理包、Agent 和日常任务呈现`;
+    heroSubtitle.textContent = `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}患者只看今天要做什么、要记录什么，以及什么时候复评。`;
   }
 
   refreshInterfacePolish();
@@ -4287,7 +4285,7 @@ function renderHospitalWorkbench() {
   const patients = getCurrentPopulationPatients();
   setElementText(
     heroSubtitle,
-    `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}${labelWorkbenchRole(state.filters.workbenchRole)} · 默认先看异常，再看全量`
+    `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}${labelWorkbenchRole(state.filters.workbenchRole)}视角，先处理逾期和高风险，再下钻到责任医生和患者。`
   );
   setElementText(
     managementScopeSummary,
@@ -4311,7 +4309,7 @@ function renderClinicianWorkbench() {
 
   setElementText(
     heroSubtitle,
-    `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}${labelWorkbenchRole(state.filters.workbenchRole)}${state.followupClinician ? ` · ${state.followupClinician}` : ""} · 默认先看异常任务`
+    `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}${labelWorkbenchRole(state.filters.workbenchRole)}${state.followupClinician ? ` · ${state.followupClinician}` : ""}，当前页面只保留今天需要执行的患者、证据和 MDT 动作。`
   );
   setElementText(
     managementScopeSummary,
