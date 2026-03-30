@@ -36,6 +36,10 @@ const state = {
   publicSourceData: null,
   dynamicHospitalFocusId: "",
   wallboardTimers: [],
+  districtAgentTimer: null,
+  districtAgentAutoplayPaused: pageQuery.get("autostart") === "0",
+  districtAgentActiveIndex: 0,
+  districtAgentPhaseIndex: 0,
   overviewSelectedDomain: "",
   overviewSelectedFunnelStage: "",
   githubPlan: null,
@@ -987,6 +991,305 @@ function activateProgressBars(root) {
 function clearWallboardTimers() {
   state.wallboardTimers.forEach((timer) => window.clearInterval(timer));
   state.wallboardTimers = [];
+}
+
+function clearDistrictAgentTimer() {
+  if (state.districtAgentTimer) {
+    window.clearInterval(state.districtAgentTimer);
+    state.districtAgentTimer = null;
+  }
+}
+
+function getDistrictSelectedPatient(scopedPatients, cohort) {
+  return scopedPatients.find((patient) => patient.id === state.populationPatientId) ?? scopedPatients[0] ?? cohort?.patients?.[0] ?? null;
+}
+
+function buildDistrictAgentMessage(agentKey, phaseKey, context) {
+  const {
+    selectedPatient,
+    activeInsight,
+    domainLabel,
+    topPrediction,
+    topPackage,
+    evidenceTitle,
+    focusHospitalName,
+    nextFollowUpDate
+  } = context;
+  const patientName = selectedPatient?.name ?? "当前患者";
+  const primaryDiagnosis = selectedPatient?.diagnoses?.[0] ?? "慢病管理对象";
+  const target = topPrediction?.target ?? `${domainLabel} 风险`;
+  const evidence = evidenceTitle ?? `${domainLabel} 指标变化`;
+  const packageTitle = topPackage ?? "个体化干预包";
+
+  if (agentKey === "risk-router") {
+    return `已把 ${patientName} 从 ${primaryDiagnosis} 入口收进 ${domainLabel} 高优先级轨道，当前先盯 ${target} 的升级阈值。`;
+  }
+
+  if (agentKey === "indicator-reader") {
+    return `围绕 ${evidence} 做轻预警，建议在 ${nextFollowUpDate || "下个随访窗口"} 前完成一次重点指标复核。`;
+  }
+
+  if (agentKey === "nutrition") {
+    return `饮食侧优先执行 ${packageTitle}，先把三餐、外卖替换和盐糖控制收口，再看症状与化验回落。`;
+  }
+
+  if (agentKey === "exercise") {
+    return `运动侧按照 4/8/12 周节奏推进，把步数、有氧与抗阻拆成可执行动作，避免一次给太重。`;
+  }
+
+  if (agentKey === "sleep") {
+    return `睡眠侧把作息、饮水、睡前光照和夜间症状一起收进今日计划，降低 ${domainLabel} 风险放大。`;
+  }
+
+  if (agentKey === "adherence") {
+    return `陪伴侧重点放在连续打卡和提醒，把 ${patientName} 的依从性维持到复评窗口，避免中途掉队。`;
+  }
+
+  if (agentKey === "mdt") {
+    return `一旦 ${target} 持续抬升，就由 ${focusHospitalName} 触发 MDT 协同，把基层筛查、区级统筹和三级专科连起来。`;
+  }
+
+  if (phaseKey === "followup-close-loop") {
+    return `${patientName} 当前进入闭环推进阶段，先把 ${packageTitle} 的执行率、异常提醒和复诊准备同步给责任团队。`;
+  }
+
+  return `${patientName} 当前围绕 ${domainLabel} 进入 ${phaseKey} 阶段，优先把 ${packageTitle} 和 ${target} 的处置顺序收住。`;
+}
+
+function getDistrictRoundtableModel() {
+  const cohort = state.populationDistrictCohort ?? state.populationCohort;
+  if (!cohort) return null;
+
+  const scopedPatients = getOverviewFilteredDistrictPatients();
+  const selectedPatient = getDistrictSelectedPatient(scopedPatients, cohort);
+  const insights = computeHospitalInsights();
+  const activeInsight = resolveActiveHospitalInsight(insights);
+  const riskVector = selectedPatient?.radar ?? cohort.averageRadar ?? {};
+  const domainKey =
+    state.overviewSelectedDomain ||
+    selectedPatient?.topDomains?.[0] ||
+    Object.entries(riskVector).sort((left, right) => right[1] - left[1])[0]?.[0] ||
+    "metabolic";
+  const domainLabel = labelRiskDomain(domainKey);
+  const topPrediction =
+    selectedPatient?.predictions?.length
+      ? [...selectedPatient.predictions].sort((left, right) => right.score - left.score)[0]
+      : null;
+  const topPackage =
+    selectedPatient?.interventionProjection?.packageTitles?.[0] ??
+    selectedPatient?.recommendedPackages?.[0] ??
+    "个体化治疗包";
+  const evidenceTitle = selectedPatient?.evidenceSources?.[0]?.title ?? "";
+  const focusHospitalName = activeInsight?.hospital.name ?? selectedPatient?.hospitalName ?? "区级慢病中心";
+  const phaseBlueprint = [
+    {
+      key: "risk-stratification",
+      label: "风险分层",
+      summary: `先围绕 ${domainLabel} 收紧人群，再判断谁需要升级。`
+    },
+    {
+      key: "behavior-package",
+      label: "行为干预",
+      summary: `把 ${topPackage} 转成饮食、运动、睡眠的可执行疗法包。`
+    },
+    {
+      key: "followup-close-loop",
+      label: "随访推进",
+      summary: `用 4/8/12 周节点盯执行率、异常提醒和复评节奏。`
+    },
+    {
+      key: "mdt-upgrade",
+      label: "MDT 协同",
+      summary: `当 ${topPrediction?.target ?? domainLabel} 波动抬升时，立即升级到区级与三级专科协同。`
+    }
+  ];
+  const phaseIndex = ((state.districtAgentPhaseIndex % phaseBlueprint.length) + phaseBlueprint.length) % phaseBlueprint.length;
+  const activePhase = phaseBlueprint[phaseIndex];
+  const agents = [
+    {
+      key: "risk-router",
+      badge: "分",
+      name: "分层 Agent",
+      lane: "风险收紧",
+      detail: `把 ${focusHospitalName} 与 ${domainLabel} 高风险患者拉进同一优先队列。`
+    },
+    {
+      key: "indicator-reader",
+      badge: "指",
+      name: "指标解读 Agent",
+      lane: "指标波动",
+      detail: `盯住 ${evidenceTitle || "血糖、血压、体重、睡眠"} 的近期波动，避免漏掉升级信号。`
+    },
+    {
+      key: "nutrition",
+      badge: "饮",
+      name: "营养评估 Agent",
+      lane: "饮食建议",
+      detail: `把 ${topPackage} 收到三餐、替换方案和外卖建议里。`
+    },
+    {
+      key: "exercise",
+      badge: "动",
+      name: "运动干预 Agent",
+      lane: "运动处方",
+      detail: `基于 ${selectedPatient?.adherenceSummary ?? "当前依从性"} 推出更易执行的日常动作。`
+    },
+    {
+      key: "sleep",
+      badge: "眠",
+      name: "睡眠管理 Agent",
+      lane: "作息调整",
+      detail: `把睡眠、光照、饮水和夜间症状串到同一条行为链里。`
+    },
+    {
+      key: "adherence",
+      badge: "随",
+      name: "陪伴随访 Agent",
+      lane: "依从督办",
+      detail: `围绕 ${selectedPatient?.nextFollowUpDate ?? "近期"} 复评窗口做提醒、打卡和连续反馈。`
+    },
+    {
+      key: "mdt",
+      badge: "协",
+      name: "MDT 协调 Agent",
+      lane: "升级协同",
+      detail: `把基层、区级和三级医院放到同一个升级协作链条里。`
+    }
+  ];
+  const activeAgentIndex = ((state.districtAgentActiveIndex % agents.length) + agents.length) % agents.length;
+  const activeAgent = agents[activeAgentIndex];
+  const nextAgent = agents[(activeAgentIndex + 1) % agents.length];
+  const transcript = Array.from({ length: 4 }, (_, offset) => {
+    const agentIndex = (activeAgentIndex - offset + agents.length) % agents.length;
+    const phase = phaseBlueprint[(phaseIndex - Math.floor(offset / 2) + phaseBlueprint.length) % phaseBlueprint.length];
+    const agent = agents[agentIndex];
+    return {
+      id: `${phase.key}-${agent.key}-${offset}`,
+      phase,
+      agent,
+      nextAgent: agents[(agentIndex + 1) % agents.length],
+      conclusion: buildDistrictAgentMessage(agent.key, phase.key, {
+        selectedPatient,
+        activeInsight,
+        domainLabel,
+        topPrediction,
+        topPackage,
+        evidenceTitle,
+        focusHospitalName,
+        nextFollowUpDate: selectedPatient?.nextFollowUpDate
+      }),
+      tone: offset === 0 ? "live" : offset === 1 ? "warm" : "rest"
+    };
+  });
+
+  return {
+    cohort,
+    scopedPatients,
+    selectedPatient,
+    activeInsight,
+    domainLabel,
+    topPrediction,
+    topPackage,
+    phaseBlueprint,
+    phaseIndex,
+    activePhase,
+    agents,
+    activeAgentIndex,
+    activeAgent,
+    nextAgent,
+    transcript
+  };
+}
+
+function setDistrictPhaseIndex(index) {
+  const roundtable = getDistrictRoundtableModel();
+  if (!roundtable) return;
+  const phaseCount = roundtable.phaseBlueprint.length;
+  state.districtAgentPhaseIndex = ((index % phaseCount) + phaseCount) % phaseCount;
+}
+
+function setDistrictAgentIndex(index) {
+  const roundtable = getDistrictRoundtableModel();
+  if (!roundtable) return;
+  const agentCount = roundtable.agents.length;
+  state.districtAgentActiveIndex = ((index % agentCount) + agentCount) % agentCount;
+}
+
+function advanceDistrictAgentState(step = 1) {
+  const roundtable = getDistrictRoundtableModel();
+  if (!roundtable) return;
+  const nextAgentIndex = state.districtAgentActiveIndex + step;
+  setDistrictAgentIndex(nextAgentIndex);
+  if (Math.abs(step) >= 1 && state.districtAgentActiveIndex % 2 === 0) {
+    setDistrictPhaseIndex(state.districtAgentPhaseIndex + Math.sign(step || 1));
+  }
+}
+
+function refreshDistrictAgentStage() {
+  renderDynamicCommandStage();
+  renderCommandCenter();
+  renderWallboardHero();
+}
+
+function startDistrictAgentAutoplay() {
+  clearDistrictAgentTimer();
+  if (!isHomePage) return;
+  state.districtAgentTimer = window.setInterval(() => {
+    if (state.districtAgentAutoplayPaused) return;
+    advanceDistrictAgentState(1);
+    refreshDistrictAgentStage();
+  }, isWallboardMode ? 2600 : 3400);
+}
+
+function bindDistrictAgentInteractions(root) {
+  if (!root) return;
+
+  root.querySelectorAll("[data-stage-agent]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.districtAgentAutoplayPaused = true;
+      setDistrictAgentIndex(Number(node.getAttribute("data-stage-agent-index") || 0));
+      refreshDistrictAgentStage();
+    });
+  });
+
+  root.querySelectorAll("[data-stage-phase]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.districtAgentAutoplayPaused = true;
+      setDistrictPhaseIndex(Number(node.getAttribute("data-stage-phase-index") || 0));
+      refreshDistrictAgentStage();
+    });
+  });
+
+  root.querySelectorAll("[data-stage-action]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const action = node.getAttribute("data-stage-action");
+      if (action === "toggle") {
+        state.districtAgentAutoplayPaused = !state.districtAgentAutoplayPaused;
+      } else if (action === "advance") {
+        state.districtAgentAutoplayPaused = true;
+        advanceDistrictAgentState(1);
+      } else if (action === "rewind") {
+        state.districtAgentAutoplayPaused = true;
+        advanceDistrictAgentState(-1);
+      } else if (action === "resume") {
+        state.districtAgentAutoplayPaused = false;
+      }
+      refreshDistrictAgentStage();
+    });
+  });
+
+  root.querySelectorAll("[data-stage-patient]").forEach((node) => {
+    node.addEventListener("click", async () => {
+      const patientId = node.getAttribute("data-stage-patient");
+      if (!patientId) return;
+      syncActivePatient(patientId);
+      const patient = (state.populationCohort?.patients ?? []).find((item) => item.id === patientId);
+      if (patient?.hospitalId) state.dynamicHospitalFocusId = patient.hospitalId;
+      renderPopulation();
+      renderFollowupCenter();
+      if (shouldLoadWorkspacePage()) await loadWorkspace();
+    });
+  });
 }
 
 function normalizeConditionName(name) {
@@ -2140,13 +2443,12 @@ function resolveActiveHospitalInsight(insights) {
 
 function renderDynamicCommandStage() {
   if (!districtLiveStage || !districtFlowStory) return;
-  const cohort = state.populationDistrictCohort ?? state.populationCohort;
-  if (!cohort) return;
+  const roundtable = getDistrictRoundtableModel();
+  if (!roundtable) return;
 
-  const scopedPatients = getOverviewFilteredDistrictPatients();
+  const { cohort, scopedPatients, activeInsight, phaseBlueprint, activePhase, agents, activeAgent, nextAgent, transcript, selectedPatient, topPrediction, topPackage, domainLabel } = roundtable;
   const insights = computeHospitalInsights();
-  const activeInsight = resolveActiveHospitalInsight(insights);
-  const funnel = (cohort.coordinationFunnel ?? []).slice(0, 6);
+  const funnel = (cohort.coordinationFunnel?.stages ?? []).slice(0, 6);
   const topDomains = Object.keys(scopedPatients[0]?.radar ?? cohort.averageRadar ?? {})
     .map((domain) => ({
       domain,
@@ -2190,8 +2492,8 @@ function renderDynamicCommandStage() {
         </article>
       </div>
 
-      <div class="dynamic-stage-network">
-        <div class="network-orbit">
+      <div class="dynamic-stage-network immersive-stage-body">
+        <div class="network-orbit immersive-network-orbit">
           <div class="network-core">
             <div class="network-core-ring"></div>
             <div class="network-core-copy">
@@ -2223,50 +2525,114 @@ function renderDynamicCommandStage() {
           </div>
         </div>
 
-        <div class="dynamic-stage-highlight">
-          ${
-            activeInsight
-              ? `
-                <div class="highlight-head">
-                  <div>
-                    <span class="mini-tag">${activeInsight.hospital.networkRole ?? activeInsight.hospital.level ?? "医院"}</span>
-                    <h4>${activeInsight.hospital.name}</h4>
-                  </div>
-                  <strong>${coveragePercentage(activeInsight.patientCount, cohort.publicProfile?.totalPopulation ?? 0)}</strong>
-                </div>
-                <div class="highlight-bars">
-                  <div class="highlight-bar-row">
-                    <span>管理患者</span>
-                    <div class="progress-track"><i data-progress-width="${coveragePercentage(activeInsight.patientCount, cohort.patientCount)}"></i></div>
-                    <strong>${formatCompactMetric(activeInsight.patientCount)}</strong>
-                  </div>
-                  <div class="highlight-bar-row">
-                    <span>病种聚焦</span>
-                    <div class="progress-track"><i data-progress-width="${activeInsight.diseaseRatios[0]?.ratio ?? "0%"}"></i></div>
-                    <strong>${activeInsight.diseaseRatios[0]?.label ?? "待补充"}</strong>
-                  </div>
-                  <div class="highlight-bar-row">
-                    <span>起效率</span>
-                    <div class="progress-track"><i data-progress-width="${activeInsight.effectiveRate}"></i></div>
-                    <strong>${activeInsight.effectiveRate}</strong>
-                  </div>
-                </div>
-                <div class="highlight-asset-strip">
-                  ${publicAssets
-                    .map(
-                      (asset) => `
-                        <div class="highlight-asset-card">
-                          <span>${asset.title}</span>
-                          <strong>${asset.value}</strong>
+        <section class="dynamic-stage-highlight immersive-transcript-panel">
+          <div class="immersive-panel-head">
+            <div>
+              <span class="mini-tag">${activePhase.label}</span>
+              <h4>${activeAgent.name} 正在接力</h4>
+              <div class="dim">${activeAgent.detail}</div>
+            </div>
+            <div class="immersive-control-strip">
+              <button class="ghost-button" type="button" data-stage-action="rewind">上一棒</button>
+              <button class="ghost-button primary" type="button" data-stage-action="${state.districtAgentAutoplayPaused ? "resume" : "toggle"}">
+                ${state.districtAgentAutoplayPaused ? "继续自动推进" : "暂停自动推进"}
+              </button>
+              <button class="ghost-button primary" type="button" data-stage-action="advance">下一棒</button>
+            </div>
+          </div>
+
+          <div class="immersive-stage-spotlight">
+            <div class="immersive-focus-card">
+              <span>当前患者</span>
+              <strong>${selectedPatient?.name ?? "未选择患者"}</strong>
+              <small>${selectedPatient?.diagnoses?.join(" / ") ?? "等待患者焦点"} · 下次随访 ${selectedPatient?.nextFollowUpDate ?? "待定"}</small>
+            </div>
+            <div class="immersive-focus-card">
+              <span>当前焦点</span>
+              <strong>${domainLabel}</strong>
+              <small>${topPrediction ? `${topPrediction.model} ${topPrediction.score} · ${topPrediction.target}` : "等待模型判读"}</small>
+            </div>
+            <div class="immersive-focus-card">
+              <span>下一棒</span>
+              <strong>${nextAgent.name}</strong>
+              <small>${activeInsight?.hospital.name ?? "区级协同"} · ${topPackage ?? "治疗包待补充"}</small>
+            </div>
+          </div>
+
+          <div class="immersive-transcript-list">
+            ${transcript
+              .map(
+                (entry, index) => `
+                  <article class="immersive-transcript-card ${index === 0 ? "is-live" : ""}">
+                    <div class="immersive-transcript-head">
+                      <div class="transcript-avatar">${entry.agent.badge}</div>
+                      <div class="immersive-transcript-copy">
+                        <div class="immersive-transcript-meta">
+                          <strong>${entry.agent.name}</strong>
+                          <span>${entry.phase.label}</span>
                         </div>
-                      `
-                    )
-                    .join("")}
-                </div>
-              `
-              : `<div class="note-block">暂无医院聚焦数据。</div>`
-          }
-        </div>
+                        <p>${entry.conclusion}</p>
+                        <small>下一棒：${entry.nextAgent.name}</small>
+                      </div>
+                    </div>
+                    ${index === 0 ? `<div class="typing-ribbon"></div>` : ""}
+                  </article>
+                `
+              )
+              .join("")}
+          </div>
+        </section>
+
+        <aside class="immersive-agent-rail">
+          <div class="roundtable-shell">
+            <div class="roundtable-spotlight">
+              <div>
+                <span class="mini-tag">Agent 舞台</span>
+                <h4>${activeAgent.name}</h4>
+              </div>
+              <strong>${activePhase.label}</strong>
+            </div>
+            <div class="roundtable-seat-grid">
+              ${agents
+                .map(
+                  (agent, index) => `
+                    <button
+                      class="roundtable-seat ${index === roundtable.activeAgentIndex ? "is-active" : index === (roundtable.activeAgentIndex + 1) % agents.length ? "is-upnext" : ""}"
+                      type="button"
+                      data-stage-agent="${agent.key}"
+                      data-stage-agent-index="${index}"
+                    >
+                      <span class="roundtable-seat-badge">${agent.badge}</span>
+                      <div class="roundtable-seat-copy">
+                        <strong>${agent.name}</strong>
+                        <small>${agent.lane}</small>
+                      </div>
+                    </button>
+                  `
+                )
+                .join("")}
+            </div>
+          </div>
+
+          <div class="immersive-phase-list">
+            ${phaseBlueprint
+              .map(
+                (phase, index) => `
+                  <button
+                    class="stage-control ${index === roundtable.phaseIndex ? "is-active" : ""}"
+                    type="button"
+                    data-stage-phase="${phase.key}"
+                    data-stage-phase-index="${index}"
+                  >
+                    <span>Phase ${index + 1}</span>
+                    <strong>${phase.label}</strong>
+                    <small>${phase.summary}</small>
+                  </button>
+                `
+              )
+              .join("")}
+          </div>
+        </aside>
       </div>
     </div>
   `;
@@ -2370,16 +2736,20 @@ function renderDynamicCommandStage() {
       state.dynamicHospitalFocusId = node.getAttribute("data-dynamic-hospital") || "";
       renderDynamicCommandStage();
       renderHospitalOverview();
+      renderCommandCenter();
       renderPatients();
       renderWallboardHero();
     });
   });
+
+  bindDistrictAgentInteractions(districtLiveStage);
 
   animateCounters(districtLiveStage);
   animateCounters(districtFlowStory);
   activateProgressBars(districtLiveStage);
   activateProgressBars(districtFlowStory);
   refreshInterfacePolish();
+  startDistrictAgentAutoplay();
 }
 
 function renderWallboardHero() {
@@ -5134,6 +5504,7 @@ function renderPopulation() {
   if (hospitalOverviewGrid && hospitalDetailPanel) renderHospitalOverview();
   if (qixiaPublicProfile) renderQixiaPublicProfile();
   renderDynamicCommandStage();
+  renderCommandCenter();
   renderWallboardHero();
   renderExecutiveCockpit();
   if (reminderCenter) renderReminderCenter();
@@ -5439,11 +5810,13 @@ function renderPopulation() {
 
 function renderCommandCenter() {
   if (!commandCenterNetwork && !commandCenterQueue && !commandCenterKpis) return;
+  const roundtable = getDistrictRoundtableModel();
+  if (!roundtable) return;
   const selectedHospital = state.hospitals.find((hospital) => hospital.id === state.filters.hospitalId);
   const networkHospitals = selectedHospital?.district
     ? state.hospitals.filter((hospital) => hospital.district === selectedHospital.district)
     : state.hospitals.filter((hospital) => hospital.district === "栖霞区");
-  const cohortPatients = state.populationCohort?.patients ?? [];
+  const cohortPatients = roundtable.scopedPatients;
   const tiers = [
     {
       title: "基层筛查",
@@ -5521,54 +5894,116 @@ function renderCommandCenter() {
   }
 
   if (commandCenterQueue) {
-    commandCenterQueue.innerHTML = queuePatients
-    .map((patient, index) => {
-      const topPrediction = [...patient.predictions].sort((left, right) => right.score - left.score)[0];
-      return `
-        <div class="queue-item">
-          <div class="queue-rank">${String(index + 1).padStart(2, "0")}</div>
-          <div class="queue-main">
-            <div class="queue-head">
-              <strong>${patient.name}</strong>
-              <span class="status-pill ${patient.overallRiskLevel}">${formatLevel(patient.overallRiskLevel)}</span>
-            </div>
-            <div class="dim">${patient.hospitalName}</div>
-            <div class="dim">${patient.topDomains.map((domain) => labelRiskDomain(domain)).join(" · ")} · 下次随访 ${patient.nextFollowUpDate}</div>
-            <div class="queue-model">${topPrediction.model}：${topPrediction.target} ${topPrediction.score}</div>
-          </div>
+    commandCenterQueue.innerHTML = `
+      <div class="plan-block">
+        <h4>实时风险队列</h4>
+        <div class="agent-queue-list">
+          ${queuePatients
+            .map((patient, index) => {
+              const topPrediction = [...patient.predictions].sort((left, right) => right.score - left.score)[0];
+              return `
+                <button class="queue-item queue-item-button" type="button" data-stage-patient="${patient.id}">
+                  <div class="queue-rank">${String(index + 1).padStart(2, "0")}</div>
+                  <div class="queue-main">
+                    <div class="queue-head">
+                      <strong>${patient.name}</strong>
+                      <span class="status-pill ${patient.overallRiskLevel}">${formatLevel(patient.overallRiskLevel)}</span>
+                    </div>
+                    <div class="dim">${patient.hospitalName}</div>
+                    <div class="dim">${patient.topDomains.map((domain) => labelRiskDomain(domain)).join(" · ")} · 下次随访 ${patient.nextFollowUpDate}</div>
+                    <div class="queue-model">${topPrediction.model}：${topPrediction.target} ${topPrediction.score}</div>
+                  </div>
+                </button>
+              `;
+            })
+            .join("")}
         </div>
-      `;
-    })
-    .join("");
+      </div>
+      <div class="plan-block">
+        <h4>接力摘要</h4>
+        <ul class="mini-list">
+          ${roundtable.transcript
+            .slice(0, 3)
+            .map((entry) => `<li>${entry.agent.name} · ${entry.phase.label}：${entry.conclusion}</li>`)
+            .join("")}
+        </ul>
+      </div>
+    `;
   }
 
   if (commandCenterKpis) {
     commandCenterKpis.innerHTML = `
-    <div class="plan-block">
-      <h4>协同总览</h4>
-      <div class="stat-grid">
-        ${statChip("高风险", highRiskCount)}
-        ${statChip("强化管理", intensiveCount)}
-        ${statChip("开放 MDT", openMeetings)}
-        ${statChip("专科医生", specialists)}
-        ${statChip("健康管理师", healthManagers)}
+      <div class="agent-command-deck">
+        <div class="plan-block">
+          <h4>协同总览</h4>
+          <div class="stat-grid">
+            ${statChip("高风险", highRiskCount)}
+            ${statChip("强化管理", intensiveCount)}
+            ${statChip("开放 MDT", openMeetings)}
+            ${statChip("专科医生", specialists)}
+            ${statChip("健康管理师", healthManagers)}
+          </div>
+        </div>
+        <div class="plan-block">
+          <h4>${roundtable.activePhase.label}</h4>
+          <div class="agent-command-summary">
+            <div>
+              <strong>${roundtable.activeAgent.name}</strong>
+              <div class="dim">${roundtable.activeAgent.detail}</div>
+            </div>
+            <div>
+              <strong>${roundtable.selectedPatient?.name ?? "待选择患者"}</strong>
+              <div class="dim">${roundtable.selectedPatient?.diagnoses?.join(" / ") ?? "暂无诊断标签"}</div>
+            </div>
+            <div>
+              <strong>${roundtable.nextAgent.name}</strong>
+              <div class="dim">下一棒补位</div>
+            </div>
+          </div>
+        </div>
+        <div class="immersive-phase-list compact">
+          ${roundtable.phaseBlueprint
+            .map(
+              (phase, index) => `
+                <button
+                  class="stage-control ${index === roundtable.phaseIndex ? "is-active" : ""}"
+                  type="button"
+                  data-stage-phase="${phase.key}"
+                  data-stage-phase-index="${index}"
+                >
+                  <span>Phase ${index + 1}</span>
+                  <strong>${phase.label}</strong>
+                  <small>${phase.summary}</small>
+                </button>
+              `
+            )
+            .join("")}
+        </div>
+        <div class="agent-action-grid">
+          <button class="task-priority-button" type="button" data-stage-action="toggle">
+            ${state.districtAgentAutoplayPaused ? "恢复自动推进" : "暂停自动推进"}
+          </button>
+          <button class="task-priority-button" type="button" data-stage-action="advance">下一棒</button>
+          <a class="ghost-button nav-button" href="./followups-hospital.html">进入医院管理视图</a>
+          <a class="ghost-button nav-button" href="./followups-clinician.html">进入医生工作台</a>
+        </div>
+        <div class="plan-block">
+          <h4>转诊与闭环</h4>
+          <ul class="mini-list">
+            <li>基层首诊与筛查后，进入区级慢病管理池。</li>
+            <li>区医院对高风险患者发起专科升级、MDT 协调与护理路径统筹。</li>
+            <li>三级医院承担复杂病例判断、专科路径修订与疑难会诊。</li>
+            <li>健康管理师、家庭医生和患者端形成随访闭环。</li>
+            <li>${selectedHospital ? `当前医院：${selectedHospital.name}` : "当前展示：栖霞区三级诊疗协同网络"}</li>
+            <li>基层筛查上送 ${communityCount} 个站点，三级专科协同 ${tertiaryCount} 家机构。</li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div class="plan-block">
-      <h4>转诊与闭环</h4>
-      <ul class="mini-list">
-        <li>基层首诊与筛查后，进入区级慢病管理池。</li>
-        <li>区医院对高风险患者发起专科升级、MDT 协调与护理路径统筹。</li>
-        <li>三级医院承担复杂病例判断、专科路径修订与疑难会诊。</li>
-        <li>健康管理师、家庭医生和患者端形成随访闭环。</li>
-      </ul>
-    </div>
-    <div class="plan-block">
-      <h4>当前筛选视图</h4>
-      <div class="dim">${selectedHospital ? `当前医院：${selectedHospital.name}` : "当前展示：栖霞区三级诊疗协同网络"}</div>
-    </div>
-  `;
+    `;
   }
+
+  bindDistrictAgentInteractions(commandCenterKpis);
+  bindDistrictAgentInteractions(commandCenterQueue);
 }
 
 function renderWorkspace() {

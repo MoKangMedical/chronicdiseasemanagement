@@ -3749,6 +3749,303 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   font-size: 1rem;
 }
 
+.immersive-stage-body {
+  grid-template-columns: minmax(320px, 1.08fr) minmax(360px, 1fr) minmax(260px, 0.82fr);
+  align-items: stretch;
+}
+
+.immersive-network-orbit {
+  min-height: 460px;
+}
+
+.immersive-transcript-panel,
+.immersive-agent-rail {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+
+.immersive-panel-head,
+.roundtable-spotlight {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.immersive-panel-head h4,
+.roundtable-spotlight h4 {
+  margin: 6px 0 0;
+}
+
+.immersive-control-strip,
+.agent-action-grid {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.ghost-button.primary {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(6, 182, 212, 0.88));
+  border-color: rgba(125, 211, 252, 0.36);
+  color: #eff6ff;
+}
+
+.immersive-stage-spotlight,
+.agent-command-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.immersive-focus-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(191, 219, 254, 0.68);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.9)),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 40%);
+}
+
+.immersive-focus-card span {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(30, 64, 175, 0.72);
+}
+
+.immersive-focus-card strong {
+  font-size: 1.02rem;
+  line-height: 1.2;
+}
+
+.immersive-focus-card small {
+  color: var(--text-secondary);
+}
+
+.immersive-transcript-list,
+.agent-queue-list {
+  display: grid;
+  gap: 12px;
+}
+
+.immersive-transcript-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(191, 219, 254, 0.64);
+  background: rgba(255, 255, 255, 0.86);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.immersive-transcript-card.is-live {
+  border-color: rgba(34, 211, 238, 0.72);
+  box-shadow: 0 16px 34px rgba(30, 64, 175, 0.16);
+}
+
+.immersive-transcript-head {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.transcript-avatar,
+.roundtable-seat-badge {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(30, 64, 175, 0.95), rgba(6, 182, 212, 0.88));
+  color: #eff6ff;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  box-shadow: 0 14px 28px rgba(30, 64, 175, 0.18);
+}
+
+.immersive-transcript-copy {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.immersive-transcript-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.immersive-transcript-meta span,
+.roundtable-seat-copy small {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.immersive-transcript-copy p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.immersive-transcript-copy small {
+  color: rgba(30, 64, 175, 0.78);
+  font-weight: 700;
+}
+
+.typing-ribbon {
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(6, 182, 212, 0), rgba(6, 182, 212, 1), rgba(6, 182, 212, 0));
+  animation: immersiveSweep 1.2s linear infinite;
+}
+
+.roundtable-shell {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(191, 219, 254, 0.7);
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.12), transparent 32%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(239, 246, 255, 0.9));
+}
+
+.roundtable-spotlight > strong {
+  font-size: 1.25rem;
+  color: var(--primary);
+}
+
+.roundtable-seat-grid,
+.immersive-phase-list {
+  display: grid;
+  gap: 10px;
+}
+
+.roundtable-seat {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(191, 219, 254, 0.64);
+  background: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.roundtable-seat:hover,
+.roundtable-seat.is-active,
+.roundtable-seat.is-upnext {
+  transform: translateY(-1px);
+  border-color: rgba(59, 130, 246, 0.72);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.1);
+}
+
+.roundtable-seat.is-active {
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(219, 234, 254, 0.94));
+}
+
+.roundtable-seat.is-upnext {
+  border-style: dashed;
+}
+
+.roundtable-seat-copy {
+  display: grid;
+  gap: 3px;
+  text-align: left;
+}
+
+.roundtable-seat-copy strong {
+  font-size: 0.96rem;
+}
+
+.stage-control {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  text-align: left;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(191, 219, 254, 0.64);
+  background: rgba(255, 255, 255, 0.82);
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.stage-control:hover,
+.stage-control.is-active {
+  transform: translateY(-1px);
+  border-color: rgba(34, 211, 238, 0.66);
+  box-shadow: 0 14px 30px rgba(30, 64, 175, 0.12);
+}
+
+.stage-control.is-active {
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.98), rgba(224, 242, 254, 0.94));
+}
+
+.stage-control span {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(30, 64, 175, 0.72);
+}
+
+.stage-control strong {
+  font-size: 1rem;
+}
+
+.stage-control small {
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+.immersive-phase-list.compact {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.agent-command-deck {
+  display: grid;
+  gap: 14px;
+}
+
+.agent-command-summary > div {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(191, 219, 254, 0.62);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.queue-item-button {
+  width: 100%;
+  border: 0;
+  text-align: left;
+  background:
+    radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(96, 165, 250, 0.14), transparent 34%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.queue-item-button:hover {
+  border-color: rgba(34, 211, 238, 0.56);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, 0.18);
+}
+
+.district-command-panel .ghost-button {
+  color: rgba(239, 246, 255, 0.94);
+}
+
+.district-command-panel .ghost-button.primary {
+  color: #eff6ff;
+}
+
 .dynamic-story-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -3862,6 +4159,16 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   50% {
     transform: scale(1.03);
     opacity: 1;
+  }
+}
+
+@keyframes immersiveSweep {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
   }
 }
 
@@ -4813,6 +5120,9 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   .clinician-center-top,
   .hospital-analytics-split,
   .district-command-grid,
+  .immersive-stage-body,
+  .immersive-stage-spotlight,
+  .agent-command-summary,
   .management-kpi-grid-4,
   .patient-app-layout,
   .patient-app-home-grid,
@@ -4830,6 +5140,10 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
 
   .patient-app-sidebar {
     position: static;
+  }
+
+  .immersive-phase-list.compact {
+    grid-template-columns: 1fr;
   }
 
   .business-home-side {
