@@ -4810,6 +4810,151 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   margin-bottom: 12px;
 }
 
+.clinician-agent-stage-panel {
+  padding: 22px 22px 18px;
+}
+
+.clinician-agent-shell {
+  display: grid;
+  gap: 14px;
+}
+
+.clinician-agent-topbar {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.clinician-agent-focus,
+.clinician-agent-state {
+  min-width: 0;
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 20px;
+  border: 1px solid rgba(96, 165, 250, 0.16);
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.94), rgba(15, 23, 42, 0.92)),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 38%);
+}
+
+.clinician-agent-focus h4 {
+  margin: 0;
+  color: rgba(248, 250, 252, 0.98);
+}
+
+.clinician-agent-state {
+  min-width: 220px;
+}
+
+.clinician-agent-state span {
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(191, 219, 254, 0.72);
+}
+
+.clinician-agent-state strong {
+  color: rgba(248, 250, 252, 0.98);
+}
+
+.clinician-agent-state small {
+  color: rgba(191, 219, 254, 0.72);
+}
+
+.clinician-agent-state.is-human {
+  border-color: rgba(34, 211, 238, 0.36);
+  box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.12);
+}
+
+.clinician-agent-toolbar,
+.clinician-agent-phase-strip,
+.clinician-agent-seat-strip,
+.clinician-agent-transcript {
+  display: grid;
+  gap: 12px;
+}
+
+.clinician-agent-toolbar {
+  grid-template-columns: repeat(5, minmax(0, max-content));
+  justify-content: start;
+}
+
+.clinician-agent-phase-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.clinician-agent-seat-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.clinician-agent-seat {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(96, 165, 250, 0.16);
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.94), rgba(15, 23, 42, 0.92)),
+    radial-gradient(circle at top right, rgba(6, 182, 212, 0.12), transparent 34%);
+  color: rgba(248, 250, 252, 0.96);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.clinician-agent-seat:hover,
+.clinician-agent-seat.is-active {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.42);
+  box-shadow: 0 16px 36px rgba(8, 145, 178, 0.16);
+}
+
+.clinician-agent-seat-copy {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.clinician-agent-seat-copy strong {
+  color: rgba(248, 250, 252, 0.98);
+}
+
+.clinician-agent-seat-copy small {
+  color: rgba(191, 219, 254, 0.72);
+}
+
+.clinician-agent-transcript .immersive-transcript-card {
+  background:
+    linear-gradient(180deg, rgba(30, 41, 59, 0.94), rgba(15, 23, 42, 0.92)),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 36%);
+  border-color: rgba(96, 165, 250, 0.16);
+}
+
+.clinician-agent-transcript .immersive-transcript-card.is-live {
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 18px 40px rgba(8, 145, 178, 0.18);
+}
+
+.clinician-agent-transcript .immersive-transcript-meta strong,
+.clinician-agent-transcript .immersive-transcript-copy p {
+  color: rgba(248, 250, 252, 0.98);
+}
+
+.clinician-agent-transcript .immersive-transcript-meta span,
+.clinician-agent-transcript .immersive-transcript-copy small,
+.clinician-agent-stage-panel .dim {
+  color: rgba(191, 219, 254, 0.72);
+}
+
+.stage-link-button {
+  text-decoration: none;
+}
+
 .package-card-action {
   width: 100%;
   border: 1px solid rgba(59, 130, 246, 0.16);
@@ -4831,7 +4976,9 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
 
 .clinician-workbench-page .package-card-action:focus-visible,
 .clinician-workbench-page .meeting-detail button:focus-visible,
-.clinician-workbench-page .meeting-card button:focus-visible {
+.clinician-workbench-page .meeting-card button:focus-visible,
+.clinician-workbench-page .clinician-agent-seat:focus-visible,
+.clinician-workbench-page .stage-control:focus-visible {
   outline: 2px solid rgba(34, 211, 238, 0.72);
   outline-offset: 2px;
 }
@@ -5144,6 +5291,16 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
 
   .immersive-phase-list.compact {
     grid-template-columns: 1fr;
+  }
+
+  .clinician-agent-toolbar,
+  .clinician-agent-phase-strip,
+  .clinician-agent-seat-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .clinician-agent-topbar {
+    flex-direction: column;
   }
 
   .business-home-side {

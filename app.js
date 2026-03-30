@@ -40,6 +40,11 @@ const state = {
   districtAgentAutoplayPaused: pageQuery.get("autostart") === "0",
   districtAgentActiveIndex: 0,
   districtAgentPhaseIndex: 0,
+  clinicianAgentTimer: null,
+  clinicianAgentAutoplayPaused: pageQuery.get("interrupt") === "1",
+  clinicianAgentActiveIndex: 0,
+  clinicianAgentPhaseIndex: 0,
+  clinicianInterruptMode: pageQuery.get("interrupt") === "1",
   overviewSelectedDomain: "",
   overviewSelectedFunnelStage: "",
   githubPlan: null,
@@ -304,6 +309,7 @@ const followupStatusFilter = document.querySelector("#followup-status-filter");
 const followupClinicianFilter = document.querySelector("#followup-clinician-filter");
 const exportFollowupsBtn = document.querySelector("#export-followups-btn");
 const clinicianTabs = document.querySelector("#clinician-tabs");
+const clinicianAgentStage = document.querySelector("#clinician-agent-stage");
 const managementScopeSummary = document.querySelector("#management-scope-summary");
 const managementUpdatedAt = document.querySelector("#management-updated-at");
 const managementKpiCards = document.querySelector("#management-kpi-cards");
@@ -1288,6 +1294,346 @@ function bindDistrictAgentInteractions(root) {
       renderPopulation();
       renderFollowupCenter();
       if (shouldLoadWorkspacePage()) await loadWorkspace();
+    });
+  });
+}
+
+function buildPageLink(pathname, overrides = {}) {
+  const params = new URLSearchParams();
+  const activePatientId = overrides.patientId ?? state.populationPatientId ?? state.patientId;
+  const activeRole = overrides.role ?? state.filters.workbenchRole;
+  const activeHospitalId =
+    overrides.hospitalId ?? state.filters.hospitalId ?? getCurrentPopulationPatients().find((patient) => patient.id === activePatientId)?.hospitalId ?? "";
+  const activeClinician = overrides.clinician ?? state.followupClinician;
+
+  if (activeHospitalId) params.set("hospitalId", activeHospitalId);
+  if (activeRole) params.set("role", activeRole);
+  if (activePatientId) params.set("patientId", activePatientId);
+  if (activeClinician) params.set("clinician", activeClinician);
+
+  Object.entries(overrides).forEach(([key, value]) => {
+    if (["patientId", "role", "hospitalId", "clinician"].includes(key)) return;
+    if (value === undefined || value === null || value === "") return;
+    params.set(key, String(value));
+  });
+
+  const raw = params.toString();
+  return `${pathname}${raw ? `?${raw}` : ""}`;
+}
+
+function getRequestedWorkbenchRole() {
+  const requestedRole = pageQuery.get("role") ?? pageQuery.get("workbenchRole") ?? "";
+  const allowedRoles = ["specialist-doctor", "general-practitioner", "health-manager"];
+  return allowedRoles.includes(requestedRole) ? requestedRole : "";
+}
+
+function getRequestedClinicianTab() {
+  const requestedTab = pageQuery.get("tab") ?? "";
+  const allowedTabs = ["my-todos", "my-patients", "completed-reassessments"];
+  return allowedTabs.includes(requestedTab) ? requestedTab : "";
+}
+
+function applyRequestedPageContext() {
+  const requestedHospitalId = pageQuery.get("hospitalId") ?? "";
+  const requestedRole = getRequestedWorkbenchRole();
+  const requestedClinician = pageQuery.get("clinician") ?? "";
+  const requestedTab = getRequestedClinicianTab();
+
+  if (requestedHospitalId && state.hospitals.some((hospital) => hospital.id === requestedHospitalId)) {
+    state.filters.hospitalId = requestedHospitalId;
+    state.dynamicHospitalFocusId = requestedHospitalId;
+  }
+
+  if (requestedRole) {
+    state.filters.workbenchRole = requestedRole;
+  }
+
+  if (isClinicianFollowupsPage) {
+    if (requestedClinician) state.followupClinician = requestedClinician;
+    if (requestedTab) state.clinicianTab = requestedTab;
+  }
+}
+
+function applyRequestedPatientFocus() {
+  const requestedPatientId = pageQuery.get("patientId") ?? "";
+  if (!requestedPatientId) return;
+
+  const cohortPatient = (state.populationCohort?.patients ?? []).find((patient) => patient.id === requestedPatientId) ?? null;
+  const dashboardPatient = (state.dashboard?.patients ?? []).find((patient) => patient.id === requestedPatientId) ?? null;
+  const activePatient = cohortPatient ?? dashboardPatient;
+  if (!activePatient) return;
+
+  syncActivePatient(requestedPatientId);
+  if (activePatient.hospitalId) {
+    state.dynamicHospitalFocusId = activePatient.hospitalId;
+    if (!state.filters.hospitalId) state.filters.hospitalId = activePatient.hospitalId;
+  }
+}
+
+function clearClinicianAgentTimer() {
+  if (state.clinicianAgentTimer) {
+    window.clearInterval(state.clinicianAgentTimer);
+    state.clinicianAgentTimer = null;
+  }
+}
+
+function getClinicianRoundtableModel() {
+  if (!state.workspace || !isClinicianFollowupsPage) return null;
+
+  const workspace = state.workspace;
+  const medclawWorkspace = state.medclawWorkspace ?? {};
+  const patient = workspace.patient;
+  const liveRisk = workspace.liveRiskAssessment;
+  const cohortPatient = (state.populationCohort?.patients ?? []).find((item) => item.id === patient.id) ?? null;
+  const topDomain =
+    liveRisk.domainAssessments?.[0]?.label ??
+    (cohortPatient?.topDomains?.[0] ? labelRiskDomain(cohortPatient.topDomains[0]) : "慢病风险");
+  const topPrediction = medclawWorkspace?.diagnosisSupport?.predictions?.[0] ?? null;
+  const topSuggestion = medclawWorkspace?.diagnosisSupport?.suggestions?.[0] ?? null;
+  const therapyTitle =
+    workspace.latestCarePlan?.content?.therapyPackages?.[0]?.content?.title ??
+    workspace.latestCarePlan?.content?.therapyPackages?.[0]?.title ??
+    cohortPatient?.interventionProjection?.packageTitles?.[0] ??
+    "个体化疗法包";
+  const evidenceTitle = cohortPatient?.evidenceSources?.[0]?.title ?? medclawWorkspace?.kgFollowup?.reasoningPaths?.[0]?.diagnosis ?? "临床证据链";
+  const primaryDoctor = getPatientOwner(cohortPatient ?? patient, "primary");
+  const phaseBlueprint = [
+    {
+      key: "intake",
+      label: "接诊归纳",
+      summary: `先把 ${patient.name} 的主诉、现病史和当前就诊目的收紧。`
+    },
+    {
+      key: "risk",
+      label: "风险判读",
+      summary: `围绕 ${topDomain} 和 ${topPrediction?.metric ?? topPrediction?.target ?? "实时风险"} 判断是否升级。`
+    },
+    {
+      key: "package",
+      label: "方案整合",
+      summary: `把 ${therapyTitle} 拆成可执行的疗程、用药和行为干预。`
+    },
+    {
+      key: "mdt",
+      label: "MDT 协同",
+      summary: `需要时把 ${primaryDoctor.name}、责任团队和 MDT 房间拉到一起。`
+    }
+  ];
+  const phaseIndex = ((state.clinicianAgentPhaseIndex % phaseBlueprint.length) + phaseBlueprint.length) % phaseBlueprint.length;
+  const agents = [
+    {
+      key: "risk-router",
+      badge: "分",
+      name: "风险分层 Agent",
+      lane: "分层",
+      detail: `先判断 ${patient.name} 当前是不是需要升级管理层级。`
+    },
+    {
+      key: "record-draft",
+      badge: "历",
+      name: "AI 病历 Agent",
+      lane: "病历",
+      detail: `把主诉、现病史、查体和辅助检查快速归纳成临床草案。`
+    },
+    {
+      key: "diagnosis",
+      badge: "诊",
+      name: "辅助诊断 Agent",
+      lane: "诊断",
+      detail: `围绕 ${topSuggestion?.diagnosis ?? topDomain} 给出鉴别诊断与病情预测。`
+    },
+    {
+      key: "behavior",
+      badge: "包",
+      name: "行为干预 Agent",
+      lane: "疗法包",
+      detail: `把 ${therapyTitle} 拆到饮食、运动、睡眠和随访动作里。`
+    },
+    {
+      key: "evidence",
+      badge: "证",
+      name: "证据链 Agent",
+      lane: "证据",
+      detail: `把 ${evidenceTitle} 与模型结论、化验和病史串成可解释证据。`
+    },
+    {
+      key: "mdt",
+      badge: "协",
+      name: "MDT 协调 Agent",
+      lane: "协同",
+      detail: `当风险抬升或策略冲突时，直接切到多学科在线会诊。`
+    }
+  ];
+  const activeAgentIndex = ((state.clinicianAgentActiveIndex % agents.length) + agents.length) % agents.length;
+  const activeAgent = agents[activeAgentIndex];
+  const nextAgent = agents[(activeAgentIndex + 1) % agents.length];
+  const activePhase = phaseBlueprint[phaseIndex];
+
+  const makeMessage = (agent, phase) => {
+    if (agent.key === "risk-router") {
+      return `当前患者 ${patient.name} 的实时风险为 ${formatLevel(liveRisk.level)}，先盯 ${topDomain} 的升级阈值，再决定是否要立即发起专科复核。`;
+    }
+    if (agent.key === "record-draft") {
+      return `AI 病历已把主诉、现病史和关键检查压缩成草案，目的是让医生先看结论，再决定是否补问。`;
+    }
+    if (agent.key === "diagnosis") {
+      return `${topSuggestion?.diagnosis ?? "候选诊断"} 当前置信度最高，${topPrediction?.explanation ?? "需要继续结合化验和病史追问判断"}。`;
+    }
+    if (agent.key === "behavior") {
+      return `行为干预侧当前先执行 ${therapyTitle}，把用药、康复、饮食和随访节奏放到同一时间轴。`;
+    }
+    if (agent.key === "evidence") {
+      return `${evidenceTitle} 是当前最关键的证据锚点，用来解释模型为什么给出这次风险提示。`;
+    }
+    if (agent.key === "mdt") {
+      return `如果 ${topDomain} 风险持续不降，就由 ${primaryDoctor.name} 牵头，直接进入 MDT 在线讨论并形成修订计划。`;
+    }
+    return `${patient.name} 当前处于 ${phase.label} 阶段，优先让 ${agent.name} 收口结论。`;
+  };
+
+  const transcript = Array.from({ length: 4 }, (_, offset) => {
+    const agentIndex = (activeAgentIndex - offset + agents.length) % agents.length;
+    const phase = phaseBlueprint[(phaseIndex - Math.floor(offset / 2) + phaseBlueprint.length) % phaseBlueprint.length];
+    const agent = agents[agentIndex];
+    return {
+      agent,
+      phase,
+      nextAgent: agents[(agentIndex + 1) % agents.length],
+      conclusion: makeMessage(agent, phase)
+    };
+  });
+
+  return {
+    patient,
+    cohortPatient,
+    liveRisk,
+    therapyTitle,
+    topDomain,
+    topPrediction,
+    topSuggestion,
+    evidenceTitle,
+    primaryDoctor,
+    phaseBlueprint,
+    phaseIndex,
+    activePhase,
+    agents,
+    activeAgentIndex,
+    activeAgent,
+    nextAgent,
+    transcript
+  };
+}
+
+function setClinicianPhaseIndex(index) {
+  const roundtable = getClinicianRoundtableModel();
+  if (!roundtable) return;
+  const phaseCount = roundtable.phaseBlueprint.length;
+  state.clinicianAgentPhaseIndex = ((index % phaseCount) + phaseCount) % phaseCount;
+}
+
+function setClinicianAgentIndex(index) {
+  const roundtable = getClinicianRoundtableModel();
+  if (!roundtable) return;
+  const agentCount = roundtable.agents.length;
+  state.clinicianAgentActiveIndex = ((index % agentCount) + agentCount) % agentCount;
+}
+
+function advanceClinicianAgentState(step = 1) {
+  const roundtable = getClinicianRoundtableModel();
+  if (!roundtable) return;
+  const nextAgentIndex = state.clinicianAgentActiveIndex + step;
+  setClinicianAgentIndex(nextAgentIndex);
+  if (Math.abs(step) >= 1 && state.clinicianAgentActiveIndex % 2 === 0) {
+    setClinicianPhaseIndex(state.clinicianAgentPhaseIndex + Math.sign(step || 1));
+  }
+}
+
+function refreshClinicianAgentStage() {
+  renderClinicianClinicalWorkbench();
+}
+
+function startClinicianAgentAutoplay() {
+  clearClinicianAgentTimer();
+  if (!isClinicianFollowupsPage) return;
+  state.clinicianAgentTimer = window.setInterval(() => {
+    if (state.clinicianAgentAutoplayPaused) return;
+    advanceClinicianAgentState(1);
+    refreshClinicianAgentStage();
+  }, 3600);
+}
+
+async function launchClinicianMeetingFromStage() {
+  if (!state.patientId || !state.workspace) return;
+  if (isStaticMode) {
+    window.alert("GitHub Pages 演示站为只读模式。请在完整服务版中发起 MDT 在线讨论。");
+    return;
+  }
+  const topic = window.prompt("请输入 MDT 会议主题", `${state.workspace.patient.name} 慢病管理 MDT 在线讨论`);
+  if (!topic) return;
+  await api(`/api/patients/${state.patientId}/mdt-meetings`, {
+    method: "POST",
+    body: JSON.stringify({ topic })
+  });
+  await refreshDashboard();
+  await loadPopulation();
+  await loadWorkspace();
+}
+
+function bindClinicianAgentInteractions(root) {
+  if (!root) return;
+
+  root.querySelectorAll("[data-clinician-agent-index]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.clinicianAgentAutoplayPaused = true;
+      state.clinicianInterruptMode = true;
+      setClinicianAgentIndex(Number(node.getAttribute("data-clinician-agent-index") || 0));
+      refreshClinicianAgentStage();
+    });
+  });
+
+  root.querySelectorAll("[data-clinician-phase-index]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.clinicianAgentAutoplayPaused = true;
+      state.clinicianInterruptMode = true;
+      setClinicianPhaseIndex(Number(node.getAttribute("data-clinician-phase-index") || 0));
+      refreshClinicianAgentStage();
+    });
+  });
+
+  root.querySelectorAll("[data-clinician-stage-action]").forEach((node) => {
+    node.addEventListener("click", async () => {
+      const action = node.getAttribute("data-clinician-stage-action");
+      if (action === "toggle") {
+        state.clinicianAgentAutoplayPaused = !state.clinicianAgentAutoplayPaused;
+        state.clinicianInterruptMode = state.clinicianAgentAutoplayPaused;
+        refreshClinicianAgentStage();
+        return;
+      }
+      if (action === "advance") {
+        state.clinicianAgentAutoplayPaused = true;
+        state.clinicianInterruptMode = true;
+        advanceClinicianAgentState(1);
+        refreshClinicianAgentStage();
+        return;
+      }
+      if (action === "rewind") {
+        state.clinicianAgentAutoplayPaused = true;
+        state.clinicianInterruptMode = true;
+        advanceClinicianAgentState(-1);
+        refreshClinicianAgentStage();
+        return;
+      }
+      if (action === "resume") {
+        state.clinicianAgentAutoplayPaused = false;
+        state.clinicianInterruptMode = false;
+        refreshClinicianAgentStage();
+        return;
+      }
+      if (action === "meeting") {
+        state.clinicianAgentAutoplayPaused = true;
+        state.clinicianInterruptMode = true;
+        await launchClinicianMeetingFromStage();
+      }
     });
   });
 }
@@ -2447,6 +2793,20 @@ function renderDynamicCommandStage() {
   if (!roundtable) return;
 
   const { cohort, scopedPatients, activeInsight, phaseBlueprint, activePhase, agents, activeAgent, nextAgent, transcript, selectedPatient, topPrediction, topPackage, domainLabel } = roundtable;
+  const primaryOwner = selectedPatient ? getPatientOwner(selectedPatient, "primary") : null;
+  const interruptLink = buildPageLink("./followups-clinician.html", {
+    patientId: selectedPatient?.id ?? "",
+    hospitalId: selectedPatient?.hospitalId ?? activeInsight?.hospital.id ?? "",
+    role: state.filters.workbenchRole === "health-manager" ? "general-practitioner" : state.filters.workbenchRole,
+    clinician: primaryOwner?.name ?? "",
+    tab: "my-todos",
+    interrupt: 1
+  });
+  const patientLink = buildPageLink("./patient-app.html", {
+    patientId: selectedPatient?.id ?? "",
+    hospitalId: selectedPatient?.hospitalId ?? activeInsight?.hospital.id ?? "",
+    role: state.filters.workbenchRole
+  });
   const insights = computeHospitalInsights();
   const funnel = (cohort.coordinationFunnel?.stages ?? []).slice(0, 6);
   const topDomains = Object.keys(scopedPatients[0]?.radar ?? cohort.averageRadar ?? {})
@@ -2538,6 +2898,8 @@ function renderDynamicCommandStage() {
                 ${state.districtAgentAutoplayPaused ? "继续自动推进" : "暂停自动推进"}
               </button>
               <button class="ghost-button primary" type="button" data-stage-action="advance">下一棒</button>
+              <a class="ghost-button nav-button stage-link-button" href="${interruptLink}">真人打断</a>
+              <a class="ghost-button nav-button stage-link-button" href="${patientLink}">切换患者端</a>
             </div>
           </div>
 
@@ -4807,6 +5169,115 @@ function renderClinicianClinicalWorkbench() {
   const liveRisk = workspace.liveRiskAssessment;
   const carePlan = workspace.latestCarePlan?.content ?? null;
   const cohortPatient = (state.populationCohort?.patients ?? []).find((item) => item.id === state.populationPatientId) ?? null;
+  const roundtable = getClinicianRoundtableModel();
+
+  if (clinicianAgentStage) {
+    if (!roundtable) {
+      clearClinicianAgentTimer();
+      clinicianAgentStage.innerHTML = `<div class="note-block">当前未生成多 Agent 临床接力节奏。</div>`;
+    } else {
+      const agentAction = state.clinicianInterruptMode || state.clinicianAgentAutoplayPaused ? "resume" : "toggle";
+      const agentActionLabel = state.clinicianInterruptMode
+        ? "退出真人接管"
+        : state.clinicianAgentAutoplayPaused
+          ? "继续多 Agent"
+          : "暂停自动推进";
+      const patientLink = buildPageLink("./patient-app.html", {
+        patientId: roundtable.patient.id,
+        hospitalId: roundtable.patient.hospitalId ?? cohortPatient?.hospitalId ?? ""
+      });
+
+      clinicianAgentStage.innerHTML = `
+        <div class="clinician-agent-shell">
+          <div class="clinician-agent-topbar">
+            <div class="clinician-agent-focus">
+              <span class="mini-tag">${roundtable.activePhase.label}</span>
+              <h4>${roundtable.activeAgent.name}</h4>
+              <div class="dim">${roundtable.activeAgent.detail}</div>
+            </div>
+            <div class="clinician-agent-state ${state.clinicianInterruptMode ? "is-human" : "is-agent"}">
+              <span>当前协作状态</span>
+              <strong>${state.clinicianInterruptMode ? "真人已接管" : "多 Agent 自动接力中"}</strong>
+              <small>下一棒：${roundtable.nextAgent.name}</small>
+            </div>
+          </div>
+
+          <div class="clinician-agent-toolbar">
+            <button class="ghost-button" type="button" data-clinician-stage-action="rewind">上一棒</button>
+            <button class="ghost-button primary" type="button" data-clinician-stage-action="${agentAction}">
+              ${agentActionLabel}
+            </button>
+            <button class="ghost-button primary" type="button" data-clinician-stage-action="advance">下一棒</button>
+            <button class="ghost-button primary" type="button" data-clinician-stage-action="meeting">发起 MDT 在线讨论</button>
+            <a class="ghost-button nav-button stage-link-button" href="${patientLink}">切换患者端</a>
+          </div>
+
+          <div class="clinician-agent-phase-strip">
+            ${roundtable.phaseBlueprint
+              .map(
+                (phase, index) => `
+                  <button
+                    class="stage-control ${index === roundtable.phaseIndex ? "is-active" : ""}"
+                    type="button"
+                    data-clinician-phase-index="${index}"
+                  >
+                    <span>Phase ${index + 1}</span>
+                    <strong>${phase.label}</strong>
+                    <small>${phase.summary}</small>
+                  </button>
+                `
+              )
+              .join("")}
+          </div>
+
+          <div class="clinician-agent-seat-strip">
+            ${roundtable.agents
+              .map(
+                (agent, index) => `
+                  <button
+                    class="clinician-agent-seat ${index === roundtable.activeAgentIndex ? "is-active" : ""}"
+                    type="button"
+                    data-clinician-agent-index="${index}"
+                  >
+                    <span class="roundtable-seat-badge">${agent.badge}</span>
+                    <span class="clinician-agent-seat-copy">
+                      <strong>${agent.name}</strong>
+                      <small>${agent.lane}</small>
+                    </span>
+                  </button>
+                `
+              )
+              .join("")}
+          </div>
+
+          <div class="clinician-agent-transcript">
+            ${roundtable.transcript
+              .map(
+                (entry, index) => `
+                  <article class="immersive-transcript-card ${index === 0 ? "is-live" : ""}">
+                    <div class="immersive-transcript-head">
+                      <div class="transcript-avatar">${entry.agent.badge}</div>
+                      <div class="immersive-transcript-copy">
+                        <div class="immersive-transcript-meta">
+                          <strong>${entry.agent.name}</strong>
+                          <span>${entry.phase.label}</span>
+                        </div>
+                        <p>${entry.conclusion}</p>
+                        <small>下一棒：${entry.nextAgent.name}</small>
+                      </div>
+                    </div>
+                    ${index === 0 ? `<div class="typing-ribbon"></div>` : ""}
+                  </article>
+                `
+              )
+              .join("")}
+          </div>
+        </div>
+      `;
+      bindClinicianAgentInteractions(clinicianAgentStage);
+      startClinicianAgentAutoplay();
+    }
+  }
 
   setElementHtml(
     patientOverview,
@@ -5984,8 +6455,28 @@ function renderCommandCenter() {
             ${state.districtAgentAutoplayPaused ? "恢复自动推进" : "暂停自动推进"}
           </button>
           <button class="task-priority-button" type="button" data-stage-action="advance">下一棒</button>
-          <a class="ghost-button nav-button" href="./followups-hospital.html">进入医院管理视图</a>
-          <a class="ghost-button nav-button" href="./followups-clinician.html">进入医生工作台</a>
+          <a class="ghost-button nav-button" href="${buildPageLink("./followups-clinician.html", {
+            patientId: roundtable.selectedPatient?.id ?? "",
+            hospitalId: roundtable.selectedPatient?.hospitalId ?? selectedHospital?.id ?? "",
+            role: state.filters.workbenchRole === "health-manager" ? "general-practitioner" : state.filters.workbenchRole,
+            clinician: roundtable.selectedPatient ? getPatientOwner(roundtable.selectedPatient, "primary")?.name ?? "" : "",
+            tab: "my-todos",
+            interrupt: 1
+          })}">真人打断</a>
+          <a class="ghost-button nav-button" href="${buildPageLink("./patient-app.html", {
+            patientId: roundtable.selectedPatient?.id ?? "",
+            hospitalId: roundtable.selectedPatient?.hospitalId ?? selectedHospital?.id ?? ""
+          })}">切换患者端</a>
+          <a class="ghost-button nav-button" href="${buildPageLink("./followups-hospital.html", {
+            hospitalId: roundtable.selectedPatient?.hospitalId ?? selectedHospital?.id ?? "",
+            patientId: roundtable.selectedPatient?.id ?? ""
+          })}">进入医院管理视图</a>
+          <a class="ghost-button nav-button" href="${buildPageLink("./followups-clinician.html", {
+            patientId: roundtable.selectedPatient?.id ?? "",
+            hospitalId: roundtable.selectedPatient?.hospitalId ?? selectedHospital?.id ?? "",
+            role: state.filters.workbenchRole === "health-manager" ? "general-practitioner" : state.filters.workbenchRole,
+            clinician: roundtable.selectedPatient ? getPatientOwner(roundtable.selectedPatient, "primary")?.name ?? "" : ""
+          })}">进入医生工作台</a>
         </div>
         <div class="plan-block">
           <h4>转诊与闭环</h4>
@@ -6998,11 +7489,16 @@ async function init() {
     state.patientViewMode = "anomaly";
     state.patientRiskFilter = "high";
   }
+  applyRequestedPageContext();
   renderFilters();
   renderMappings();
   await refreshDashboard();
   await loadPopulation();
-  state.patientId = state.populationPatientId ?? state.dashboard?.patients[0]?.id ?? state.populationCohort?.patients?.[0]?.id ?? null;
+  applyRequestedPatientFocus();
+  state.patientId = state.populationPatientId ?? state.patientId ?? state.dashboard?.patients[0]?.id ?? state.populationCohort?.patients?.[0]?.id ?? null;
+  renderFilters();
+  renderPatients();
+  renderFollowupCenter();
   if (shouldLoadWorkspacePage()) {
     await loadWorkspace();
   }
