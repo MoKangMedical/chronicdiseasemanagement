@@ -45,6 +45,7 @@ const state = {
   clinicianAgentActiveIndex: 0,
   clinicianAgentPhaseIndex: 0,
   clinicianInterruptMode: pageQuery.get("interrupt") === "1",
+  clinicianFocusKey: "",
   overviewSelectedDomain: "",
   overviewSelectedFunnelStage: "",
   githubPlan: null,
@@ -76,7 +77,8 @@ const state = {
   patientDiseaseFilter: "",
   patientSortBy: "priority",
   patientPage: 1,
-  selectedPatientTableIds: []
+  selectedPatientTableIds: [],
+  patientInteractionById: {}
 };
 
 function deepClone(value) {
@@ -97,8 +99,38 @@ function shouldLoadWorkspacePage() {
 
 function syncActivePatient(patientId) {
   if (!patientId) return;
+  if (state.populationPatientId && state.populationPatientId !== patientId) {
+    state.clinicianFocusKey = "";
+  }
   state.populationPatientId = patientId;
   state.patientId = patientId;
+}
+
+function getPatientInteractionState(patient) {
+  if (!patient?.id) return null;
+  const current = state.patientInteractionById[patient.id];
+  if (current) return current;
+
+  const interaction = {
+    quickActionDone: Object.fromEntries((patient.patientWorkspace?.quickActions ?? []).map((_, index) => [index, false])),
+    miniActionDone: Object.fromEntries((patient.patientWorkspace?.miniActions ?? []).map((_, index) => [index, index === 0])),
+    reminderDone: Object.fromEntries((patient.patientWorkspace?.reminders ?? []).map((_, index) => [index, false])),
+    activeTrend: 0,
+    lastInteraction: ""
+  };
+  state.patientInteractionById[patient.id] = interaction;
+  return interaction;
+}
+
+function updatePatientInteractionState(patientId, updater) {
+  const current = state.patientInteractionById[patientId] ?? {
+    quickActionDone: {},
+    miniActionDone: {},
+    reminderDone: {},
+    activeTrend: 0,
+    lastInteraction: ""
+  };
+  state.patientInteractionById[patientId] = typeof updater === "function" ? updater(current) : { ...current, ...updater };
 }
 
 async function loadSnapshot() {
@@ -2500,6 +2532,21 @@ function renderPatientApp() {
   const workspace = selectedPatient.patientWorkspace;
   const primaryDoctor = getPatientOwner(selectedPatient, "primary");
   const responsibleClinician = getPatientOwner(selectedPatient, "responsible");
+  const interaction = getPatientInteractionState(selectedPatient);
+  const quickActionDoneCount = Object.values(interaction.quickActionDone).filter(Boolean).length;
+  const miniActionDoneCount = Object.values(interaction.miniActionDone).filter(Boolean).length;
+  const totalActionCount = (workspace.quickActions?.length ?? 0) + (workspace.miniActions?.length ?? 0);
+  const completedActionCount = quickActionDoneCount + miniActionDoneCount;
+  const completionRatio = totalActionCount ? Math.round((completedActionCount / totalActionCount) * 100) : 0;
+  const activeTrend = workspace.trendSnapshots[interaction.activeTrend] ?? workspace.trendSnapshots[0];
+  const coachLead =
+    interaction.lastInteraction
+      ? `刚刚完成：${interaction.lastInteraction}，继续把节奏保持住。`
+      : completionRatio >= 70
+        ? "今天执行节奏不错，建议继续保持并准备晚间复盘。"
+        : completionRatio >= 30
+          ? "已经开始进入状态，下一步优先完成记录与复评提醒。"
+          : "先完成一个最容易的动作，把今天的管理链路启动起来。";
 
   setElementText(patientAppTitle, `${selectedPatient.name} · 患者端管理首页`);
   setElementHtml(
@@ -2545,6 +2592,13 @@ function renderPatientApp() {
       <article class="patient-app-card patient-app-card-primary">
         <div class="panel-kicker">今日健康计划主卡</div>
         <h3>从今天开始，只做最关键的 4 件事</h3>
+        <div class="patient-progress-strip">
+          <div class="patient-progress-copy">
+            <span>今日完成率</span>
+            <strong>${completionRatio}%</strong>
+          </div>
+          <div class="progress-track"><i style="--progress-width:${completionRatio}%"></i></div>
+        </div>
         <ul class="mini-list">
           <li>${workspace.todayPlan.breakfastSuggestion}</li>
           <li>${workspace.todayPlan.activityGoal}</li>
@@ -2559,8 +2613,8 @@ function renderPatientApp() {
     patientAppQuickActions,
     workspace.quickActions
       .map(
-        (action) => `
-          <button class="patient-app-action" type="button">
+        (action, index) => `
+          <button class="patient-app-action ${interaction.quickActionDone[index] ? "is-done" : ""}" type="button" data-patient-quick-action="${index}">
             <strong>${action.label}</strong>
             <span>${action.hint}</span>
           </button>
@@ -2575,8 +2629,9 @@ function renderPatientApp() {
       <article class="patient-app-card">
         <div class="panel-kicker">AI 教练卡</div>
         <h3>一句建议 + 一键追问</h3>
-        <p>${workspace.aiCoach.message}</p>
-        <div class="patient-app-coach-prompt">${workspace.aiCoach.followUpPrompt}</div>
+        <p>${coachLead}</p>
+        <div class="patient-app-coach-prompt">${workspace.aiCoach.message}</div>
+        <div class="patient-app-coach-prompt secondary">${workspace.aiCoach.followUpPrompt}</div>
       </article>
     `
   );
@@ -2585,8 +2640,8 @@ function renderPatientApp() {
     patientAppTrends,
     workspace.trendSnapshots
       .map(
-        (item) => `
-          <article class="patient-app-card">
+        (item, index) => `
+          <article class="patient-app-card ${interaction.activeTrend === index ? "is-active" : ""}" data-patient-trend="${index}">
             <div class="patient-app-card-head">
               <strong>${item.label}</strong>
               <span class="status-pill ${item.trend === "improved" ? "low" : item.trend === "stable" ? "medium" : "high"}">${item.change}</span>
@@ -2604,9 +2659,18 @@ function renderPatientApp() {
       <article class="patient-app-card">
         <div class="panel-kicker">今日小行动</div>
         <h3>把建议拆成能执行的小动作</h3>
-        <ul class="mini-list">
-          ${workspace.miniActions.map((item) => `<li><strong>${item.title}</strong>：${item.detail}</li>`).join("")}
-        </ul>
+        <div class="patient-checklist">
+          ${workspace.miniActions
+            .map(
+              (item, index) => `
+                <button class="patient-check-item ${interaction.miniActionDone[index] ? "is-done" : ""}" type="button" data-patient-mini-action="${index}">
+                  <span class="patient-check-icon">${interaction.miniActionDone[index] ? "✓" : "○"}</span>
+                  <span><strong>${item.title}</strong>：${item.detail}</span>
+                </button>
+              `
+            )
+            .join("")}
+        </div>
       </article>
     `
   );
@@ -2615,13 +2679,16 @@ function renderPatientApp() {
     patientAppReminders,
     workspace.reminders
       .map(
-        (item) => `
-          <article class="patient-app-card">
+        (item, index) => `
+          <article class="patient-app-card ${interaction.reminderDone[index] ? "is-muted" : ""}">
             <div class="patient-app-card-head">
               <strong>${item.title}</strong>
               <span class="status-pill ${item.level === "urgent" ? "high" : item.level === "watch" ? "medium" : "low"}">${item.level === "urgent" ? "重点" : item.level === "watch" ? "关注" : "提示"}</span>
             </div>
             <p>${item.detail}</p>
+            <button class="ghost-button patient-reminder-button" type="button" data-patient-reminder="${index}">
+              ${interaction.reminderDone[index] ? "已知晓" : "标记已知晓"}
+            </button>
           </article>
         `
       )
@@ -2676,10 +2743,68 @@ function renderPatientApp() {
           <li>患者端首页只保留身份条、今日计划、快捷记录、AI 教练、趋势快照、小行动和关键提醒。</li>
           <li>医院与医生端看到的是督办与复评，患者端看到的是可执行的日常管理内容。</li>
           <li>当前患者绑定主诊医生 ${primaryDoctor.name}，责任支持为 ${responsibleClinician.name}。</li>
+          <li>当前趋势焦点：${activeTrend?.label ?? "今日趋势"} · ${activeTrend?.current ?? "待更新"}。</li>
         </ul>
       </div>
     `
   );
+
+  patientAppQuickActions?.querySelectorAll("[data-patient-quick-action]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const index = Number(node.getAttribute("data-patient-quick-action"));
+      updatePatientInteractionState(selectedPatient.id, (current) => ({
+        ...current,
+        quickActionDone: {
+          ...current.quickActionDone,
+          [index]: !current.quickActionDone[index]
+        },
+        lastInteraction: workspace.quickActions[index]?.label ?? current.lastInteraction
+      }));
+      renderPatientApp();
+    });
+  });
+
+  patientAppActions?.querySelectorAll("[data-patient-mini-action]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const index = Number(node.getAttribute("data-patient-mini-action"));
+      updatePatientInteractionState(selectedPatient.id, (current) => ({
+        ...current,
+        miniActionDone: {
+          ...current.miniActionDone,
+          [index]: !current.miniActionDone[index]
+        },
+        lastInteraction: workspace.miniActions[index]?.title ?? current.lastInteraction
+      }));
+      renderPatientApp();
+    });
+  });
+
+  patientAppTrends?.querySelectorAll("[data-patient-trend]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const index = Number(node.getAttribute("data-patient-trend"));
+      updatePatientInteractionState(selectedPatient.id, (current) => ({
+        ...current,
+        activeTrend: index,
+        lastInteraction: workspace.trendSnapshots[index]?.label ?? current.lastInteraction
+      }));
+      renderPatientApp();
+    });
+  });
+
+  patientAppReminders?.querySelectorAll("[data-patient-reminder]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const index = Number(node.getAttribute("data-patient-reminder"));
+      updatePatientInteractionState(selectedPatient.id, (current) => ({
+        ...current,
+        reminderDone: {
+          ...current.reminderDone,
+          [index]: !current.reminderDone[index]
+        },
+        lastInteraction: workspace.reminders[index]?.title ?? current.lastInteraction
+      }));
+      renderPatientApp();
+    });
+  });
 
   if (heroSubtitle) {
     heroSubtitle.textContent = `${state.filters.hospitalId ? `${getHospitalById(state.filters.hospitalId)?.name ?? "指定医院"} · ` : `${qixiaDistrictName}全域 · `}患者只看今天要做什么、要记录什么，以及什么时候复评。`;
@@ -2823,9 +2948,29 @@ function renderDynamicCommandStage() {
   const packageHighlights = (activeInsight?.packageRatios ?? []).slice(0, 4);
   const maxPackageCount = Math.max(...packageHighlights.map((item) => item.count), 1);
   const publicAssets = (cohort.publicProfile?.systemUsableAssets ?? []).slice(0, 4);
+  const scenarioDomainButtons = [
+    { domain: "", label: "全域协同", count: scopedPatients.length },
+    ...topDomains.map((item) => ({ domain: item.domain, label: item.label, count: item.count }))
+  ];
 
   districtLiveStage.innerHTML = `
     <div class="dynamic-stage-grid">
+      <div class="district-scenario-ribbon">
+        ${scenarioDomainButtons
+          .map(
+            (item) => `
+              <button
+                class="district-scenario-chip ${state.overviewSelectedDomain === item.domain || (!state.overviewSelectedDomain && item.domain === "") ? "is-active" : ""}"
+                type="button"
+                data-scenario-domain="${item.domain}"
+              >
+                <span>${item.label}</span>
+                <strong>${formatCompactMetric(item.count)}</strong>
+              </button>
+            `
+          )
+          .join("")}
+      </div>
       <div class="dynamic-stage-metrics">
         <article class="dynamic-metric-card accent-blue" data-reveal="fast">
           <span>常住人口底数</span>
@@ -3096,6 +3241,28 @@ function renderDynamicCommandStage() {
   districtLiveStage.querySelectorAll("[data-dynamic-hospital]").forEach((node) => {
     node.addEventListener("click", () => {
       state.dynamicHospitalFocusId = node.getAttribute("data-dynamic-hospital") || "";
+      renderDynamicCommandStage();
+      renderHospitalOverview();
+      renderCommandCenter();
+      renderPatients();
+      renderWallboardHero();
+    });
+  });
+
+  districtLiveStage.querySelectorAll("[data-scenario-domain]").forEach((node) => {
+    node.addEventListener("click", () => {
+      const nextDomain = node.getAttribute("data-scenario-domain") || "";
+      state.overviewSelectedDomain = state.overviewSelectedDomain === nextDomain ? "" : nextDomain;
+      const activeDomain = state.overviewSelectedDomain;
+      if (activeDomain) {
+        const domainPatients = getOverviewFilteredDistrictPatients()
+          .filter((patient) => matchesOverviewDomain(patient, activeDomain))
+          .sort((left, right) => (right.radar?.[activeDomain] ?? 0) - (left.radar?.[activeDomain] ?? 0));
+        if (domainPatients[0]) {
+          syncActivePatient(domainPatients[0].id);
+          state.dynamicHospitalFocusId = domainPatients[0].hospitalId;
+        }
+      }
       renderDynamicCommandStage();
       renderHospitalOverview();
       renderCommandCenter();
@@ -5170,6 +5337,18 @@ function renderClinicianClinicalWorkbench() {
   const carePlan = workspace.latestCarePlan?.content ?? null;
   const cohortPatient = (state.populationCohort?.patients ?? []).find((item) => item.id === state.populationPatientId) ?? null;
   const roundtable = getClinicianRoundtableModel();
+  const resolvedFocus =
+    state.clinicianFocusKey ||
+    (liveRisk.domainAssessments?.[0] ? `domain:${liveRisk.domainAssessments[0].label}` : "");
+  const focusMeta = resolvedFocus.split(":");
+  const focusType = focusMeta[0] ?? "";
+  const focusValue = focusMeta.slice(1).join(":");
+  const focusSummary =
+    focusType === "package"
+      ? `当前临床焦点：${focusValue}，优先联动疗法包执行、复评节点和依从性。`
+      : focusValue
+        ? `当前临床焦点：${focusValue}，优先检查相关证据、病情预测和异常升级提示。`
+        : "当前未锁定临床焦点，系统默认展示全量判断。";
 
   if (clinicianAgentStage) {
     if (!roundtable) {
@@ -5296,12 +5475,12 @@ function renderClinicianClinicalWorkbench() {
     liveRisk.domainAssessments
       .map(
         (domain) => `
-          <article class="risk-card">
+          <button class="risk-card interactive-focus-card ${resolvedFocus === `domain:${domain.label}` ? "is-active" : ""}" type="button" data-clinician-focus="domain:${domain.label}">
             <div class="status-pill ${domain.level}">${domain.label} · ${formatLevel(domain.level)}</div>
             <h4>${domain.score} 分</h4>
             <div class="dim">${domain.summary}</div>
             <ul class="mini-list">${domain.drivers.map((driver) => `<li>${driver}</li>`).join("")}</ul>
-          </article>
+          </button>
         `
       )
       .join("")
@@ -5348,7 +5527,7 @@ function renderClinicianClinicalWorkbench() {
       ? carePlan.therapyPackages
           .map(
             (pkg) => `
-              <button class="package-card package-card-action">
+              <button class="package-card package-card-action ${resolvedFocus === `package:${pkg.title}` ? "is-active" : ""}" data-clinician-focus="package:${pkg.title}">
                 <div class="panel-kicker">${pkg.title}</div>
                 <h4>${pkg.content.title ?? pkg.title}</h4>
                 <div class="dim">${pkg.content.rationale ?? ""}</div>
@@ -5365,6 +5544,7 @@ function renderClinicianClinicalWorkbench() {
     recordDraft,
     recordDraftContent
       ? `
+        <div class="note-block clinician-focus-note">${focusSummary}</div>
         <div class="plan-block">
           <h4>主诉</h4>
           <div class="dim">${recordDraftContent.chiefComplaint}</div>
@@ -5389,6 +5569,7 @@ function renderClinicianClinicalWorkbench() {
     diagnosisSupport,
     diagnosisSupportContent
       ? `
+        <div class="note-block clinician-focus-note">${focusSummary}</div>
         <div class="plan-block">
           <h4>诊断建议</h4>
           <ul class="mini-list">
@@ -5421,6 +5602,41 @@ function renderClinicianClinicalWorkbench() {
       `
       : `<div class="note-block">当前未生成辅助诊断与病情预测建议。</div>`
   );
+
+  setElementHtml(
+    populationEvidence,
+    (cohortPatient?.evidenceSources ?? [])
+      .filter((source) => {
+        if (!focusValue) return true;
+        const haystack = `${source.title} ${source.detail}`.toLowerCase();
+        return haystack.includes(focusValue.toLowerCase());
+      })
+      .map(
+        (source) => `
+          <article class="mapping-card ${focusValue && `${source.title} ${source.detail}`.toLowerCase().includes(focusValue.toLowerCase()) ? "is-active" : ""}">
+            <div class="panel-kicker">${source.type}</div>
+            <h4>${source.title}</h4>
+            <div class="dim">${source.detail}</div>
+            <div class="dim">相关度 ${source.relevance}</div>
+          </article>
+        `
+      )
+      .join("") || `<div class="note-block">当前焦点下暂无匹配证据，已建议医生切换到全量证据视图。</div>`
+  );
+
+  riskDomainGrid?.querySelectorAll("[data-clinician-focus]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.clinicianFocusKey = node.getAttribute("data-clinician-focus") || "";
+      renderClinicianClinicalWorkbench();
+    });
+  });
+
+  therapyPackageGrid?.querySelectorAll("[data-clinician-focus]").forEach((node) => {
+    node.addEventListener("click", () => {
+      state.clinicianFocusKey = node.getAttribute("data-clinician-focus") || "";
+      renderClinicianClinicalWorkbench();
+    });
+  });
 
   renderMeetings();
 }

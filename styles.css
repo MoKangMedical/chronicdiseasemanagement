@@ -809,6 +809,24 @@ a {
   margin: 8px 0;
 }
 
+.interactive-focus-card {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.interactive-focus-card.is-active,
+.package-card-action.is-active,
+.mapping-card.is-active {
+  border-color: rgba(34, 211, 238, 0.48);
+  box-shadow: 0 16px 34px rgba(8, 145, 178, 0.16);
+}
+
+.clinician-focus-note {
+  margin-bottom: 12px;
+}
+
 .care-plan-summary {
   grid-template-columns: 1fr;
 }
@@ -3446,6 +3464,46 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   gap: 12px;
 }
 
+.district-scenario-ribbon {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.district-scenario-chip {
+  display: inline-grid;
+  gap: 2px;
+  min-width: 118px;
+  padding: 10px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(191, 219, 254, 0.58);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(239, 246, 255, 0.9));
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.district-scenario-chip span {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.district-scenario-chip strong {
+  font-size: 0.98rem;
+  color: var(--primary-dark);
+}
+
+.district-scenario-chip:hover,
+.district-scenario-chip.is-active {
+  transform: translateY(-2px);
+  border-color: rgba(34, 211, 238, 0.5);
+  box-shadow: 0 14px 32px rgba(30, 64, 175, 0.14);
+}
+
+.district-scenario-chip.is-active {
+  background: linear-gradient(135deg, rgba(219, 234, 254, 0.98), rgba(224, 242, 254, 0.95));
+}
+
 .dynamic-metric-card {
   position: relative;
   overflow: hidden;
@@ -5135,6 +5193,27 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   color: #f8fbff;
 }
 
+.patient-progress-strip {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0 4px;
+}
+
+.patient-progress-copy {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.patient-progress-copy span {
+  color: rgba(219, 234, 254, 0.8);
+}
+
+.patient-progress-copy strong {
+  color: #f8fbff;
+}
+
 .patient-app-action {
   display: grid;
   gap: 4px;
@@ -5143,13 +5222,23 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   background:
     radial-gradient(circle at var(--pointer-x, 50%) var(--pointer-y, 50%), rgba(59, 130, 246, 0.16), transparent 36%),
     linear-gradient(180deg, rgba(30, 41, 59, 0.92), rgba(15, 23, 42, 0.88));
-  color: var(--text-primary);
+  color: rgba(239, 246, 255, 0.96);
   cursor: pointer;
 }
 
 .patient-app-action span {
   font-size: 0.88rem;
   color: rgba(191, 219, 254, 0.78);
+}
+
+.patient-app-action.is-done {
+  border-color: rgba(34, 197, 94, 0.34);
+  box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.14);
+}
+
+.patient-app-action.is-done strong::after {
+  content: " · 已完成";
+  color: rgba(34, 197, 94, 0.92);
 }
 
 .patient-app-card:hover,
@@ -5221,6 +5310,65 @@ body[data-display-mode="wallboard"] .benchmark-row:hover {
   background: rgba(37, 99, 235, 0.14);
   color: rgba(239, 246, 255, 0.96);
   border: 1px solid rgba(96, 165, 250, 0.18);
+}
+
+.patient-app-coach-prompt.secondary {
+  background: rgba(15, 23, 42, 0.42);
+  border-color: rgba(96, 165, 250, 0.12);
+}
+
+.patient-checklist {
+  display: grid;
+  gap: 10px;
+}
+
+.patient-check-item {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(96, 165, 250, 0.16);
+  background: rgba(15, 23, 42, 0.34);
+  color: rgba(239, 246, 255, 0.96);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.patient-check-item:hover,
+.patient-check-item.is-done {
+  transform: translateY(-1px);
+  border-color: rgba(34, 211, 238, 0.4);
+}
+
+.patient-check-item.is-done {
+  box-shadow: inset 0 0 0 1px rgba(34, 197, 94, 0.12);
+}
+
+.patient-check-icon {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: rgba(59, 130, 246, 0.2);
+  color: rgba(239, 246, 255, 0.96);
+  font-weight: 800;
+}
+
+.patient-app-card.is-active {
+  border-color: rgba(34, 211, 238, 0.4);
+  box-shadow: 0 16px 36px rgba(8, 145, 178, 0.18);
+}
+
+.patient-app-card.is-muted {
+  opacity: 0.72;
+}
+
+.patient-reminder-button {
+  margin-top: 8px;
 }
 
 .patient-app-page .hero-meta-chip,
