@@ -1,5 +1,8 @@
 # 慢康智枢 ChroniCare OS
 
+![Node.js](https://img.shields.io/badge/node.js-18+-green) ![Docker](https://img.shields.io/badge/docker-ready-blue)
+
+
 这是一个面向医院慢病管理场景的本地可运行 PoC。当前项目的产品名定为 `慢康智枢 ChroniCare OS`。它不只是后端接口原型，而是一个带前端控制台、模拟 HIS 资源模型、文件持久化存储、精准风险分层、行为干预疗法包和 MDT 在线讨论的演示系统。
 
 ## 当前已实现
