@@ -11,5 +11,5 @@ PyYAML==6.0.3
 cloudpickle==3.1.2
 omegaconf==2.3.0
 requests==2.32.5
-pandera==0.17.2
+pandera==0.31.1
 multimethod==1.10
