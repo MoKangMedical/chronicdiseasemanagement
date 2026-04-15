@@ -413,3 +413,17 @@ curl -X POST http://localhost:3010/api/mdt-meetings/<meetingId>/close \
 4. 数据库存储替换文件存储
 5. LLM 智能体接入
 6. 会诊结论签发与医嘱回写
+
+---
+
+## ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=MoKangMedical/chronicdiseasemanagement&type=Date)](https://star-history.com/#MoKangMedical/chronicdiseasemanagement&Date)
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📄 License
+
+MIT License
