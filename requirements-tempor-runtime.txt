@@ -24,7 +24,7 @@ importlib-resources==6.5.2
 fastai==2.7.19
 fastcore==1.7.29
 fastdownload==0.0.7
-fastprogress==1.0.5
+fastprogress==1.1.5
 pyts==0.13.0
 imbalanced-learn==0.12.4
 psutil==6.1.0
