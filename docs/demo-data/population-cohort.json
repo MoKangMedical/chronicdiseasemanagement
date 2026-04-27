@@ -456,11 +456,11 @@
         "ratio": 0.08
       }
     ],
-    "ageHighlights": {
-      "agingRate": "18.2%",
-      "workingAgeRatio": "62.0%",
-      "medianAge": 42
-    },
+    "ageHighlights": [
+      "60岁以上人口占比18.2%，老龄化趋势明显",
+      "40-59岁慢病高发人群占比35.6%",
+      "18-39岁青年高血压检出率上升至12.3%"
+    ],
     "sexDistribution": [
       {
         "gender": "男",
@@ -756,13 +756,20 @@
         "hr": 72,
         "bmi": 25.8,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 155,
+        "diastolicBp": 95,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 4824,
+        "averageSleepHours": 5.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -1151,13 +1158,20 @@
         "hr": 72,
         "bmi": 24.4,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 142,
+        "diastolicBp": 88,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 7012,
+        "averageSleepHours": 6.2,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -1547,13 +1561,20 @@
         "hr": 72,
         "bmi": 25.6,
         "hba1c": 7.2,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 4679,
+        "averageSleepHours": 7.5,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -1931,13 +1952,20 @@
         "hr": 72,
         "bmi": 24.4,
         "hba1c": 6.0,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 11935,
+        "averageSleepHours": 5.8,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -2327,13 +2355,20 @@
         "hr": 72,
         "bmi": 24.7,
         "hba1c": 7.2,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 3520,
+        "averageSleepHours": 5.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -2717,13 +2752,20 @@
         "hr": 82,
         "bmi": 24.9,
         "hba1c": 6.0,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 6811,
+        "averageSleepHours": 7.0,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "常规管理",
       "overallRiskLevel": "low",
@@ -3101,13 +3143,20 @@
         "hr": 72,
         "bmi": 24.1,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 6257,
+        "averageSleepHours": 7.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -3491,13 +3540,20 @@
         "hr": 82,
         "bmi": 24.2,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 11928,
+        "averageSleepHours": 6.8,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -3875,13 +3931,20 @@
         "hr": 72,
         "bmi": 28.6,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 7557,
+        "averageSleepHours": 7.9,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -4281,13 +4344,20 @@
         "hr": 78,
         "bmi": 27.4,
         "hba1c": 8.5,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 5615,
+        "averageSleepHours": 7.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -4681,13 +4751,20 @@
         "hr": 78,
         "bmi": 25.8,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 147,
+        "diastolicBp": 88,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 7552,
+        "averageSleepHours": 6.0,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "常规管理",
       "overallRiskLevel": "low",
@@ -5065,13 +5142,20 @@
         "hr": 72,
         "bmi": 27.2,
         "hba1c": 8.5,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 8514,
+        "averageSleepHours": 5.8,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -5465,13 +5549,20 @@
         "hr": 72,
         "bmi": 25.4,
         "hba1c": 6.0,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 4584,
+        "averageSleepHours": 6.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -5861,13 +5952,20 @@
         "hr": 78,
         "bmi": 24.7,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 7333,
+        "averageSleepHours": 7.9,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -6257,13 +6355,20 @@
         "hr": 78,
         "bmi": 24.5,
         "hba1c": 7.2,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "从不",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 10527,
+        "averageSleepHours": 7.1,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "常规管理",
       "overallRiskLevel": "low",
@@ -6647,13 +6752,20 @@
         "hr": 72,
         "bmi": 24.8,
         "hba1c": 6.0,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 9201,
+        "averageSleepHours": 5.7,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -7043,13 +7155,20 @@
         "hr": 82,
         "bmi": 24.8,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 142,
+        "diastolicBp": 88,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 8925,
+        "averageSleepHours": 7.2,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -7427,13 +7546,20 @@
         "hr": 82,
         "bmi": 25.1,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 4139,
+        "averageSleepHours": 5.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -7823,13 +7949,20 @@
         "hr": 78,
         "bmi": 24.1,
         "hba1c": 8.5,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 7741,
+        "averageSleepHours": 8.5,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -8218,13 +8351,20 @@
         "hr": 82,
         "bmi": 28.1,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 155,
+        "diastolicBp": 95,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 6814,
+        "averageSleepHours": 8.1,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -8618,13 +8758,20 @@
         "hr": 78,
         "bmi": 24.6,
         "hba1c": 6.0,
-        "egfr": 45
+        "egfr": 45,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 7554,
+        "averageSleepHours": 6.9,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -9013,13 +9160,20 @@
         "hr": 82,
         "bmi": 24.8,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 8977,
+        "averageSleepHours": 6.0,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -9409,13 +9563,20 @@
         "hr": 82,
         "bmi": 27.6,
         "hba1c": 8.5,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 155,
+        "diastolicBp": 95,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 6432,
+        "averageSleepHours": 7.5,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -9809,13 +9970,20 @@
         "hr": 78,
         "bmi": 28.1,
         "hba1c": 6.0,
-        "egfr": 45
+        "egfr": 45,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 4169,
+        "averageSleepHours": 7.3,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -10203,13 +10371,20 @@
         "hr": 72,
         "bmi": 25.4,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 11751,
+        "averageSleepHours": 7.7,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "常规管理",
       "overallRiskLevel": "low",
@@ -10599,13 +10774,20 @@
         "hr": 78,
         "bmi": 25.6,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 160,
+        "diastolicBp": 95,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 10573,
+        "averageSleepHours": 6.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -10988,13 +11170,20 @@
         "hr": 72,
         "bmi": 28.4,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 6598,
+        "averageSleepHours": 7.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -11388,13 +11577,20 @@
         "hr": 72,
         "bmi": 24.1,
         "hba1c": 7.2,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 142,
+        "diastolicBp": 88,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 3916,
+        "averageSleepHours": 6.2,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -11784,13 +11980,20 @@
         "hr": 78,
         "bmi": 28.5,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 8168,
+        "averageSleepHours": 6.7,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -12190,13 +12393,20 @@
         "hr": 78,
         "bmi": 28.0,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 160,
+        "diastolicBp": 95,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 6456,
+        "averageSleepHours": 8.2,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -12596,13 +12806,20 @@
         "hr": 82,
         "bmi": 24.0,
         "hba1c": 7.2,
-        "egfr": 62
+        "egfr": 62,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 8155,
+        "averageSleepHours": 6.1,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -12992,13 +13209,20 @@
         "hr": 78,
         "bmi": 23.8,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 160,
+        "diastolicBp": 95,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 9482,
+        "averageSleepHours": 8.2,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -13387,13 +13611,20 @@
         "hr": 78,
         "bmi": 28.4,
         "hba1c": 8.5,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 10517,
+        "averageSleepHours": 5.9,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -13793,13 +14024,20 @@
         "hr": 82,
         "bmi": 27.8,
         "hba1c": 8.5,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 155,
+        "diastolicBp": 95,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "从不",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 7040,
+        "averageSleepHours": 7.7,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "紧急管理",
       "overallRiskLevel": "critical",
@@ -14187,13 +14425,20 @@
         "hr": 72,
         "bmi": 24.9,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 130,
+        "diastolicBp": 80,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "已戒",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 7304,
+        "averageSleepHours": 7.7,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -14571,13 +14816,20 @@
         "hr": 72,
         "bmi": 24.6,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 155,
+        "diastolicBp": 95,
+        "heartRate": 72
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 9543,
+        "averageSleepHours": 6.6,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -14972,13 +15224,20 @@
         "hr": 82,
         "bmi": 25.2,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 155,
+        "diastolicBp": 95,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 11348,
+        "averageSleepHours": 7.0,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -15367,13 +15626,20 @@
         "hr": 78,
         "bmi": 24.1,
         "hba1c": 6.0,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "偶尔",
         "drinking": "偶尔",
         "exercise": "较少",
-        "diet": "需调整"
+        "diet": "需调整",
+        "averageDailySteps": 3771,
+        "averageSleepHours": 8.1,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "强化管理",
       "overallRiskLevel": "high",
@@ -15768,13 +16034,20 @@
         "hr": 82,
         "bmi": 24.2,
         "hba1c": 7.2,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 142,
+        "diastolicBp": 88,
+        "heartRate": 82
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 5621,
+        "averageSleepHours": 7.9,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
@@ -16158,13 +16431,20 @@
         "hr": 78,
         "bmi": 25.1,
         "hba1c": 7.2,
-        "egfr": 85
+        "egfr": 85,
+        "systolicBp": 135,
+        "diastolicBp": 80,
+        "heartRate": 78
       },
       "lifestyle": {
         "smoking": "从不",
         "drinking": "偶尔",
         "exercise": "每周3次",
-        "diet": "基本均衡"
+        "diet": "基本均衡",
+        "averageDailySteps": 4040,
+        "averageSleepHours": 6.7,
+        "smokingStatus": "从不吸烟",
+        "exerciseFrequency": "每周3次"
       },
       "managementTier": "重点管理",
       "overallRiskLevel": "medium",
