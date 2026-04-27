@@ -15,3 +15,7 @@ pages-dist
 pnpm-debug.log*
 npm-debug.log*
 yarn-error.log*
+*.key
+*.pem
+*_secret*
+credentials.json

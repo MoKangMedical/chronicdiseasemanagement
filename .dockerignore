@@ -1,6 +1,11 @@
-node_modules
-dist
-storage
+__pycache__
+*.pyc
 .git
 .github
+.env
+.venv
+venv
+*.egg-info
+dist
+build
 .DS_Store

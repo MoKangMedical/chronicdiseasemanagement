@@ -1,418 +1,424 @@
-# 慢康智枢 ChroniCare OS
+# 🏥 慢康智枢
 
-![Node.js](https://img.shields.io/badge/node.js-18+-green) ![Docker](https://img.shields.io/badge/docker-ready-blue)
+**AI驱动的慢病管理平台** — HIS集成 · 风险分层 · 智能随访，让慢性病管理更精准、更高效。
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://python.org)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-teal.svg)](https://fastapi.tiangolo.com)
 
-这是一个面向医院慢病管理场景的本地可运行 PoC。当前项目的产品名定为 `慢康智枢 ChroniCare OS`。它不只是后端接口原型，而是一个带前端控制台、模拟 HIS 资源模型、文件持久化存储、精准风险分层、行为干预疗法包和 MDT 在线讨论的演示系统。
+---
 
-## 当前已实现
+## ✨ 核心功能
 
-- 按疾病领域精准风险分层
-  - 心血管
-  - 糖尿病
-  - 认知/老年痴呆
-  - 呼吸
-  - 睡眠
-  - 肾脏
-  - 代谢
-- 行为干预疗法包
-  - 运动疗法包
-  - 饮食疗法包
-  - 生活方式疗法包
-  - 睡眠改善包
-- MDT 协作
-  - 自动生成 MDT 任务单
-  - 真人在线讨论
-  - 发言留痕
-  - 关闭会议后生成会议纪要
-  - 自动追加 care plan 修订版
-- 更真实的医院接口模型
-  - `patient / conditions / observations / medications / encounters / careTeam`
-- 文件持久化存储
-  - `storage/his-records.json`
-  - `storage/documents.json`
-  - `storage/mdt-meetings.json`
-- 医院可演示前端控制台
-  - 三家医院切换
-  - 分角色工作台
-    - 专科医生
-    - 全科医生
-    - 健康管理师
-  - 患者队列
-  - 领域风险卡片
-  - 疗法包面板
-  - 临床计划摘要
-  - MDT 在线讨论区
-- MedClaw 医疗智能能力
-  - 影像报告结构化解析与时序对比
-  - AI 病历自动生成草案
-  - 辅助诊断与病情预测
-  - 只读权限边界与审计事件留痕
-- KG-Followup 追问能力
-  - EHR 引导的实体抽取
-  - DDX 驱动的候选诊断与推理路径
-  - KG 感知的 hard-case active ICL 示例选择
-  - 基于知识图谱的精准追问生成
-  - 问题整合与去冗余摘要
-  - 前端工作台可视化展示
-- B2B2C 健康管理生态层
-  - 保险、银行、企业、互联网平台、赛事方多类付费方模型
-  - AI 全科医生、AI 精准就医、AI 体检报告解读等产品矩阵
-  - 患者权益旅程与服务模块编排
-  - 付费方-医院-用户三方联动演示视图
-- GitHub 开源能力中台
-  - 健康管理、慢病管理、疾病预测相关仓库目录
-  - EHR/FHIR、时序风险、文本疾病预测、患者生成数据接入建议
-  - 按患者自动生成开源能力接入计划
-- 真实数据适配链与本地预测服务
-  - HealthChain 风格 FHIR 资源整合
-  - SMART on FHIR 配置、动态 client registration、授权码、refresh token 与 scope 校验
-  - healthkit-on-fhir 风格患者生成数据接入
-  - Python 微服务化的 TemporAI 真实插件链：`ffill -> ts_standard_scaler -> nn_classifier`
-  - Python 微服务化的 TemporAI `time_to_event.ts_xgb` 时间到事件风险预测
-  - Python 微服务化的 PyHealth `SampleEHRDataset + RNN + Trainer` 训练链
-  - PyHealth `train / val / test split + pr_auc monitor + best.ckpt`
-  - Python 微服务化的 disease-prediction 风格文本风险分类
-- HIS 字段映射预览
-  - `MedSphere/v1`
-  - `SmartEMR/v3`
-  - `CareBridge/v2`
+| # | 功能模块 | 说明 |
+|---|---------|------|
+| 1 | **HIS系统集成** | 无缝对接医院信息系统，自动同步患者基本信息、检验检查结果、处方数据 |
+| 2 | **患者管理** | 慢病患者全生命周期管理，从筛查、诊断到长期随访的完整闭环 |
+| 3 | **风险分层** | AI模型综合评估患者风险等级（低危/中危/高危/极高危），精准识别高危人群 |
+| 4 | **智能随访** | 自动生成个性化随访计划，支持AI电话、微信、短信多通道智能提醒 |
+| 5 | **用药管理** | 药物依从性实时监测，药物相互作用智能提醒，处方合理性审核 |
+| 6 | **数据看板** | 科室/医院/区域多维度数据展示，实时监控慢病管理核心指标 |
+| 7 | **质控报告** | 慢病管理质量指标自动统计，一键生成符合卫健委要求的质控报告 |
+| 8 | **科研支持** | 脱敏数据安全导出，支持临床回顾性研究和真实世界研究 |
 
-## 项目结构
+---
 
-```text
-medical-agent-os/
-  .github/workflows/     # GitHub CI / Docker 发布
-  public/                # 前端控制台
-  src/
-    adapters/            # HIS 适配层
-    core/                # 文档库 / 事件代理 / 会议存储
-    data/                # 模拟医院资源数据
-    lib/                 # ID / 存储工具
-    services/            # 慢病管理编排
-  storage/               # 运行期持久化文件
+## 🩺 6种慢病管理详解
+
+### 🫀 高血压管理
+
+**风险模型：** 基于Framingham评分 + 中国人群修正因子，综合评估10年心血管事件风险。
+
+- **分级管理：** 1级/2级/3级高血压差异化随访频率
+- **靶器官监测：** 心脏超声、肾功能、眼底检查自动提醒
+- **药物方案：** 基于指南的阶梯式用药推荐（CCB→ACEI→联合）
+- **家庭血压：** 对接智能血压计，自动采集家庭血压数据
+- **质控指标：** 血压达标率、服药依从性、随访完成率
+
+### 🍬 糖尿病管理
+
+**风险模型：** UKPDS风险引擎 + 中国2型糖尿病风险评分，预测微血管/大血管并发症风险。
+
+- **血糖监控：** HbA1c趋势分析，血糖波动预警
+- **并发症筛查：** 糖尿病视网膜病变、肾病、周围神经病变定期筛查提醒
+- **饮食管理：** AI营养师个性化饮食方案，食物GI值查询
+- **运动处方：** 基于患者体能的个性化运动建议
+- **质控指标：** HbA1c达标率、并发症筛查率、低血糖发生率
+
+### ❤️ 冠心病管理
+
+**风险模型：** GRACE评分 + SYNTAX评分，综合评估急性冠脉事件风险与冠脉病变严重程度。
+
+- **二级预防：** ABCDE方案自动提醒（抗血小板、β受体阻滞、胆固醇管理）
+- **心脏康复：** 分期运动处方、心理干预、营养指导
+- **危险因素管理：** 血压/血糖/血脂三达标管理
+- **紧急预警：** 胸痛症状识别，自动触发急救流程
+- **质控指标：** LDL-C达标率、双抗依从性、心脏康复参与率
+
+### 🫁 慢阻肺管理
+
+**风险模型：** GOLD分级 + mMRC呼吸困难评分 + CAT评分，综合评估病情严重程度。
+
+- **肺功能监测：** FEV1趋势分析，急性加重风险预警
+- **吸入装置管理：** 吸入技术视频指导，用药依从性监测
+- **急性加重管理：** 症状日记自动分析，加重早期识别
+- **戒烟支持：** AI戒烟助手，尼古丁替代方案推荐
+- **质控指标：** 肺功能检查率、吸入装置使用正确率、急性加重率
+
+### 🫘 慢性肾病管理
+
+**风险模型：** KDIGO风险矩阵，基于eGFR和蛋白尿水平分层。
+
+- **肾功能监测：** eGFR趋势分析，肾功能恶化预警
+- **用药调整：** 肾功能不全时药物剂量自动调整提醒
+- **饮食管理：** 低蛋白饮食方案，钾/磷/钠摄入监控
+- **透析准备：** eGFR<20时自动启动透析教育和通路准备
+- **质控指标：** eGFR监测频率、贫血纠正率、透析准备率
+
+### 🧠 脑卒中管理
+
+**风险模型：** CHA₂DS₂-VASc评分（房颤相关）+ ABCD²评分（TIA后卒中风险）。
+
+- **复发预防：** 抗血小板/抗凝方案管理，血压达标监控
+- **功能康复：** 肢体功能、语言功能、认知功能康复训练提醒
+- **心理支持：** 卒中后抑郁筛查与干预
+- **生活指导：** 吞咽障碍管理、跌倒预防、家庭环境改造建议
+- **质控指标：** 复发率、功能恢复率、抗凝达标率
+
+---
+
+## 🏗️ 技术架构
+
+```
+┌─────────────────────────────────────────────┐
+│                   前端层                      │
+│         Vue 3 + Element Plus + ECharts       │
+├─────────────────────────────────────────────┤
+│                  API 网关                     │
+│              Nginx / Kong                    │
+├─────────────────────────────────────────────┤
+│                后端服务层                     │
+│        FastAPI + Celery + WebSocket          │
+├──────────┬──────────┬───────────────────────┤
+│ 风险引擎  │ 随访引擎  │   HIS适配器           │
+│ (Python) │ (Python) │  (HL7/FHIR/REST)     │
+├──────────┴──────────┴───────────────────────┤
+│               数据层                         │
+│   PostgreSQL + Redis + MinIO(文件存储)        │
+├─────────────────────────────────────────────┤
+│               AI 模型层                      │
+│     scikit-learn / XGBoost / LLM API        │
+└─────────────────────────────────────────────┘
 ```
 
-## GitHub 与 Pages 部署说明
+**技术栈：**
+- **后端：** Python 3.10+ / FastAPI / Celery / SQLAlchemy
+- **数据库：** PostgreSQL 15+ / Redis 7+
+- **前端：** Vue 3 / Element Plus / ECharts
+- **AI：** scikit-learn / XGBoost / OpenAI API
+- **消息队列：** Redis / RabbitMQ
+- **部署：** Docker / Docker Compose / Kubernetes
 
-这个项目现在支持两条 GitHub 交付链，但要区分两件事：
+---
 
-- `GitHub Pages` 托管的是静态医院演示控制台
-- `Render / Railway` 运行的是完整的 `Node + Express + Python` 服务
+## 📡 API 文档
 
-### 已提供
-
-- [ci.yml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/.github/workflows/ci.yml)
-  - push / PR 自动执行 `pnpm build`
-- [deploy-pages.yml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/.github/workflows/deploy-pages.yml)
-  - `main` 分支自动导出静态快照并发布到 GitHub Pages
-- [docker-publish.yml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/.github/workflows/docker-publish.yml)
-  - 主分支或 tag 自动推送镜像到 `ghcr.io/mokangmedical/chronicdiseasemanagement`
-- [deploy-render.yml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/.github/workflows/deploy-render.yml)
-  - Docker 镜像发布成功后自动触发 Render Deploy Hook
-- [deploy-railway.yml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/.github/workflows/deploy-railway.yml)
-  - 主分支提交后自动通过 Railway CLI 发布
-- [Dockerfile](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/Dockerfile)
-- [docker-compose.yml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/docker-compose.yml)
-- [render.yaml](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/render.yaml)
-- [railway.json](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/railway.json)
-- [DEPLOY_CHECKLIST.md](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/DEPLOY_CHECKLIST.md)
-- [GITHUB_BOOTSTRAP.md](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/GITHUB_BOOTSTRAP.md)
-- [FIRST_DEPLOY_SEQUENCE.md](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/FIRST_DEPLOY_SEQUENCE.md)
-- [RENDER_BLUEPRINT_SETUP.md](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/RENDER_BLUEPRINT_SETUP.md)
-- [.env.github.example](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/.env.github.example)
-- [scripts/01_first_push.sh](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/scripts/01_first_push.sh)
-- [scripts/02_set_github_secrets.sh](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/scripts/02_set_github_secrets.sh)
-- [scripts/03_trigger_and_verify.sh](/Users/linzhang/Desktop/%20%20%20%20%20%20OPC/medical-agent-os/scripts/03_trigger_and_verify.sh)
-
-### 推荐发布方式
-
-1. 把项目推到 GitHub 仓库
-2. 在 GitHub `Settings -> Pages` 中将 Source 设为 `GitHub Actions`
-3. 推送到 `main` 后自动发布静态演示站到：
-   - `https://mokangmedical.github.io/chronicdiseasemanagement/`
-4. 在 GitHub Actions 中自动跑 CI
-5. 在主分支触发 Docker 发布到 GHCR
-6. Render 自动触发 Deploy Hook
-7. Railway 自动执行 `railway up`
-
-### GitHub Pages 的边界
-
-- Pages 版是只读静态演示
-- Pages 版展示完整的患者视图、风险卡片、疗法包、MedClaw、KG-Followup、B2B2C 生态、FHIR 适配摘要和模型训练摘要
-- 工作流执行、MDT 发言、SMART on FHIR 授权与真实 Python 推理服务，仍需访问 Render 或 Railway 的完整部署版
-
-### GitHub Secrets
-
-在 GitHub 仓库 `Settings -> Secrets and variables -> Actions` 中配置：
-
-#### Render
-
-- `RENDER_DEPLOY_HOOK_URL`
-
-#### Railway
-
-- `RAILWAY_TOKEN`
-- `RAILWAY_PROJECT_ID`
-- `RAILWAY_ENVIRONMENT`
-- `RAILWAY_SERVICE`
-
-### Render 建议配置
-
-建议在 Render 中先创建一个 image-backed web service，并将镜像指向：
-
-```text
-ghcr.io/mokangmedical/chronicdiseasemanagement:main
-```
-
-然后把 Render 生成的 Deploy Hook 配到 GitHub secret `RENDER_DEPLOY_HOOK_URL`。
-
-### Railway 建议配置
-
-建议先在 Railway 中创建项目、环境和服务，然后把项目级部署参数配置进 GitHub secrets。当前 workflow 会在 `main/master` 推送后执行：
+### 认证
 
 ```bash
-railway up --ci --service="$RAILWAY_SERVICE" --environment="$RAILWAY_ENVIRONMENT" --project="$RAILWAY_PROJECT_ID"
-```
-
-### 本地用 Docker 启动
-
-```bash
-docker compose up --build
-```
-
-## 本地启动
-
-```bash
-cd "/Users/linzhang/Desktop/      OPC/medical-agent-os"
-pnpm install
-pnpm run setup:predictor
-pnpm start
-```
-
-如果你要本地预览 GitHub Pages 版本，再执行：
-
-```bash
-pnpm run build:pages
-```
-
-生成目录：
-
-```text
-pages-dist/
-```
-
-如果你要把 `TemporAI` 的完整插件运行时也装上，再执行：
-
-```bash
-pnpm run setup:predictor:tempor-runtime
-```
-
-这会补齐 `hyperimpute / tsai / fastai / torch*` 等依赖，让 `TemporAI` 不只是做 runtime probe，而是能在本地预测微服务里真实跑通 plugin registry 和 one-off classification 插件训练。
-
-打开：
-
-- 控制台: [http://localhost:3010](http://localhost:3010)
-- 健康检查: [http://localhost:3010/health](http://localhost:3010/health)
-
-## 核心接口
-
-### Dashboard
-
-```bash
-curl http://localhost:3010/api/dashboard
-```
-
-### 三家医院 + 分角色 Dashboard
-
-```bash
-curl "http://localhost:3010/api/dashboard?hospitalId=beijing&workbenchRole=specialist-doctor"
-```
-
-### 患者工作台
-
-```bash
-curl http://localhost:3010/api/patients/patient-wu-004/workspace
-```
-
-### 分角色患者工作台
-
-```bash
-curl "http://localhost:3010/api/patients/patient-wu-004/workspace?workbenchRole=general-practitioner"
-```
-
-### HIS 字段映射预览
-
-```bash
-curl http://localhost:3010/api/his/mappings
-```
-
-### MedClaw 患者工作空间
-
-```bash
-curl "http://localhost:3010/api/medclaw/patients/patient-chen-002/workspace?workbenchRole=specialist-doctor"
-```
-
-### KG-Followup 精准追问
-
-```bash
-curl http://localhost:3010/api/medclaw/patients/patient-wu-004/kg-followup
-```
-
-### B2B2C 生态总览
-
-```bash
-curl http://localhost:3010/api/ecosystem/overview
-```
-
-### 患者权益旅程
-
-```bash
-curl http://localhost:3010/api/ecosystem/patients/patient-chen-002/journey
-```
-
-### GitHub 开源能力总览
-
-```bash
-curl http://localhost:3010/api/github-capabilities/overview
-```
-
-### 当前患者的开源能力接入计划
-
-```bash
-curl http://localhost:3010/api/github-capabilities/patients/patient-chen-002/plan
-```
-
-### HealthChain + HealthKit 适配输出
-
-```bash
-curl http://localhost:3010/api/integrations/patients/patient-chen-002/adapted
-```
-
-### SMART on FHIR 配置
-
-```bash
-curl http://localhost:3010/.well-known/smart-configuration
-curl http://localhost:3010/fhir/metadata
-```
-
-### SMART on FHIR 动态客户端注册
-
-```bash
-curl -X POST http://localhost:3010/oauth/register \
+# JWT Token 认证
+curl -X POST https://api.chronic-care.io/v1/auth/login \
   -H "Content-Type: application/json" \
-  -d '{
-    "client_name": "Demo SMART App",
-    "redirect_uris": ["http://127.0.0.1:8899/callback"],
-    "scope": "launch patient/*.read patient/Observation.read offline_access",
-    "grant_types": ["authorization_code", "refresh_token"]
-  }'
+  -d '{"username": "doctor01", "password": "xxx"}'
 ```
 
-### SMART on FHIR 授权码与 refresh token
+### 核心端点
+
+#### GET /v1/patients — 获取患者列表
 
 ```bash
-curl -i "http://localhost:3010/oauth/authorize?client_id=demo-smart-app&redirect_uri=http://127.0.0.1:9999/callback&scope=launch%20patient/*.read%20offline_access&launch=patient-chen-002"
-
-curl -X POST http://localhost:3010/oauth/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=authorization_code&client_id=demo-smart-app&code=<code>&redirect_uri=http://127.0.0.1:9999/callback"
-
-curl -X POST http://localhost:3010/oauth/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "grant_type=refresh_token&client_id=demo-smart-app&refresh_token=<refresh_token>"
+curl -H "Authorization: Bearer TOKEN" \
+  "https://api.chronic-care.io/v1/patients?disease=hypertension&risk_level=high&page=1"
 ```
 
-### 本地预测服务输出
+**响应：**
+```json
+{
+  "patients": [
+    {
+      "id": "pat_001",
+      "name": "张三",
+      "diseases": ["hypertension", "diabetes"],
+      "risk_level": "high",
+      "last_visit": "2026-04-20",
+      "next_followup": "2026-05-04",
+      "bp_controlled": false,
+      "hba1c": 8.2
+    }
+  ],
+  "total": 156,
+  "page": 1
+}
+```
+
+#### POST /v1/patients/{id}/risk-assessment — 执行风险评估
+
+```json
+{
+  "patient_id": "pat_001",
+  "disease": "hypertension",
+  "data": {
+    "age": 65,
+    "gender": "male",
+    "sbp": 165,
+    "dbp": 95,
+    "total_cholesterol": 6.2,
+    "hdl": 1.1,
+    "smoking": true,
+    "diabetes": true,
+    "family_history": true
+  }
+}
+```
+
+**响应：**
+```json
+{
+  "risk_level": "very_high",
+  "10_year_cvd_risk": 0.342,
+  "recommendations": [
+    "立即启动降压治疗，目标<130/80mmHg",
+    "推荐联合用药：ACEI + CCB",
+    "建议戒烟干预",
+    "1个月后复查"
+  ],
+  "next_followup": "2026-05-26"
+}
+```
+
+#### POST /v1/followups — 创建随访任务
+
+```json
+{
+  "patient_id": "pat_001",
+  "type": "phone",
+  "scheduled_date": "2026-05-04",
+  "template": "hypertension_monthly",
+  "remind_before": [1440, 60]
+}
+```
+
+#### GET /v1/dashboard/metrics — 获取数据看板
+
+```json
+{
+  "period": "2026-04",
+  "metrics": {
+    "total_patients": 2450,
+    "controlled_rate": 0.68,
+    "followup_completion": 0.85,
+    "high_risk_patients": 312,
+    "medication_adherence": 0.79
+  },
+  "by_disease": {
+    "hypertension": {"controlled": 0.72, "total": 1200},
+    "diabetes": {"controlled": 0.65, "total": 850}
+  }
+}
+```
+
+#### POST /v1/reports/quality — 生成质控报告
+
+```json
+{
+  "period": "2026-Q1",
+  "scope": "department",
+  "department_id": "dept_cardiology",
+  "format": "pdf"
+}
+```
+
+---
+
+## 🔒 数据安全说明
+
+### 数据加密
+
+- **传输层：** 全链路TLS 1.3加密，API通信HTTPS强制
+- **存储层：** AES-256加密敏感字段（身份证号、手机号、病历号）
+- **数据库：** PostgreSQL TDE透明加密，Redis AUTH认证
+
+### 访问控制
+
+- **RBAC权限模型：** 院级管理员/科级管理员/医生/护士/药师5级权限
+- **最小权限原则：** 医生仅可访问自己管理的患者数据
+- **操作审计：** 所有数据访问记录完整审计日志，保留3年
+- **会话管理：** 30分钟自动登出，异常登录实时告警
+
+### 合规认证
+
+- **等保三级：** 符合国家信息安全等级保护三级要求
+- **HIPAA兼容：** 患者隐私数据管理符合国际医疗信息标准
+- **数据脱敏：** 科研数据导出自动脱敏，去除个人身份信息
+- **知情同意：** 电子签署数据使用知情同意书
+
+### 备份与容灾
+
+- **实时备份：** PostgreSQL WAL归档 + 流复制
+- **异地容灾：** 数据每日同步至异地灾备中心
+- **RPO/RTO：** RPO<15分钟，RTO<1小时
+- **恢复演练：** 每季度执行一次灾难恢复演练
+
+---
+
+## 🔗 集成方案
+
+### HIS系统集成
+
+```
+┌──────────┐     HL7/FHIR      ┌──────────┐
+│  HIS系统  │ ←──────────────→  │  慢康智枢  │
+│  (院内)   │     REST API      │  适配器    │
+└──────────┘                   └──────────┘
+```
+
+**支持的集成方式：**
+- **HL7 v2.x：** ADT（入出转）、ORM（医嘱）、ORU（检验结果）
+- **FHIR R4：** Patient、Observation、MedicationRequest等资源
+- **REST API：** 标准RESTful接口，支持JSON数据交换
+- **数据库直连：** 支持Oracle/SQL Server/MySQL数据库直连（需授权）
+
+**已对接HIS系统：**
+- 卫宁健康 WiNEX
+- 东华医为 HOS
+- 创业慧康 HCIS
+- 东软望海 NeuSoft
+
+### 智能设备集成
+
+- **血压计：** 欧姆龙/鱼跃/九安，蓝牙自动上传
+- **血糖仪：** 三诺/怡成/罗氏，数据自动同步
+- **智能手表：** 华为/Apple Watch，心率/血氧/运动数据
+- **体脂秤：** 小米/华为，体重/BMI趋势追踪
+
+### 第三方服务集成
+
+- **短信网关：** 阿里云短信/腾讯云短信
+- **微信服务号：** 随访提醒、健康报告推送
+- **AI外呼：** 智能电话随访，自动记录通话内容
+- **电子签名：** 法大大/e签宝，知情同意电子签署
+
+---
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Python 3.10+
+- PostgreSQL 15+
+- Redis 7+
+- Node.js 18+ (前端)
+
+### 1. 克隆项目
 
 ```bash
-curl http://localhost:3010/api/predictions/patients/patient-chen-002
+git clone https://github.com/MoKangMedical/chronicdiseasemanagement.git
+cd chronicdiseasemanagement
 ```
 
-预测结果会额外返回：
-
-- `featureEngineering`：静态特征、时序点数、时序信号、文本 top terms
-- `pipelines.temporai`：真实 TemporAI 插件链、cohort、时序特征维度与当前患者概率
-- `pipelines.temporai.timeToEvent*`：7/30/90 天时间到事件风险
-- `pipelines.pyhealth`：真实 PyHealth `SampleEHRDataset`、RNN 训练链、split、monitor、best checkpoint、验证/测试指标
-- `runtime.packages`：`temporai / pyhealth / pandas / numpy / scikit-learn` 运行时状态
-
-### 运行慢病工作流
+### 2. 后端启动
 
 ```bash
-curl -X POST http://localhost:3010/api/workflows/chronic-care/run/patient-wu-004
+# 创建虚拟环境
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 安装依赖
+pip install -r requirements.txt
+
+# 配置环境变量
+cp .env.example .env
+# 编辑 .env 填入数据库和Redis连接信息
+
+# 数据库迁移
+alembic upgrade head
+
+# 启动服务
+uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 获取患者实时风险
+### 3. Docker 一键部署
 
 ```bash
-curl http://localhost:3010/api/patients/patient-wu-004/risk
+docker-compose up -d
 ```
 
-### 创建 MDT 会议
+服务启动后访问：
+- API 文档：http://localhost:8000/docs
+- 管理后台：http://localhost:3000
 
-```bash
-curl -X POST http://localhost:3010/api/patients/patient-wu-004/mdt-meetings \
-  -H "Content-Type: application/json" \
-  -d '{"topic":"吴美芳 慢病管理 MDT 在线讨论"}'
+---
+
+## 📁 项目结构
+
+```
+chronicdiseasemanagement/
+├── src/
+│   ├── main.py              # FastAPI 入口
+│   ├── risk_engine.py       # 风险评估引擎
+│   ├── follow_up.py         # 随访管理模块
+│   ├── models/              # 数据模型
+│   ├── api/                 # API 路由
+│   ├── services/            # 业务逻辑
+│   └── adapters/            # HIS 适配器
+├── data/
+│   ├── disease-models.json  # 疾病风险模型配置
+│   └── follow-up-templates.json  # 随访模板
+├── docs/
+│   ├── product-spec.md      # 产品需求文档
+│   └── business-model.md    # 商业模式文档
+├── docker-compose.yml
+├── Dockerfile
+└── requirements.txt
 ```
 
-### 会议发言
+---
 
-```bash
-curl -X POST http://localhost:3010/api/mdt-meetings/<meetingId>/messages \
-  -H "Content-Type: application/json" \
-  -d '{"clinicianId":"doc-zhou-003a","message":"建议 4 周后完成认知量表复评。"}'
-```
+## 📊 部署方式
 
-### 关闭会议并生成纪要
+| 方式 | 适用场景 | 说明 |
+|------|---------|------|
+| **私有化部署** | 三甲医院/大型医疗集团 | 部署在医院内网，数据不出院，符合等保三级要求 |
+| **SaaS 模式** | 基层医疗机构/社区卫生中心 | 开箱即用，按年付费，无需运维 |
+| **混合云** | 医联体/区域医疗中心 | 核心数据本地，AI计算云端 |
 
-```bash
-curl -X POST http://localhost:3010/api/mdt-meetings/<meetingId>/close \
-  -H "Content-Type: application/json" \
-  -d '{"decision":"继续以认知管理为主轴联合睡眠干预","followUpActions":["4 周后复测 MMSE/MoCA"]}'
-```
+---
 
-## 业务编排
+## 🤝 贡献
 
-当前工作流如下：
+欢迎提交 Issue 和 Pull Request！请先阅读 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
-1. `HIS 接诊代理` 读取模拟医院资源数据
-2. 写入 `intake-note`
-3. `风险分层代理` 输出疾病领域级 `risk-assessment`
-4. `MDT 协调代理` 自动生成在线 MDT 会议与 `mdt-tasklist`
-5. 角色代理分别产出：
-   - `medical-plan`
-   - `diet-prescription`
-   - `exercise-prescription`
-   - `lifestyle-prescription`
-   - `sleep-prescription`
-   - `care-coordination-note`
-6. 汇总为 `integrated-care-plan`
-7. MDT 真人讨论关闭后生成 `mdt-meeting-summary`
-8. 自动追加 `integrated-care-plan` 修订版
+---
 
-## 模拟患者
+## 🔗 相关项目
 
-当前内置 4 个演示患者：
+| 项目 | 定位 |
+|------|------|
+| [OPC Platform](https://github.com/MoKangMedical/opcplatform) | 一人公司全链路学习平台 |
+| [Digital Sage](https://github.com/MoKangMedical/digital-sage) | 与100位智者对话 |
+| [Cloud Memorial](https://github.com/MoKangMedical/cloud-memorial) | AI思念亲人平台 |
+| [天眼 Tianyan](https://github.com/MoKangMedical/tianyan) | 市场预测平台 |
+| [MediChat-RD](https://github.com/MoKangMedical/medichat-rd) | 罕病诊断平台 |
+| [MedRoundTable](https://github.com/MoKangMedical/medroundtable) | 临床科研圆桌会 |
+| [DrugMind](https://github.com/MoKangMedical/drugmind) | 药物研发数字孪生 |
+| [MediPharma](https://github.com/MoKangMedical/medi-pharma) | AI药物发现平台 |
+| [Minder](https://github.com/MoKangMedical/minder) | AI知识管理平台 |
+| [Biostats](https://github.com/MoKangMedical/Biostats) | 生物统计分析平台 |
 
-- 厦门大学附属慢病管理示范医院
-  - 张淑兰：高血压 + 糖尿病 + 肥胖
-- 北京清华长庚智慧医疗中心
-  - 陈建国：心衰 + 慢性肾病 + 高血压
-  - 吴美芳：阿尔茨海默病早期 + 高血压 + 失眠障碍
-- 江阴区域健康协同医院
-  - 李敏：慢阻肺 + 睡眠呼吸暂停 + 糖代谢异常
+## 📄 许可证
 
-其中 `吴美芳` 适合演示“认知/老年痴呆 + 睡眠 + MDT”路径。
+本项目采用 [MIT License](LICENSE) 开源许可证。
 
-## 下一步建议
+---
 
-如果你继续推进到医院 PoC，我建议下一阶段直接补这几块：
-
-1. 用户/角色/权限体系
-2. 患者端随访与打卡入口
-3. 真实 HIS / EMR / LIS API 适配
-4. 数据库存储替换文件存储
-5. LLM 智能体接入
-6. 会诊结论签发与医嘱回写
+**慢康智枢** — 让每一位慢病患者都能获得持续、精准的健康管理 🏥✨

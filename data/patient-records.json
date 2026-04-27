@@ -1,0 +1,28 @@
+[
+  {
+    "id": "P001",
+    "age": 65,
+    "diseases": [
+      "高血压",
+      "糖尿病"
+    ],
+    "risk_level": "高危"
+  },
+  {
+    "id": "P002",
+    "age": 55,
+    "diseases": [
+      "冠心病"
+    ],
+    "risk_level": "中危"
+  },
+  {
+    "id": "P003",
+    "age": 70,
+    "diseases": [
+      "COPD",
+      "高血压"
+    ],
+    "risk_level": "高危"
+  }
+]

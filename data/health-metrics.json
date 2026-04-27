@@ -1,0 +1,20 @@
+[
+  {
+    "name": "BMI",
+    "normal": "18.5-23.9",
+    "overweight": "24-27.9",
+    "obese": ">=28"
+  },
+  {
+    "name": "血压",
+    "normal": "<120/80",
+    "elevated": "120-129/<80",
+    "high": ">=130/80"
+  },
+  {
+    "name": "血糖",
+    "normal": "<6.1",
+    "prediabetes": "6.1-6.9",
+    "diabetes": ">=7.0"
+  }
+]

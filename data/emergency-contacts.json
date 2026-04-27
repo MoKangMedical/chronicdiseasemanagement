@@ -1,0 +1,22 @@
+[
+  {
+    "type": "急救电话",
+    "number": "120",
+    "description": "医疗急救"
+  },
+  {
+    "type": "火警",
+    "number": "119",
+    "description": "火灾报警"
+  },
+  {
+    "type": "报警",
+    "number": "110",
+    "description": "治安报警"
+  },
+  {
+    "type": "心理援助",
+    "number": "12320-5",
+    "description": "心理危机干预热线"
+  }
+]

@@ -1,11 +1,12 @@
-version: "3.9"
+version: '3.8'
 
 services:
-  medical-agent-os:
+  app:
     build: .
     ports:
-      - "3010:3010"
-    environment:
-      PORT: 3010
+      - "8000:8000"
     volumes:
-      - ./storage:/app/storage
+      - ./data:/app/data
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped

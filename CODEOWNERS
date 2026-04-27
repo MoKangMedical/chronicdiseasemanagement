@@ -1,0 +1,9 @@
+# Default owners for everything
+* @MoKangMedical
+
+# Documentation
+*.md @MoKangMedical
+docs/ @MoKangMedical
+
+# CI/CD
+.github/ @MoKangMedical
