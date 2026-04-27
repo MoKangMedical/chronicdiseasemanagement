@@ -16904,5 +16904,14 @@
   },
   "displayedPatientCount": 40,
   "patientCount": 4440,
-  "hospitalLabel": "栖霞区5家医疗机构"
+  "hospitalLabel": "栖霞区5家医疗机构",
+  "averageRadar": {
+    "cardiovascular": 43,
+    "diabetes": 44,
+    "dementia": 43,
+    "respiratory": 45,
+    "sleep": 46,
+    "renal": 45,
+    "metabolic": 45
+  }
 }
