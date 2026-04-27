@@ -3187,13 +3187,13 @@ function renderPopulation() {
     <div class="plan-block">
       <h4>重点慢病与干预包</h4>
       <ul class="mini-list">
-        ${selectedPatient.diagnoses.map((item) => `<li>${item}</li>`).join("")}
-        ${selectedPatient.recommendedPackages.map((item) => `<li>推荐：${item}</li>`).join("")}
+        ${(selectedPatient.diagnoses ?? []).map((item) => `<li>${item}</li>`).join("")}
+        ${(selectedPatient.recommendedPackages ?? []).map((item) => `<li>推荐：${item}</li>`).join("")}
       </ul>
     </div>
     <div class="plan-block">
       <h4>当前管理缺口</h4>
-      <ul class="mini-list">${selectedPatient.careGaps.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul class="mini-list">${(selectedPatient.careGaps ?? []).map((item) => `<li>${item}</li>`).join("")}</ul>
     </div>
   `
   );
@@ -3672,7 +3672,7 @@ function renderMedClaw() {
       <ul class="mini-list">${(workspace.guardrails ?? []).map((item) => `<li>${item.title}：${item.description}</li>`).join("")}</ul>
     </div>
     <div class="plan-block">
-      <h4>${labelWorkbenchRole(workspace.permissionBoundary.role)} 可读范围</h4>
+      <h4>${labelWorkbenchRole((workspace.permissionBoundary?.role ?? "health-manager"))} 可读范围</h4>
       <ul class="mini-list">${(workspace.permissionBoundary?.scopes ?? []).map((item) => `<li>${item}</li>`).join("")}</ul>
     </div>
     <div class="plan-block">
