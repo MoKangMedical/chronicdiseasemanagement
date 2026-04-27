@@ -499,6 +499,363 @@
             <div id="mapping-grid" class="therapy-package-grid"></div>
           </article>
         </section>
+
+        <!-- ====== NEW INTERACTIVE PANELS ====== -->
+        <style>
+          /* -- New panels section styles -- */
+          .new-panels-section { margin-top: 28px; display: grid; gap: 22px; }
+          .new-panels-row { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+          @media (max-width: 1100px) { .new-panels-row { grid-template-columns: 1fr; } }
+
+          /* AI Alert Panel */
+          .ai-alert-panel .panel { border-left: 4px solid var(--primary); }
+          .ai-alert-list { display: flex; flex-direction: column; gap: 10px; }
+          .ai-alert-item {
+            display: grid;
+            grid-template-columns: 8px 1fr auto auto;
+            gap: 14px;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--surface-elevated);
+            transition: transform 160ms ease, box-shadow 160ms ease;
+          }
+          .ai-alert-item:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+          .ai-alert-dot {
+            width: 8px; height: 8px; border-radius: 50%;
+          }
+          .ai-alert-dot.critical { background: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.5); }
+          .ai-alert-dot.warning { background: #ea580c; box-shadow: 0 0 6px rgba(234,88,12,0.4); }
+          .ai-alert-dot.info { background: #2563eb; box-shadow: 0 0 6px rgba(37,99,235,0.4); }
+          .ai-alert-text { display: flex; flex-direction: column; gap: 2px; }
+          .ai-alert-text strong { font-size: 0.82rem; color: var(--text-secondary); }
+          .ai-alert-text span { font-size: 0.9rem; color: var(--text-primary); }
+          .ai-alert-time { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+          .ai-alert-action {
+            padding: 5px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--line);
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: var(--primary-dark);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 160ms ease, box-shadow 160ms ease;
+          }
+          .ai-alert-action:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+
+          /* Health Score Trend */
+          .health-score-chart { width: 100%; overflow-x: auto; }
+          .health-score-chart svg { width: 100%; height: auto; }
+          .score-line { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+          .score-area { fill: url(#scoreGrad); }
+          .score-dot { fill: var(--surface-elevated); stroke: var(--primary); stroke-width: 2; cursor: pointer; transition: r 150ms ease; }
+          .score-dot:hover { r: 6; }
+          .chart-grid-line { stroke: var(--line); stroke-width: 0.5; stroke-dasharray: 4 3; }
+          .chart-label { font-size: 10px; fill: var(--text-muted); }
+          .chart-value-label { font-size: 9px; fill: var(--primary); font-weight: 600; }
+          .score-stats { display: flex; gap: 20px; margin-top: 14px; flex-wrap: wrap; }
+          .score-stat { display: flex; flex-direction: column; gap: 2px; }
+          .score-stat-label { font-size: 0.72rem; color: var(--text-muted); }
+          .score-stat-value { font-size: 1.15rem; font-weight: 700; color: var(--text-primary); }
+          .score-stat-value.up { color: var(--success); }
+          .score-stat-value.down { color: var(--danger); }
+
+          /* Medication Timeline */
+          .med-timeline { position: relative; padding-left: 28px; }
+          .med-timeline::before {
+            content: ''; position: absolute; left: 8px; top: 4px; bottom: 4px;
+            width: 2px; background: linear-gradient(180deg, var(--primary-light), var(--accent), var(--line));
+            border-radius: 1px;
+          }
+          .med-item {
+            position: relative; padding: 10px 0 10px 14px;
+            display: flex; align-items: center; gap: 12px;
+          }
+          .med-item::before {
+            content: ''; position: absolute; left: -24px; top: 50%; transform: translateY(-50%);
+            width: 12px; height: 12px; border-radius: 50%;
+            border: 2.5px solid var(--surface-elevated);
+            box-shadow: 0 0 0 2px var(--primary-light);
+          }
+          .med-item.taken::before { background: var(--success); box-shadow: 0 0 0 2px var(--success); }
+          .med-item.pending::before { background: #f59e0b; box-shadow: 0 0 0 2px #f59e0b; }
+          .med-item.missed::before { background: var(--danger); box-shadow: 0 0 0 2px var(--danger); }
+          .med-time { font-size: 0.78rem; font-weight: 700; color: var(--primary); min-width: 48px; }
+          .med-info { flex: 1; display: flex; flex-direction: column; gap: 1px; }
+          .med-name { font-size: 0.88rem; font-weight: 600; color: var(--text-primary); }
+          .med-dose { font-size: 0.75rem; color: var(--text-secondary); }
+          .med-status {
+            font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 8px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+          }
+          .med-status.taken { background: #ecfdf5; color: #065f46; }
+          .med-status.pending { background: #fffbeb; color: #92400e; }
+          .med-status.missed { background: #fef2f2; color: #991b1b; }
+
+          /* Achievements */
+          .achievement-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+          @media (max-width: 700px) { .achievement-grid { grid-template-columns: 1fr; } }
+          .achievement-card {
+            display: flex; gap: 14px; align-items: flex-start;
+            padding: 14px 16px; border-radius: 14px;
+            border: 1px solid var(--line);
+            background: var(--surface-elevated);
+            transition: transform 160ms ease, box-shadow 160ms ease;
+          }
+          .achievement-card:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+          .achievement-card.locked { opacity: 0.55; }
+          .achievement-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; flex-shrink: 0;
+          }
+          .achievement-card.unlocked .achievement-icon { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+          .achievement-card.locked .achievement-icon { background: #f1f5f9; filter: grayscale(1); }
+          .achievement-body { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+          .achievement-title { font-size: 0.85rem; font-weight: 600; color: var(--text-primary); }
+          .achievement-desc { font-size: 0.72rem; color: var(--text-muted); }
+          .achievement-bar-bg {
+            height: 6px; border-radius: 3px; background: #f1f5f9; overflow: hidden;
+          }
+          .achievement-bar-fill {
+            height: 100%; border-radius: 3px; transition: width 800ms ease;
+          }
+          .achievement-card.unlocked .achievement-bar-fill { background: linear-gradient(90deg, var(--success), #34d399); }
+          .achievement-card.locked .achievement-bar-fill { background: var(--text-muted); }
+          .achievement-progress-label { font-size: 0.68rem; color: var(--text-muted); text-align: right; }
+
+          /* Section header */
+          .new-section-header {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 4px; padding-bottom: 10px;
+            border-bottom: 1px solid var(--line);
+          }
+          .new-section-header .section-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 12px; border-radius: 8px;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            font-size: 0.72rem; font-weight: 600; color: var(--primary-dark);
+          }
+          .new-section-header h3 { margin: 0; }
+        </style>
+
+        <!-- AI Alert Panel & Health Score Trend (row 1) -->
+        <section class="new-panels-section">
+          <div class="new-panels-row">
+            <!-- AI Alert Panel -->
+            <article class="panel ai-alert-panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Intelligent Alert Engine</span>
+                <h3>AI 预警通知面板</h3>
+              </div>
+              <div id="ai-alert-list" class="ai-alert-list"></div>
+            </article>
+
+            <!-- Health Score Trend -->
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Health Score Analytics</span>
+                <h3>患者健康评分趋势</h3>
+              </div>
+              <div class="new-section-header">
+                <span class="section-badge">📈 12 周趋势</span>
+                <span style="font-size:0.78rem;color:var(--text-muted);">张建国 · 高血压合并糖尿病</span>
+              </div>
+              <div class="health-score-chart" id="health-score-chart"></div>
+              <div class="score-stats" id="score-stats"></div>
+            </article>
+          </div>
+
+          <!-- Medication Timeline & Achievements (row 2) -->
+          <div class="new-panels-row">
+            <!-- Medication Timeline -->
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Medication Adherence Tracker</span>
+                <h3>用药提醒时间线</h3>
+              </div>
+              <div class="new-section-header">
+                <span class="section-badge">💊 今日用药</span>
+                <span style="font-size:0.78rem;color:var(--text-muted);">2025年1月15日 · 张建国</span>
+              </div>
+              <div class="med-timeline" id="med-timeline"></div>
+            </article>
+
+            <!-- Adherence Achievements -->
+            <article class="panel">
+              <div class="panel-head">
+                <span class="panel-kicker">Gamification & Motivation</span>
+                <h3>依从性成就系统</h3>
+              </div>
+              <div class="new-section-header">
+                <span class="section-badge">🏆 成就进度</span>
+                <span style="font-size:0.78rem;color:var(--text-muted);">已解锁 3 / 6</span>
+              </div>
+              <div class="achievement-grid" id="achievement-grid"></div>
+            </article>
+          </div>
+        </section>
+
+        <script>
+        (function() {
+          /* ==== AI ALERT PANEL ==== */
+          const alerts = [
+            { level: 'critical', patient: '张建国', msg: '患者张建国血压持续偏高（165/102mmHg），连续3天未服药，建议立即调整用药方案', time: '10分钟前', action: '调整方案' },
+            { level: 'warning', patient: '李秀兰', msg: '患者李秀兰空腹血糖波动较大（6.2-11.8mmol/L），建议增加监测频次', time: '32分钟前', action: '增加监测' },
+            { level: 'info', patient: '周桂芳', msg: '患者周桂芳HbA1c达标（6.8%），可降低随访频率至每3个月一次', time: '1小时前', action: '调整频率' },
+            { level: 'warning', patient: '王德明', msg: '患者王德明COPD急性加重风险评分上升至78分，建议提前安排肺功能检查', time: '2小时前', action: '安排检查' },
+            { level: 'critical', patient: '赵文华', msg: '患者赵文华连续7天未上传血糖数据，依从性评分下降至42分', time: '3小时前', action: '主动随访' }
+          ];
+
+          const alertContainer = document.getElementById('ai-alert-list');
+          if (alertContainer) {
+            alerts.forEach(function(a) {
+              var item = document.createElement('div');
+              item.className = 'ai-alert-item';
+              item.innerHTML =
+                '<div class="ai-alert-dot ' + a.level + '"></div>' +
+                '<div class="ai-alert-text">' +
+                  '<strong>' + a.patient + '</strong>' +
+                  '<span>' + a.msg + '</span>' +
+                '</div>' +
+                '<span class="ai-alert-time">' + a.time + '</span>' +
+                '<button class="ai-alert-action">' + a.action + '</button>';
+              alertContainer.appendChild(item);
+            });
+          }
+
+          /* ==== HEALTH SCORE TREND (SVG) ==== */
+          var weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12'];
+          var scores = [68, 66, 64, 65, 62, 61, 63, 60, 59, 58, 57, 56];
+          var chartEl = document.getElementById('health-score-chart');
+          if (chartEl) {
+            var W = 520, H = 200, padL = 36, padR = 14, padT = 16, padB = 28;
+            var plotW = W - padL - padR, plotH = H - padT - padB;
+            var minV = 50, maxV = 75;
+            function xPos(i) { return padL + (i / (scores.length - 1)) * plotW; }
+            function yPos(v) { return padT + plotH - ((v - minV) / (maxV - minV)) * plotH; }
+
+            var pathD = scores.map(function(v, i) {
+              return (i === 0 ? 'M' : 'L') + xPos(i).toFixed(1) + ',' + yPos(v).toFixed(1);
+            }).join(' ');
+
+            var areaD = pathD + ' L' + xPos(scores.length - 1).toFixed(1) + ',' + (padT + plotH) +
+                        ' L' + padL + ',' + (padT + plotH) + ' Z';
+
+            var gridLines = '';
+            for (var g = minV; g <= maxV; g += 5) {
+              var yy = yPos(g);
+              gridLines += '<line x1="' + padL + '" y1="' + yy.toFixed(1) + '" x2="' + (W - padR) +
+                           '" y2="' + yy.toFixed(1) + '" class="chart-grid-line"/>';
+              gridLines += '<text x="' + (padL - 6) + '" y="' + (yy + 3).toFixed(1) +
+                           '" class="chart-label" text-anchor="end">' + g + '</text>';
+            }
+
+            var dots = scores.map(function(v, i) {
+              return '<circle cx="' + xPos(i).toFixed(1) + '" cy="' + yPos(v).toFixed(1) +
+                     '" r="4" class="score-dot"><title>' + weeks[i] + ': ' + v + '分</title></circle>';
+            }).join('');
+
+            var weekLabels = weeks.map(function(w, i) {
+              return '<text x="' + xPos(i).toFixed(1) + '" y="' + (H - 4) +
+                     '" class="chart-label" text-anchor="middle">' + w + '</text>';
+            }).join('');
+
+            var valueLabels = scores.map(function(v, i) {
+              if (i % 3 === 0 || i === scores.length - 1) {
+                return '<text x="' + xPos(i).toFixed(1) + '" y="' + (yPos(v) - 10).toFixed(1) +
+                       '" class="chart-value-label" text-anchor="middle">' + v + '</text>';
+              }
+              return '';
+            }).join('');
+
+            chartEl.innerHTML =
+              '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">' +
+                '<defs>' +
+                  '<linearGradient id="scoreGrad" x1="0" y1="0" x2="0" y2="1">' +
+                    '<stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25"/>' +
+                    '<stop offset="100%" stop-color="#3b82f6" stop-opacity="0.02"/>' +
+                  '</linearGradient>' +
+                '</defs>' +
+                gridLines +
+                '<path d="' + areaD + '" class="score-area"/>' +
+                '<path d="' + pathD + '" class="score-line"/>' +
+                dots + weekLabels + valueLabels +
+              '</svg>';
+
+            var statsEl = document.getElementById('score-stats');
+            if (statsEl) {
+              var change = scores[scores.length - 1] - scores[0];
+              statsEl.innerHTML =
+                '<div class="score-stat"><span class="score-stat-label">起始评分</span><span class="score-stat-value">' + scores[0] + '</span></div>' +
+                '<div class="score-stat"><span class="score-stat-label">当前评分</span><span class="score-stat-value">' + scores[scores.length - 1] + '</span></div>' +
+                '<div class="score-stat"><span class="score-stat-label">变化</span><span class="score-stat-value ' + (change < 0 ? 'up' : 'down') + '">' + (change > 0 ? '+' : '') + change + '</span></div>' +
+                '<div class="score-stat"><span class="score-stat-label">趋势</span><span class="score-stat-value up">📉 持续改善</span></div>' +
+                '<div class="score-stat"><span class="score-stat-label">最佳单周降幅</span><span class="score-stat-value">-3</span></div>';
+            }
+          }
+
+          /* ==== MEDICATION TIMELINE ==== */
+          var meds = [
+            { time: '07:00', name: '苯磺酸氨氯地平', dose: '5mg × 1片', status: 'taken' },
+            { time: '07:30', name: '二甲双胍缓释片', dose: '500mg × 1片', status: 'taken' },
+            { time: '08:00', name: '阿托伐他汀钙', dose: '20mg × 1片', status: 'taken' },
+            { time: '12:00', name: '二甲双胍缓释片', dose: '500mg × 1片', status: 'taken' },
+            { time: '18:00', name: '二甲双胍缓释片', dose: '500mg × 1片', status: 'pending' },
+            { time: '19:00', name: '苯磺酸氨氯地平', dose: '5mg × 1片（如有需要）', status: 'pending' },
+            { time: '21:00', name: '阿司匹林肠溶片', dose: '100mg × 1片', status: 'pending' },
+            { time: '22:00', name: '氯吡格雷', dose: '75mg × 1片', status: 'missed' }
+          ];
+
+          var statusLabel = { taken: '已服用', pending: '待服用', missed: '已漏服' };
+          var medContainer = document.getElementById('med-timeline');
+          if (medContainer) {
+            meds.forEach(function(m) {
+              var el = document.createElement('div');
+              el.className = 'med-item ' + m.status;
+              el.innerHTML =
+                '<span class="med-time">' + m.time + '</span>' +
+                '<div class="med-info">' +
+                  '<span class="med-name">' + m.name + '</span>' +
+                  '<span class="med-dose">' + m.dose + '</span>' +
+                '</div>' +
+                '<span class="med-status ' + m.status + '">' + statusLabel[m.status] + '</span>';
+              medContainer.appendChild(el);
+            });
+          }
+
+          /* ==== ADHERENCE ACHIEVEMENTS ==== */
+          var achievements = [
+            { icon: '🔥', title: '连续监测7天', desc: '连续7天每日上传健康数据', progress: 100, unlocked: true },
+            { icon: '❤️', title: '血压达标30天', desc: '血压连续30天维持在目标范围', progress: 87, unlocked: true },
+            { icon: '💊', title: '按时用药之星', desc: '连续14天按时服药无遗漏', progress: 100, unlocked: true },
+            { icon: '🏃', title: '运动达人', desc: '每周运动不少于3次，每次30分钟', progress: 62, unlocked: false },
+            { icon: '🥗', title: '饮食管理专家', desc: '连续21天记录饮食且热量达标', progress: 45, unlocked: false },
+            { icon: '📋', title: '随访满分', desc: '连续6次随访评分≥90分', progress: 33, unlocked: false }
+          ];
+
+          var achContainer = document.getElementById('achievement-grid');
+          if (achContainer) {
+            achievements.forEach(function(a) {
+              var card = document.createElement('div');
+              card.className = 'achievement-card ' + (a.unlocked ? 'unlocked' : 'locked');
+              card.innerHTML =
+                '<div class="achievement-icon">' + a.icon + '</div>' +
+                '<div class="achievement-body">' +
+                  '<span class="achievement-title">' + a.title + (a.unlocked ? ' ✅' : ' 🔒') + '</span>' +
+                  '<span class="achievement-desc">' + a.desc + '</span>' +
+                  '<div class="achievement-bar-bg"><div class="achievement-bar-fill" style="width:' + a.progress + '%"></div></div>' +
+                  '<span class="achievement-progress-label">' + a.progress + '%</span>' +
+                '</div>';
+              achContainer.appendChild(card);
+            });
+          }
+        })();
+        </script>
+        <!-- ====== END NEW INTERACTIVE PANELS ====== -->
+
       </main>
     </div>
 
