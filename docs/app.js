@@ -1123,7 +1123,7 @@ function getPatientRiskLevel(patient) {
 
 function getPatientOverdueCount(patient) {
   return (patient.roleFollowupPlans ?? []).reduce(
-    (total, plan) => total + plan.todoList.filter((todo) => todo.status === "overdue").length,
+    (total, plan) => total + (plan.todoList ?? []).filter((todo) => todo.status === "overdue").length,
     0
   );
 }
@@ -3669,19 +3669,19 @@ function renderMedClaw() {
   medclawGuardrails.innerHTML = `
     <div class="plan-block">
       <h4>合规边界</h4>
-      <ul class="mini-list">${workspace.guardrails.map((item) => `<li>${item.title}：${item.description}</li>`).join("")}</ul>
+      <ul class="mini-list">${(workspace.guardrails ?? []).map((item) => `<li>${item.title}：${item.description}</li>`).join("")}</ul>
     </div>
     <div class="plan-block">
       <h4>${labelWorkbenchRole(workspace.permissionBoundary.role)} 可读范围</h4>
-      <ul class="mini-list">${workspace.permissionBoundary.scopes.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul class="mini-list">${(workspace.permissionBoundary?.scopes ?? []).map((item) => `<li>${item}</li>`).join("")}</ul>
     </div>
     <div class="plan-block">
       <h4>限制项</h4>
-      <ul class="mini-list">${workspace.permissionBoundary.restrictions.map((item) => `<li>${item}</li>`).join("")}</ul>
+      <ul class="mini-list">${(workspace.permissionBoundary?.restrictions ?? []).map((item) => `<li>${item}</li>`).join("")}</ul>
     </div>
     <div class="note-block">
       <strong>审计事件</strong>
-      <div class="dim">${workspace.auditTrail.length} 条已记录</div>
+      <div class="dim">${(workspace.auditTrail ?? []).length} 条已记录</div>
     </div>
   `;
 

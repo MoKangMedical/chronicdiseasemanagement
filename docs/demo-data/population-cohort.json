@@ -878,13 +878,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -1280,13 +1304,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -1683,13 +1731,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -2074,13 +2146,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -2477,13 +2573,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -2874,13 +2994,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -3265,13 +3409,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -3662,13 +3830,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -4053,13 +4245,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -4466,13 +4682,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -4873,13 +5113,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -5264,13 +5528,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -5671,13 +5959,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -6074,13 +6386,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -6477,13 +6813,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -6874,13 +7234,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -7277,13 +7661,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -7668,13 +8076,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -8071,13 +8503,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -8473,13 +8929,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -8880,13 +9360,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -9282,13 +9786,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -9685,13 +10213,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -10092,13 +10644,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -10493,13 +11069,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -10896,13 +11496,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -11292,13 +11916,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -11699,13 +12347,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -12102,13 +12774,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -12515,13 +13211,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -12928,13 +13648,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -13331,13 +14075,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -13733,13 +14501,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -14146,13 +14938,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -14547,13 +15363,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -14938,13 +15778,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -15346,13 +16210,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -15748,13 +16636,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -16156,13 +17068,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
@@ -16553,13 +17489,37 @@
           "role": "health-manager",
           "plan": "月度电话随访",
           "frequency": "每月1次",
-          "nextDate": "2026-05-15"
+          "nextDate": "2026-05-15",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         },
         {
           "role": "specialist-doctor",
           "plan": "季度复诊",
           "frequency": "每季度1次",
-          "nextDate": "2026-07-01"
+          "nextDate": "2026-07-01",
+          "todoList": [
+            {
+              "title": "电话随访",
+              "status": "pending",
+              "dueDate": "2026-05-15"
+            },
+            {
+              "title": "复查提醒",
+              "status": "pending",
+              "dueDate": "2026-06-01"
+            }
+          ]
         }
       ],
       "careProcess": {
