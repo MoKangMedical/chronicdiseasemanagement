@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, HTMLResponse, Response
 from pydantic import BaseModel
 
 # ---------------------------------------------------------------------------
@@ -459,6 +460,91 @@ def get_snapshot_meta():
 @app.get("/api/followups")
 def get_followups():
     return snapshot.get("followups", {})
+
+
+# ---------------------------------------------------------------------------
+# 静态文件中间件 — 为 public/ 目录的前端文件提供服务
+# 使用自定义 ASGI 中间件确保 API 路由优先匹配
+# ---------------------------------------------------------------------------
+PUBLIC_DIR = PROJECT_ROOT / "public"
+
+# MIME 类型映射 (标准库 mimetypes 对 .js 可能返回不正确的类型)
+# 注意: text/* 类型不需要手动加 charset, Starlette 会自动添加
+_MIME_MAP: Dict[str, str] = {
+    ".html": "text/html",
+    ".css": "text/css",
+    ".js": "application/javascript",
+    ".json": "application/json; charset=utf-8",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".svg": "image/svg+xml",
+    ".ico": "image/x-icon",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+    ".ttf": "font/ttf",
+    ".txt": "text/plain",
+    ".xml": "text/xml",
+}
+
+
+def _guess_mime(file_path: Path) -> str:
+    """根据文件扩展名返回 Content-Type."""
+    ext = file_path.suffix.lower()
+    if ext in _MIME_MAP:
+        return _MIME_MAP[ext]
+    import mimetypes
+    mime, _ = mimetypes.guess_type(str(file_path))
+    return mime or "application/octet-stream"
+
+
+class StaticFileFallbackMiddleware:
+    """
+    ASGI 中间件: 如果请求路径对应 public/ 下的一个真实文件则直接返回,
+    否则将请求转发给内部 FastAPI 应用 (API 路由优先).
+    """
+
+    def __init__(self, app):
+        self.app = app
+        self.static_dir = PUBLIC_DIR
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        path: str = scope.get("path", "/")
+        if path == "/":
+            file_path = self.static_dir / "index.html"
+        else:
+            file_path = self.static_dir / path.lstrip("/")
+
+        # 安全检查: 确保解析后的路径仍在 static_dir 内
+        try:
+            resolved = file_path.resolve()
+            if not str(resolved).startswith(str(self.static_dir)):
+                await self.app(scope, receive, send)
+                return
+        except (ValueError, OSError):
+            await self.app(scope, receive, send)
+            return
+
+        # 如果文件存在, 直接返回
+        if resolved.is_file():
+            content = resolved.read_bytes()
+            mime = _guess_mime(resolved)
+            response = Response(content=content, media_type=mime)
+            await response(scope, receive, send)
+            return
+
+        # 文件不存在 → 转发给 FastAPI (匹配 API 路由)
+        await self.app(scope, receive, send)
+
+
+# 注册中间件
+if PUBLIC_DIR.is_dir():
+    app.add_middleware(StaticFileFallbackMiddleware)
 
 
 # ---------------------------------------------------------------------------

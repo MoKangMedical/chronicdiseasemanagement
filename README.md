@@ -312,50 +312,40 @@ curl -H "Authorization: Bearer TOKEN" \
 
 ## 🚀 快速开始
 
-### 环境要求
-
-- Python 3.10+
-- PostgreSQL 15+
-- Redis 7+
-- Node.js 18+ (前端)
-
-### 1. 克隆项目
+### 一键启动 (推荐)
 
 ```bash
+# 克隆项目
 git clone https://github.com/MoKangMedical/chronicdiseasemanagement.git
 cd chronicdiseasemanagement
-```
-
-### 2. 后端启动
-
-```bash
-# 创建虚拟环境
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
 
 # 安装依赖
 pip install -r requirements.txt
 
-# 配置环境变量
-cp .env.example .env
-# 编辑 .env 填入数据库和Redis连接信息
-
-# 数据库迁移
-alembic upgrade head
-
-# 启动服务
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+# 一键启动
+./start.sh          # macOS / Linux
+# start.bat          # Windows
 ```
 
-### 3. Docker 一键部署
+启动后访问：
+- **前端首页：** http://localhost:8000
+- **API 文档：** http://localhost:8000/docs
+- **健康检查：** http://localhost:8000/health
+
+### 手动启动
 
 ```bash
-docker-compose up -d
+python3.12 -m uvicorn src.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-服务启动后访问：
-- API 文档：http://localhost:8000/docs
-- 管理后台：http://localhost:3000
+### Docker 部署
+
+```bash
+docker build -t chronicare .
+docker run -p 8000:8000 chronicare
+# 或使用 docker-compose
+docker-compose up -d
+```
 
 ---
 
