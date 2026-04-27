@@ -1,65 +1,320 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>慢康智枢 ChroniCare OS — Hospital Chronic Disease Management Platform | MoKangMedical</title>
-<meta name="description" content="AI-powered hospital chronic disease management. HIS/LIS/PACS integration, NPCDR risk stratification, intelligent multi-channel follow-up, and real-time outcome dashboards.">
-<meta name="keywords" content="chronic disease management,hospital HIS,diabetes,hypertension,CKD,NPCDR,risk stratification,intelligent follow-up,digital health">
-<meta property="og:title" content="慢康智枢 ChroniCare OS — Hospital Chronic Disease Management Platform">
-<meta property="og:description" content="基于AI的医院慢性病管理平台，集成HIS系统，实现患者筛查、风险分层、智能随访、效果评估的全流程数字化管理。">
+<title>慢康智枢 ChroniCare OS — AI慢病管理平台</title>
+<meta name="description" content="AI驱动的慢病管理平台——HIS集成、风险分层、智能随访，覆盖高血压、糖尿病、冠心病、COPD、慢性肾病、脑卒中6大慢病。">
+<meta name="keywords" content="慢病管理,慢性病,高血压管理,糖尿病管理,AI医疗,HIS集成,风险分层,智能随访,慢康智枢,ChroniCare">
+<meta property="og:title" content="慢康智枢 ChroniCare OS — AI慢病管理平台">
+<meta property="og:description" content="AI驱动的慢病管理平台，覆盖6大慢病全周期管理">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://mokangmedical.github.io/chronicdiseasemanagement/">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://mokangmedical.github.io/chronicdiseasemanagement/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"慢康智枢 ChroniCare OS","description":"AI-powered hospital chronic disease management. HIS/LIS/PACS integration, NPCDR risk stratification, intelligent multi-channel follow-up, and real-time outcome dashboards.","url":"https://mokangmedical.github.io/chronicdiseasemanagement/","author":{"@type":"Person","name":"MoKangMedical","url":"https://github.com/MoKangMedical"},"codeRepository":"https://github.com/MoKangMedical/chronicdiseasemanagement","license":"https://opensource.org/licenses/MIT","keywords":"chronic disease management,hospital HIS,diabetes,hypertension,CKD,NPCDR,risk stratification,intelligent follow-up,digital health","operatingSystem":"Cross-platform","applicationCategory":"DeveloperApplication","isAccessibleForFree":true}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"慢康智枢 ChroniCare OS","description":"AI驱动的慢病管理平台——HIS集成、风险分层、智能随访","url":"https://mokangmedical.github.io/chronicdiseasemanagement/","author":{"@type":"Organization","name":"MoKangMedical","url":"https://github.com/MoKangMedical"},"codeRepository":"https://github.com/MoKangMedical/chronicdiseasemanagement","license":"https://opensource.org/licenses/MIT","applicationCategory":"HealthApplication","operatingSystem":"Cross-platform","isAccessibleForFree":true}
 </script>
 <style>
-:root{--c:#1a1a2e;--a:#1a73e8;--bg:#fff;--card:#f8f9fa;--border:#e0e0e0}
-body{font-family:system-ui,-apple-system,sans-serif;max-width:860px;margin:0 auto;padding:2rem;color:var(--c);line-height:1.8;background:var(--bg)}
-h1{font-size:2.2rem;margin-bottom:.3rem}.sub{color:#666;font-size:1.1rem;margin-top:0}
-.bilingual{display:grid;grid-template-columns:1fr 1fr;gap:1rem;background:var(--card);padding:1.5rem;border-radius:8px;margin:1.5rem 0}
-a{color:var(--a);text-decoration:none}a:hover{text-decoration:underline}
-.badge{display:inline-block;background:#e8f0fe;color:var(--a);padding:.25rem .7rem;border-radius:12px;font-size:.85rem;margin:.2rem}
-.badges{margin:1rem 0}
-.features{background:var(--card);padding:1.5rem;border-radius:8px}
-.faq .qa{border-bottom:1px solid var(--border);padding:1rem 0}.faq .qa:last-child{border:none}
-.cross{display:flex;flex-wrap:wrap;gap:.5rem}.cross-link{background:var(--card);padding:.4rem .8rem;border-radius:6px;font-size:.9rem}
-footer{margin-top:3rem;text-align:center;color:#999;font-size:.85rem}
-@media(max-width:640px){.bilingual{grid-template-columns:1fr}h1{font-size:1.6rem}}
+:root {
+  --primary: #1e40af;
+  --primary-light: #3b82f6;
+  --accent: #06b6d4;
+  --surface: #f8fafc;
+  --dark: #0f172a;
+  --text: #1e293b;
+  --text-muted: #64748b;
+  --success: #059669;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --border: #e2e8f0;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Inter", "Noto Sans SC", -apple-system, sans-serif;
+  color: var(--text);
+  line-height: 1.7;
+  background: linear-gradient(180deg, #f8fbff, #f0f4fa);
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1e3a5f 100%);
+  color: #fff;
+  padding: 80px 24px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(59,130,246,0.15), transparent 50%),
+              radial-gradient(circle at 70% 30%, rgba(6,182,212,0.1), transparent 40%);
+}
+.hero > * { position: relative; z-index: 1; }
+.hero h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
+.hero .brand-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; }
+.hero .tagline { font-size: 1.3rem; max-width: 640px; margin: 0 auto 2rem; color: rgba(255,255,255,0.85); }
+.hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 600;
+  transition: all 0.2s; cursor: pointer; border: none;
+}
+.btn-primary { background: var(--primary-light); color: #fff; }
+.btn-primary:hover { background: #2563eb; text-decoration: none; transform: translateY(-1px); }
+.btn-ghost { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+.btn-ghost:hover { background: rgba(255,255,255,0.2); text-decoration: none; }
+
+/* Stats ribbon */
+.stats-ribbon {
+  display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+  padding: 24px; margin-top: -30px; position: relative; z-index: 2;
+}
+.stat-item {
+  background: #fff; border-radius: 16px; padding: 20px 32px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06); text-align: center; min-width: 140px;
+}
+.stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+.stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
+
+/* Sections */
+.section { max-width: 1100px; margin: 0 auto; padding: 60px 24px; }
+.section-title {
+  font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 12px;
+}
+.section-sub { text-align: center; color: var(--text-muted); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+/* Disease cards */
+.disease-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+.disease-card {
+  background: #fff; border-radius: 16px; padding: 24px;
+  border: 1px solid var(--border); transition: all 0.2s;
+}
+.disease-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); transform: translateY(-2px); }
+.disease-card h3 { font-size: 1.15rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.disease-card h3 .icon { font-size: 1.4rem; }
+.disease-card p { font-size: 0.92rem; color: var(--text-muted); }
+.disease-tag { display: inline-block; background: #eff6ff; color: var(--primary); padding: 2px 10px; border-radius: 6px; font-size: 0.8rem; margin-top: 8px; }
+
+/* Features */
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+.feature-item {
+  background: #fff; border-radius: 14px; padding: 24px;
+  border: 1px solid var(--border); text-align: center;
+}
+.feature-icon { font-size: 2rem; margin-bottom: 12px; }
+.feature-item h4 { font-size: 1rem; margin-bottom: 8px; }
+.feature-item p { font-size: 0.88rem; color: var(--text-muted); }
+
+/* Architecture */
+.arch-box {
+  background: var(--dark); color: #e2e8f0; border-radius: 16px;
+  padding: 32px; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.85rem;
+  overflow-x: auto; line-height: 1.8;
+}
+
+/* Tech badges */
+.tech-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
+.tech-badge {
+  background: #f1f5f9; padding: 6px 16px; border-radius: 8px; font-size: 0.88rem;
+  border: 1px solid var(--border);
+}
+
+/* Footer */
+.footer {
+  background: var(--dark); color: rgba(255,255,255,0.6); text-align: center;
+  padding: 40px 24px; font-size: 0.88rem;
+}
+.footer a { color: rgba(255,255,255,0.8); }
+.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
+
+@media (max-width: 640px) {
+  .hero h1 { font-size: 1.8rem; }
+  .stats-ribbon { gap: 16px; }
+  .stat-item { min-width: 100px; padding: 16px 20px; }
+  .stat-value { font-size: 1.4rem; }
+}
 </style>
 </head>
 <body>
-<h1>慢康智枢 ChroniCare OS</h1>
-<p class="sub">Hospital Chronic Disease Management Platform</p>
-<div class="badges">
-<a href="https://github.com/MoKangMedical/chronicdiseasemanagement" class="badge">⭐ GitHub</a>
-<a href="https://github.com/MoKangMedical/chronicdiseasemanagement/issues" class="badge">🐛 Issues</a>
-<a href="https://github.com/MoKangMedical/chronicdiseasemanagement/blob/main/CONTRIBUTING.md" class="badge">🤝 Contributing</a>
-<a href="https://pypi.org/project/openclaw-medical-harness/" class="badge">📦 PyPI</a>
+
+<section class="hero">
+  <h1>慢康智枢 ChroniCare OS</h1>
+  <p class="brand-sub">Hospital Chronic Disease Management Platform</p>
+  <p class="tagline">AI驱动的慢病管理平台——HIS集成、风险分层、智能随访，覆盖6大慢病全周期管理</p>
+  <div class="hero-actions">
+    <a href="./app.html" class="btn btn-primary">进入在线演示</a>
+    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement" class="btn btn-ghost">GitHub 仓库</a>
+  </div>
+</section>
+
+<div class="stats-ribbon">
+  <div class="stat-item"><div class="stat-value">6</div><div class="stat-label">慢病覆盖</div></div>
+  <div class="stat-item"><div class="stat-value">5</div><div class="stat-label">医院网络</div></div>
+  <div class="stat-item"><div class="stat-value">4,440</div><div class="stat-label">纳管患者</div></div>
+  <div class="stat-item"><div class="stat-value">85%</div><div class="stat-label">随访完成率</div></div>
 </div>
-<div class="bilingual">
-<div><strong>中文</strong><p>基于AI的医院慢性病管理平台，集成HIS系统，实现患者筛查、风险分层、智能随访、效果评估的全流程数字化管理。</p></div>
-<div><strong>English</strong><p>AI-powered hospital chronic disease management. HIS/LIS/PACS integration, NPCDR risk stratification, intelligent multi-channel follow-up, and real-time outcome dashboards.</p></div>
-</div>
-<h2>核心功能 Use Cases</h2>
-<div class="features"><p>糖尿病管理 · 高血压监测 · 慢性肾病 · 心血管疾病 · COPD · 肿瘤随访</p></div>
-<h2>快速开始 Quick Start</h2>
-<div class="features"><pre>git clone https://github.com/MoKangMedical/chronicdiseasemanagement.git
+
+<section class="section">
+  <h2 class="section-title">6大慢病全周期管理</h2>
+  <p class="section-sub">基于循证医学指南，覆盖高血压、糖尿病、冠心病、COPD、慢性肾病、脑卒中，实现从筛查到长期随访的完整闭环。</p>
+  <div class="disease-grid">
+    <div class="disease-card">
+      <h3><span class="icon">🫀</span> 高血压管理</h3>
+      <p>基于Framingham评分 + 中国人群修正因子，10年心血管事件风险评估。阶梯式用药推荐，家庭血压自动采集。</p>
+      <span class="disease-tag">血压达标率</span> <span class="disease-tag">靶器官监测</span>
+    </div>
+    <div class="disease-card">
+      <h3><span class="icon">🍬</span> 糖尿病管理</h3>
+      <p>UKPDS风险引擎预测微血管/大血管并发症。HbA1c趋势分析，AI营养师个性化饮食方案。</p>
+      <span class="disease-tag">血糖监控</span> <span class="disease-tag">并发症筛查</span>
+    </div>
+    <div class="disease-card">
+      <h3><span class="icon">❤️</span> 冠心病管理</h3>
+      <p>GRACE评分 + SYNTAX评分综合评估。ABCDE二级预防方案自动提醒，心脏康复分期运动处方。</p>
+      <span class="disease-tag">LDL-C达标</span> <span class="disease-tag">紧急预警</span>
+    </div>
+    <div class="disease-card">
+      <h3><span class="icon">🫁</span> 慢阻肺管理</h3>
+      <p>GOLD分级 + mMRC + CAT评分综合评估。吸入装置使用指导，急性加重早期识别。</p>
+      <span class="disease-tag">肺功能监测</span> <span class="disease-tag">戒烟支持</span>
+    </div>
+    <div class="disease-card">
+      <h3><span class="icon">🫘</span> 慢性肾病管理</h3>
+      <p>KDIGO风险矩阵分层。eGFR趋势分析，肾功能不全时药物剂量自动调整提醒。</p>
+      <span class="disease-tag">透析准备</span> <span class="disease-tag">饮食管理</span>
+    </div>
+    <div class="disease-card">
+      <h3><span class="icon">🧠</span> 脑卒中管理</h3>
+      <p>CHA2DS2-VASc + ABCD2评分。复发预防、功能康复、卒中后抑郁筛查与干预。</p>
+      <span class="disease-tag">二级预防</span> <span class="disease-tag">功能康复</span>
+    </div>
+  </div>
+</section>
+
+<section class="section" style="background: #f1f5f9; margin: 0 auto; max-width: 100%; padding: 60px 24px;">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <h2 class="section-title">核心功能</h2>
+    <p class="section-sub">从数据采集到决策支持，构建完整的慢病管理数字化闭环</p>
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="feature-icon">🔗</div>
+        <h4>HIS系统集成</h4>
+        <p>HL7/FHIR/REST多协议适配，无缝对接卫宁、东华、创业慧康等主流HIS</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <h4>AI风险分层</h4>
+        <p>多模型融合评估，精准识别高危人群，支持Framingham/UKPDS/GRACE等国际评分</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📱</div>
+        <h4>智能随访</h4>
+        <p>AI电话、微信、短信多通道提醒，个性化随访计划自动生成</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💊</div>
+        <h4>用药管理</h4>
+        <p>药物依从性监测，相互作用提醒，处方合理性审核</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📈</div>
+        <h4>数据看板</h4>
+        <p>科室/医院/区域多维度展示，实时监控核心指标</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">👥</div>
+        <h4>MDT协作</h4>
+        <p>多学科在线讨论，会诊结论追踪，闭环执行管理</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📋</div>
+        <h4>质控报告</h4>
+        <p>符合卫健委要求，一键生成慢病管理质量指标报告</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔬</div>
+        <h4>科研支持</h4>
+        <p>脱敏数据导出，支持回顾性研究和真实世界研究</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">技术架构</h2>
+  <p class="section-sub">云原生微服务架构，支持私有化部署、SaaS模式与混合云</p>
+  <div class="arch-box">
+┌─────────────────────────────────────────────┐
+│                   前端层                      │
+│         Vue 3 + Element Plus + ECharts       │
+├─────────────────────────────────────────────┤
+│                  API 网关                     │
+│              Nginx / Kong                    │
+├─────────────────────────────────────────────┤
+│                后端服务层                     │
+│        FastAPI + Celery + WebSocket          │
+├──────────┬──────────┬───────────────────────┤
+│ 风险引擎  │ 随访引擎  │   HIS适配器           │
+│ (Python) │ (Python) │  (HL7/FHIR/REST)     │
+├──────────┴──────────┴───────────────────────┤
+│               数据层                         │
+│   PostgreSQL + Redis + MinIO(文件存储)        │
+├─────────────────────────────────────────────┤
+│               AI 模型层                      │
+│   scikit-learn / XGBoost / TemporAI / LLM   │
+└─────────────────────────────────────────────┘
+  </div>
+  <div class="tech-list">
+    <span class="tech-badge">Python 3.10+</span>
+    <span class="tech-badge">FastAPI</span>
+    <span class="tech-badge">PostgreSQL</span>
+    <span class="tech-badge">Redis</span>
+    <span class="tech-badge">Vue 3</span>
+    <span class="tech-badge">ECharts</span>
+    <span class="tech-badge">Docker</span>
+    <span class="tech-badge">HL7 FHIR</span>
+    <span class="tech-badge">scikit-learn</span>
+    <span class="tech-badge">XGBoost</span>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">快速开始</h2>
+  <div class="arch-box" style="max-width: 700px; margin: 0 auto;">
+# 克隆项目
+git clone https://github.com/MoKangMedical/chronicdiseasemanagement.git
 cd chronicdiseasemanagement
-# See README.md for detailed setup</pre></div>
-<h2>常见问题 FAQ</h2>
-<div class="faq"><div class="qa"><p><strong>Q: 慢康智枢支持哪些疾病？</strong></p><p>A: 糖尿病、高血压、慢性肾病、心血管疾病、COPD等主要慢性病，支持自定义疾病模板。</p></div>
-<div class="qa"><p><strong>Q: 如何对接医院HIS系统？</strong></p><p>A: 通过标准HL7/FHIR接口对接，支持主流HIS厂商（东华、卫宁、东软等）。</p></div>
-<div class="qa"><p><strong>Q: 风险分层依据什么标准？</strong></p><p>A: 基于中国慢性病防治指南和NPCDR标准，4级风险自动评估。</p></div></div>
-<h2>MoKangMedical 生态</h2>
-<div class="cross"><a href="https://mokangmedical.github.io/cloud-memorial/" class="cross-link">云思园</a>
-<a href="https://mokangmedical.github.io/digital-sage/" class="cross-link">数字智者</a>
-<a href="https://mokangmedical.github.io/medichat-rd/" class="cross-link">MediChat-RD</a>
-<a href="https://mokangmedical.github.io/drugmind/" class="cross-link">DrugMind</a>
-<a href="https://mokangmedical.github.io/medi-pharma/" class="cross-link">MediPharma</a>
-<a href="https://mokangmedical.github.io/tianyan/" class="cross-link">天眼</a></div>
-<footer>
-<p><a href="https://github.com/MoKangMedical/chronicdiseasemanagement">GitHub</a> · <a href="https://mokangmedical.github.io/openclaw-medical-harness/">Medical Harness</a> · MIT License</p>
+
+# Docker 一键部署
+docker-compose up -d
+
+# 或手动启动
+pip install -r requirements.txt
+uvicorn src.main:app --reload --port 8000
+
+# 访问
+# API 文档: http://localhost:8000/docs
+# 管理后台: http://localhost:3000
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement">GitHub</a>
+    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement/issues">Issues</a>
+    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement/blob/main/CONTRIBUTING.md">Contributing</a>
+    <a href="./app.html">在线演示</a>
+  </div>
+  <p>慢康智枢 ChroniCare OS &copy; 2026 MoKangMedical. MIT License.</p>
 </footer>
-</body></html>
+
+</body>
+</html>

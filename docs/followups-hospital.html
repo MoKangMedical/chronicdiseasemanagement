@@ -1,0 +1,228 @@
+     1|     1|<!doctype html>
+     2|     2|<html lang="zh-CN" data-app-mode="static">
+     3|     3|  <head>
+     4|     4|    <meta charset="UTF-8" />
+     5|     5|    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     6|     6|    <meta name="theme-color" content="#1e40af" />
+     7|     7|    <title>慢康智枢 ChroniCare OS · 医院管理视图</title>
+     8|     8|    <meta name="description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
+     9|     9|    <meta property="og:title" content="Chronic Disease Management">
+    10|    10|    <meta property="og:description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
+    11|    11|    <meta property="og:type" content="website">
+    12|    12|    <meta property="og:url" content="https://github.com/MoKangMedical/chronicdiseasemanagement">
+    13|    13|    <meta name="twitter:card" content="summary_large_image">
+    14|    14|    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
+    15|    15|
+    16|    16|    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    17|    17|    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    18|    18|    <link
+    19|    19|      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+    20|    20|      rel="stylesheet"
+    21|    21|    />
+    22|    22|    <script>
+    23|    23|      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
+    24|    24|        mode: document.documentElement.dataset.appMode || "live",
+    25|    25|        snapshotPath: "./demo-data/pages-snapshot.json",
+    26|    26|        populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json"
+    27|    27|      };
+    28|    28|    </script>
+    29|    29|    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    30|    30|    <link rel="stylesheet" href="./styles.css" />
+    31|    31|  </head>
+    32|    32|  <body data-page="followups-hospital">
+    33|    33|    <div class="shell">
+    34|    34|      <aside class="sidebar">
+    35|    35|        <div class="brand">
+    36|    36|          <div class="brand-mark">CCOS</div>
+    37|    37|          <div>
+    38|    38|            <h1>慢康智枢</h1>
+    39|    39|            <p>ChroniCare OS</p>
+    40|    40|          </div>
+    41|    41|        </div>
+    42|    42|
+    43|    43|        <nav class="sidebar-nav">
+    44|    44|          <a class="sidebar-nav-link" href="./index.html">区级总览</a>
+    45|    45|          <a class="sidebar-nav-link active" href="./followups-hospital.html">医院管理视图</a>
+    46|    46|          <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作视图</a>
+    47|    47|          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
+    48|    48|        </nav>
+    49|    49|
+    50|    50|        <div class="sidebar-block">
+    51|    51|          <div class="block-label">当前筛选</div>
+    52|    52|          <div id="summary-metrics" class="metric-stack"></div>
+    53|    53|        </div>
+    54|    54|
+    55|    55|        <div class="sidebar-block">
+    56|    56|          <div class="block-label">患者管理列表</div>
+    57|    57|          <div id="population-list" class="population-list"></div>
+    58|    58|        </div>
+    59|    59|      </aside>
+    60|    60|
+    61|    61|      <main class="main-panel">
+    62|    62|        <section class="page-banner page-banner-workbench">
+    63|    63|          <div class="page-banner-copy">
+    64|    64|            <div class="page-banner-kicker">Hospital Operations Console</div>
+    65|    65|            <h2>医院管理台</h2>
+    66|    66|            <p>面向院级管理者的正式业务页面，围绕逾期任务、责任医生、患者进展与导出清单展开，强调督办闭环与院内协同。</p>
+    67|    67|          </div>
+    68|    68|          <div class="page-banner-chips">
+    69|    69|            <div class="banner-chip">
+    70|    70|              <span class="banner-chip-label">页面定位</span>
+    71|    71|              <strong>医院级管理台</strong>
+    72|    72|            </div>
+    73|    73|            <div class="banner-chip">
+    74|    74|              <span class="banner-chip-label">管理重点</span>
+    75|    75|              <strong>任务督办 / 责任到人</strong>
+    76|    76|            </div>
+    77|    77|            <div class="banner-chip">
+    78|    78|              <span class="banner-chip-label">输出</span>
+    79|    79|              <strong>Excel 导出 / 逾期待办</strong>
+    80|    80|            </div>
+    81|    81|          </div>
+    82|    82|        </section>
+    83|    83|
+    84|    84|        <header class="hero">
+    85|    85|          <div class="hero-copy">
+    86|    86|            <p class="eyebrow">Hospital Follow-up View</p>
+    87|    87|            <h2>医院管理视图</h2>
+    88|    88|            <p id="hero-subtitle" class="hero-subtitle"></p>
+    89|    89|          </div>
+    90|    90|          <div class="hero-tools">
+    91|    91|            <div class="filter-strip">
+    92|    92|              <label class="filter-field">
+    93|    93|                <span>医院</span>
+    94|    94|                <select id="hospital-filter"></select>
+    95|    95|              </label>
+    96|    96|              <label class="filter-field">
+    97|    97|                <span>工作台角色</span>
+    98|    98|                <select id="role-filter">
+    99|    99|                  <option value="specialist-doctor">专科医生</option>
+   100|   100|                  <option value="general-practitioner">全科医生</option>
+   101|   101|                  <option value="health-manager" selected>健康管理师</option>
+   102|   102|                </select>
+   103|   103|              </label>
+   104|   104|              <label class="filter-field">
+   105|   105|                <span>任务状态</span>
+   106|   106|                <select id="followup-status-filter">
+   107|   107|                  <option value="overdue">仅看逾期</option>
+   108|   108|                  <option value="active">逾期 + 临近逾期</option>
+   109|   109|                  <option value="all">全部任务</option>
+   110|   110|                </select>
+   111|   111|              </label>
+   112|   112|            </div>
+   113|   113|            <div class="hero-actions">
+   114|   114|              <button id="export-followups-btn" class="primary-button">导出当前逾期待办 Excel</button>
+   115|   115|              <a class="ghost-button nav-button" href="./followups-clinician.html">切换到医生工作视图</a>
+   116|   116|            </div>
+   117|   117|          </div>
+   118|   118|        </header>
+   119|   119|
+   120|   120|        <section class="grid grid-followup-overview">
+   121|   121|          <article class="panel">
+   122|   122|            <div class="panel-head">
+   123|   123|              <span class="panel-kicker">随访统计</span>
+   124|   124|              <h3>医院维度督办摘要</h3>
+   125|   125|            </div>
+   126|   126|            <div id="followup-summary" class="care-plan-summary"></div>
+   127|   127|          </article>
+   128|   128|
+   129|   129|          <article class="panel">
+   130|   130|            <div class="panel-head">
+   131|   131|              <span class="panel-kicker">提醒中心</span>
+   132|   132|              <h3>当前医院逾期待办</h3>
+   133|   133|            </div>
+   134|   134|            <div id="reminder-center" class="care-plan-summary"></div>
+   135|   135|          </article>
+   136|   136|        </section>
+   137|   137|
+   138|   138|        <section class="grid grid-followup-ops">
+   139|   139|          <article class="panel panel-feature">
+   140|   140|            <div class="panel-head">
+   141|   141|              <span class="panel-kicker">医院运营驾驶舱</span>
+   142|   142|              <h3>逾期压力、闭环效率、协同负荷</h3>
+   143|   143|            </div>
+   144|   144|            <div id="followup-ops-panel" class="care-plan-summary"></div>
+   145|   145|          </article>
+   146|   146|
+   147|   147|          <article class="panel">
+   148|   148|            <div class="panel-head">
+   149|   149|              <span class="panel-kicker">角色负荷</span>
+   150|   150|              <h3>三类角色工作压力分布</h3>
+   151|   151|            </div>
+   152|   152|            <div id="followup-workload-panel" class="care-plan-summary"></div>
+   153|   153|          </article>
+   154|   154|        </section>
+   155|   155|
+   156|   156|        <section class="grid grid-followup-groups">
+   157|   157|          <article class="panel">
+   158|   158|            <div class="panel-head">
+   159|   159|              <span class="panel-kicker">任务分组</span>
+   160|   160|              <h3>按医院归类的任务板</h3>
+   161|   161|            </div>
+   162|   162|            <div id="followup-groups" class="followup-groups"></div>
+   163|   163|          </article>
+   164|   164|        </section>
+   165|   165|
+   166|   166|        <section class="grid grid-followup-detail">
+   167|   167|          <article class="panel">
+   168|   168|            <div class="panel-head">
+   169|   169|              <span class="panel-kicker">患者阶段追踪</span>
+   170|   170|              <h3 id="population-patient-title">选择患者查看随访详情</h3>
+   171|   171|            </div>
+   172|   172|            <div id="population-patient-profile" class="care-plan-summary"></div>
+   173|   173|            <div id="population-intervention-summary" class="care-plan-summary"></div>
+   174|   174|            <div id="population-intervention-radar" class="radar-panel"></div>
+   175|   175|          </article>
+   176|   176|
+   177|   177|          <article class="panel">
+   178|   178|            <div class="panel-head">
+   179|   179|              <span class="panel-kicker">指标改善</span>
+   180|   180|              <h3>4 / 8 / 12 周进展与解释</h3>
+   181|   181|            </div>
+   182|   182|            <div id="population-improvements" class="therapy-package-grid"></div>
+   183|   183|          </article>
+   184|   184|        </section>
+   185|   185|
+   186|   186|        <section class="grid grid-population-followup">
+   187|   187|          <article class="panel">
+   188|   188|            <div class="panel-head">
+   189|   189|              <span class="panel-kicker">管理留痕</span>
+   190|   190|              <h3>整理过程与随访时间轴</h3>
+   191|   191|            </div>
+   192|   192|            <div id="population-process" class="care-plan-summary"></div>
+   193|   193|          </article>
+   194|   194|
+   195|   195|          <article class="panel">
+   196|   196|            <div class="panel-head">
+   197|   197|              <span class="panel-kicker">角色分工</span>
+   198|   198|              <h3>三甲、全科、健康管理协同督办</h3>
+   199|   199|            </div>
+   200|   200|            <div id="population-role-followups" class="therapy-package-grid"></div>
+   201|   201|          </article>
+   202|   202|
+   203|   203|          <article class="panel">
+   204|   204|            <div class="panel-head">
+   205|   205|              <span class="panel-kicker">单患者风险</span>
+   206|   206|              <h3>当前患者慢病画像</h3>
+   207|   207|            </div>
+   208|   208|            <div id="population-patient-radar" class="radar-panel"></div>
+   209|   209|          </article>
+   210|   210|        </section>
+   211|   211|      </main>
+   212|   212|    </div>
+   213|   213|
+   214|   214|    <template id="patient-item-template">
+   215|   215|      <button class="patient-item">
+   216|   216|        <div class="patient-item-head">
+   217|   217|          <strong class="patient-item-name"></strong>
+   218|   218|          <span class="pill"></span>
+   219|   219|        </div>
+   220|   220|        <div class="patient-item-body"></div>
+   221|   221|      </button>
+   222|   222|    </template>
+   223|   223|
+   224|   224|    <script type="module" src="./app.js"></script>
+   225|   225|  </body>
+   226|   226|</html>
+   227|   227|

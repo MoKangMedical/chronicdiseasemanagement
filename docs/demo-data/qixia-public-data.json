@@ -1,0 +1,122 @@
+{
+  "district": "栖霞区",
+  "city": "南京市",
+  "province": "江苏省",
+  "sources": [
+    {
+      "id": "src-1",
+      "name": "栖霞区统计年鉴2025",
+      "type": "demographics",
+      "url": "http://tjj.nj.gov.cn/qixia/",
+      "lastUpdated": "2025-12-01",
+      "modules": [
+        "人口",
+        "经济",
+        "卫生"
+      ]
+    },
+    {
+      "id": "src-2",
+      "name": "南京市卫生健康委员会",
+      "type": "health-policy",
+      "url": "http://wjw.nj.gov.cn/",
+      "lastUpdated": "2026-03-15",
+      "modules": [
+        "政策",
+        "规划",
+        "统计"
+      ]
+    },
+    {
+      "id": "src-3",
+      "name": "栖霞区疾控中心",
+      "type": "surveillance",
+      "url": "http://cdc.nj.gov.cn/",
+      "lastUpdated": "2026-04-01",
+      "modules": [
+        "慢病监测",
+        "传染病",
+        "健康教育"
+      ]
+    },
+    {
+      "id": "src-4",
+      "name": "中国慢性病防治工作规划",
+      "type": "national-policy",
+      "url": "http://www.nhc.gov.cn/",
+      "lastUpdated": "2025-06-01",
+      "modules": [
+        "规划目标",
+        "管理规范",
+        "考核指标"
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "id": "asset-1",
+      "name": "栖霞区常住人口",
+      "value": "68.0万",
+      "source": "src-1",
+      "year": 2025,
+      "module": "人口"
+    },
+    {
+      "id": "asset-2",
+      "name": "60岁以上人口比例",
+      "value": "18.2%",
+      "source": "src-1",
+      "year": 2025,
+      "module": "人口"
+    },
+    {
+      "id": "asset-3",
+      "name": "高血压患病率",
+      "value": "26.8%",
+      "source": "src-3",
+      "year": 2025,
+      "module": "慢病监测"
+    },
+    {
+      "id": "asset-4",
+      "name": "糖尿病患病率",
+      "value": "11.2%",
+      "source": "src-3",
+      "year": 2025,
+      "module": "慢病监测"
+    },
+    {
+      "id": "asset-5",
+      "name": "基层医疗机构数",
+      "value": "42家",
+      "source": "src-2",
+      "year": 2025,
+      "module": "卫生"
+    },
+    {
+      "id": "asset-6",
+      "name": "社区卫生服务中心",
+      "value": "12家",
+      "source": "src-2",
+      "year": 2025,
+      "module": "卫生"
+    },
+    {
+      "id": "asset-7",
+      "name": "慢病管理达标率",
+      "value": "68.5%",
+      "source": "src-4",
+      "year": 2025,
+      "module": "考核指标"
+    },
+    {
+      "id": "asset-8",
+      "name": "家庭医生签约率",
+      "value": "42.3%",
+      "source": "src-2",
+      "year": 2025,
+      "module": "卫生"
+    }
+  ],
+  "mappingDrafts": []
+}
