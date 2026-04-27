@@ -3222,8 +3222,8 @@ function renderPopulation() {
     <div class="plan-block">
       <h4>主要治疗包与建议</h4>
       <ul class="mini-list">
-        ${selectedPatient.interventionProjection.packageTitles.map((item) => `<li>${item}</li>`).join("")}
-        ${selectedPatient.interventionProjection.recommendations.map((item) => `<li>${item}</li>`).join("")}
+        ${(selectedPatient.interventionProjection?.packageTitles ?? []).map((item) => `<li>${item}</li>`).join("")}
+        ${(selectedPatient.interventionProjection?.recommendations ?? []).map((item) => `<li>${item}</li>`).join("")}
       </ul>
     </div>
     <div class="plan-block">
@@ -3721,9 +3721,8 @@ function renderMedClaw() {
     </div>
     <div class="plan-block">
       <h4>诊断与计划</h4>
-      <ul class="mini-list">${workspace.recordDraft.diagnosis
-        .map((item) => `<li>${item}</li>`)
-        .concat(workspace.recordDraft.plan.map((item) => `<li>${item}</li>`))
+      <ul class="mini-list">${(workspace.recordDraft?.diagnosis ?? []).map((item) => `<li>${item}</li>`)
+        .concat((workspace.recordDraft?.plan ?? []).map((item) => `<li>${item}</li>`))
         .join("")}</ul>
     </div>
   `;
