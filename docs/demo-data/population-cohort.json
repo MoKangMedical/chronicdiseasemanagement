@@ -382,7 +382,16 @@
           "签约管理",
           "随访提醒",
           "健康评估"
-        ]
+        ],
+        "usableFields": [
+          "patient_id",
+          "diagnosis",
+          "visit_date",
+          "lab_result"
+        ],
+        "sourceUrl": "https://github.com/MoKangMedical/chronicdiseasemanagement",
+        "sourceLabel": "数据来源",
+        "sourceDate": "2025-12"
       },
       {
         "title": "重点人群联系人数",
@@ -391,7 +400,16 @@
           "慢病管理",
           "风险分层",
           "定期随访"
-        ]
+        ],
+        "usableFields": [
+          "patient_id",
+          "diagnosis",
+          "visit_date",
+          "lab_result"
+        ],
+        "sourceUrl": "https://github.com/MoKangMedical/chronicdiseasemanagement",
+        "sourceLabel": "数据来源",
+        "sourceDate": "2025-12"
       },
       {
         "title": "医疗资源底盘",
@@ -400,7 +418,16 @@
           "区级医院",
           "社区中心",
           "三级联动"
-        ]
+        ],
+        "usableFields": [
+          "patient_id",
+          "diagnosis",
+          "visit_date",
+          "lab_result"
+        ],
+        "sourceUrl": "https://github.com/MoKangMedical/chronicdiseasemanagement",
+        "sourceLabel": "数据来源",
+        "sourceDate": "2025-12"
       },
       {
         "title": "慢病防控结果指标",
@@ -409,7 +436,16 @@
           "血压达标",
           "血糖达标",
           "综合管理"
-        ]
+        ],
+        "usableFields": [
+          "patient_id",
+          "diagnosis",
+          "visit_date",
+          "lab_result"
+        ],
+        "sourceUrl": "https://github.com/MoKangMedical/chronicdiseasemanagement",
+        "sourceLabel": "数据来源",
+        "sourceDate": "2025-12"
       }
     ],
     "threeTierCoordination": {
