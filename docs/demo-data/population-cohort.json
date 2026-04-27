@@ -41,46 +41,44 @@
       "label": "脑卒中"
     }
   ],
-  "coordinationFunnel": {
-    "stages": [
-      {
-        "stage": "基层筛查",
-        "label": "基层筛查",
-        "count": 8500,
-        "rate": "0%"
-      },
-      {
-        "stage": "异常转诊",
-        "label": "异常转诊",
-        "count": 3200,
-        "rate": "0%"
-      },
-      {
-        "stage": "确诊纳管",
-        "label": "确诊纳管",
-        "count": 2800,
-        "rate": "0%"
-      },
-      {
-        "stage": "规范治疗",
-        "label": "规范治疗",
-        "count": 2400,
-        "rate": "0%"
-      },
-      {
-        "stage": "达标控制",
-        "label": "达标控制",
-        "count": 1680,
-        "rate": "0%"
-      },
-      {
-        "stage": "持续随访",
-        "label": "持续随访",
-        "count": 1400,
-        "rate": "0%"
-      }
-    ]
-  },
+  "coordinationFunnel": [
+    {
+      "stage": "基层筛查",
+      "label": "基层筛查",
+      "count": 8500,
+      "rate": "0%"
+    },
+    {
+      "stage": "异常转诊",
+      "label": "异常转诊",
+      "count": 3200,
+      "rate": "0%"
+    },
+    {
+      "stage": "确诊纳管",
+      "label": "确诊纳管",
+      "count": 2800,
+      "rate": "0%"
+    },
+    {
+      "stage": "规范治疗",
+      "label": "规范治疗",
+      "count": 2400,
+      "rate": "0%"
+    },
+    {
+      "stage": "达标控制",
+      "label": "达标控制",
+      "count": 1680,
+      "rate": "0%"
+    },
+    {
+      "stage": "持续随访",
+      "label": "持续随访",
+      "count": 1400,
+      "rate": "0%"
+    }
+  ],
   "hospitalPerformanceRanking": [
     {
       "hospitalId": "hosp-qx-01",
