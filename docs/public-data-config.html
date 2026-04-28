@@ -1,160 +1,174 @@
-     1|<!doctype html>
-     2|<html lang="zh-CN" data-app-mode="static">
-     3|  <head>
-     4|    <meta charset="UTF-8" />
-     5|    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-     6|    <meta name="theme-color" content="#1e40af" />
-     7|    <title>慢康智枢 ChroniCare OS · 公开资料配置</title>
-     8|    <meta name="description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
-     9|    <meta property="og:title" content="Chronic Disease Management">
-    10|    <meta property="og:description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
-    11|    <meta property="og:type" content="website">
-    12|    <meta property="og:url" content="https://github.com/MoKangMedical/chronicdiseasemanagement">
-    13|    <meta name="twitter:card" content="summary_large_image">
-    14|    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
-    15|
-    16|    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    17|    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    18|    <link
-    19|      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
-    20|      rel="stylesheet"
-    21|    />
-    22|    <script>
-    23|      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
-    24|        mode: document.documentElement.dataset.appMode || "live",
-    25|        snapshotPath: "./demo-data/pages-snapshot.json",
-    26|        populationPath: "./demo-data/population-cohort.json",
-    27|        publicDataPath: "./demo-data/qixia-public-data.json"
-    28|      };
-    29|    </script>
-    30|    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    31|    <link rel="stylesheet" href="./styles.css" />
-    32|  </head>
-    33|  <body data-page="public-data-config">
-    34|    <div class="shell">
-    35|      <aside class="sidebar">
-    36|        <div class="brand">
-    37|          <div class="brand-mark">CCOS</div>
-    38|          <div>
-    39|            <h1>慢康智枢</h1>
-    40|            <p>ChroniCare OS</p>
-    41|          </div>
-    42|        </div>
-    43|
-    44|        <nav class="sidebar-nav">
-    45|          <a class="sidebar-nav-link" href="./index.html">区级总览</a>
-    46|          <a class="sidebar-nav-link" href="./followups-hospital.html">医院管理视图</a>
-    47|          <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作视图</a>
-    48|          <a class="sidebar-nav-link active" href="./public-data-config.html">公开资料配置</a>
-    49|        </nav>
-    50|
-    51|        <div class="sidebar-block">
-    52|          <div class="block-label">数据概览</div>
-    53|          <div id="public-data-summary" class="metric-stack"></div>
-    54|        </div>
-    55|
-    56|        <div class="sidebar-block">
-    57|          <div class="block-label">来源索引</div>
-    58|          <div id="public-data-sources-nav" class="metric-stack"></div>
-    59|        </div>
-    60|      </aside>
-    61|
-    62|      <main class="main-panel">
-    63|        <section class="page-banner page-banner-workbench">
-    64|          <div class="page-banner-copy">
-    65|            <div class="page-banner-kicker">Public Data Integration Dictionary</div>
-    66|            <h2>公开资料接入字典</h2>
-    67|            <p>用于把栖霞区公开人口与健康资料整理成可接入资产字典，支持按来源、按模块浏览，并预置后续真实区卫健委 / 医院字段映射草案。</p>
-    68|          </div>
-    69|          <div class="page-banner-chips">
-    70|            <div class="banner-chip">
-    71|              <span class="banner-chip-label">页面定位</span>
-    72|              <strong>后台配置页</strong>
-    73|            </div>
-    74|            <div class="banner-chip">
-    75|              <span class="banner-chip-label">浏览方式</span>
-    76|              <strong>来源 / 模块</strong>
-    77|            </div>
-    78|            <div class="banner-chip">
-    79|              <span class="banner-chip-label">输出</span>
-    80|              <strong>字段映射草案</strong>
-    81|            </div>
-    82|          </div>
-    83|        </section>
-    84|
-    85|        <header class="hero">
-    86|          <div class="hero-copy">
-    87|            <p class="eyebrow">Public Source Workspace</p>
-    88|            <h2>公开资料资产梳理与字段映射配置</h2>
-    89|            <p class="hero-subtitle">静态配置页，用于查看当前 qixia-public-data.json 的 sources、systemUsableAssets 以及后续可替换的真实字段映射占位。</p>
-    90|          </div>
-    91|          <div class="hero-tools">
-    92|            <div class="filter-strip">
-    93|              <label class="filter-field">
-    94|                <span>视图</span>
-    95|                <select id="public-data-view-filter">
-    96|                  <option value="asset">资产视图</option>
-    97|                  <option value="source">按来源查看</option>
-    98|                  <option value="module">按模块查看</option>
-    99|                </select>
-   100|              </label>
-   101|              <label class="filter-field">
-   102|                <span>来源</span>
-   103|                <select id="public-data-source-filter"></select>
-   104|              </label>
-   105|              <label class="filter-field">
-   106|                <span>模块</span>
-   107|                <select id="public-data-module-filter"></select>
-   108|              </label>
-   109|            </div>
-   110|            <div class="hero-actions">
-   111|              <button id="public-data-export-json" class="primary-button">导出映射 JSON</button>
-   112|              <button id="public-data-export-xlsx" class="ghost-button">导出映射 Excel</button>
-   113|              <a class="ghost-button nav-button" href="./index.html">返回区级总览</a>
-   114|              <a class="ghost-button nav-button" href="./followups-hospital.html">进入随访中心</a>
-   115|            </div>
-   116|          </div>
-   117|        </header>
-   118|
-   119|        <section class="grid grid-public-data-overview">
-   120|          <article class="panel">
-   121|            <div class="panel-head">
-   122|              <span class="panel-kicker">接入摘要</span>
-   123|              <h3>当前公开资料资产总览</h3>
-   124|            </div>
-   125|            <div id="public-data-assets-panel" class="care-plan-summary"></div>
-   126|          </article>
-   127|
-   128|          <article class="panel">
-   129|            <div class="panel-head">
-   130|              <span class="panel-kicker">来源索引</span>
-   131|              <h3>公开资料来源列表</h3>
-   132|            </div>
-   133|            <div id="public-data-sources-panel" class="care-plan-summary"></div>
-   134|          </article>
-   135|        </section>
-   136|
-   137|        <section class="grid grid-public-data-main">
-   138|          <article class="panel">
-   139|            <div class="panel-head">
-   140|              <span class="panel-kicker">资产浏览</span>
-   141|              <h3>按来源 / 模块 / 资产的层级视图</h3>
-   142|            </div>
-   143|            <div id="public-data-filtered-panel" class="care-plan-summary"></div>
-   144|          </article>
-   145|
-   146|          <article class="panel">
-   147|            <div class="panel-head">
-   148|              <span class="panel-kicker">映射草案</span>
-   149|              <h3>后续真实字段替换占位</h3>
-   150|            </div>
-   151|            <div id="public-data-mapping-panel" class="care-plan-summary"></div>
-   152|          </article>
-   153|        </section>
-   154|      </main>
-   155|    </div>
-   156|
-   157|    <script type="module" src="./app.js"></script>
-   158|  </body>
-   159|</html>
-   160|
+<!doctype html>
+<html lang="zh-CN" data-app-mode="static">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1e40af" />
+    <title>慢康智枢 ChroniCare OS · 公开资料配置</title>
+    <meta name="description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
+    <meta name="author" content="MoKangMedical">
+    <meta property="og:title" content="Chronic Disease Management">
+    <meta property="og:description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/MoKangMedical/chronicdiseasemanagement">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='12' y='4' width='8' height='24' rx='2' fill='%23e53e3e'/%3E%3Crect x='4' y='12' width='24' height='8' rx='2' fill='%23e53e3e'/%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link
+      href="https://fonts.loli.net/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
+        mode: document.documentElement.dataset.appMode || "live",
+        snapshotPath: "./demo-data/pages-snapshot.json",
+        populationPath: "./demo-data/population-cohort.json",
+        publicDataPath: "./demo-data/qixia-public-data.json"
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="public-data-config">
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">CCOS</div>
+          <div>
+            <h1>慢康智枢</h1>
+            <p>ChroniCare OS</p>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a class="sidebar-nav-link" href="./index.html">区级总览</a>
+          <a class="sidebar-nav-link" href="./followups-hospital.html">医院管理视图</a>
+          <a class="sidebar-nav-link" href="./followups-clinician.html">医生工作视图</a>
+          <a class="sidebar-nav-link active" href="./public-data-config.html">公开资料配置</a>
+        </nav>
+
+        <div class="sidebar-block">
+          <div class="block-label">数据概览</div>
+          <div id="public-data-summary" class="metric-stack"></div>
+        </div>
+
+        <div class="sidebar-block">
+          <div class="block-label">来源索引</div>
+          <div id="public-data-sources-nav" class="metric-stack"></div>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <section class="page-banner page-banner-workbench">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">Public Data Integration Dictionary</div>
+            <h2>公开资料接入字典</h2>
+            <p>用于把栖霞区公开人口与健康资料整理成可接入资产字典，支持按来源、按模块浏览，并预置后续真实区卫健委 / 医院字段映射草案。</p>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">页面定位</span>
+              <strong>后台配置页</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">浏览方式</span>
+              <strong>来源 / 模块</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">输出</span>
+              <strong>字段映射草案</strong>
+            </div>
+          </div>
+        </section>
+
+        <header class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Public Source Workspace</p>
+            <h2>公开资料资产梳理与字段映射配置</h2>
+            <p class="hero-subtitle">静态配置页，用于查看当前 qixia-public-data.json 的 sources、systemUsableAssets 以及后续可替换的真实字段映射占位。</p>
+          </div>
+          <div class="hero-tools">
+            <div class="filter-strip">
+              <label class="filter-field">
+                <span>视图</span>
+                <select id="public-data-view-filter">
+                  <option value="asset">资产视图</option>
+                  <option value="source">按来源查看</option>
+                  <option value="module">按模块查看</option>
+                </select>
+              </label>
+              <label class="filter-field">
+                <span>来源</span>
+                <select id="public-data-source-filter"></select>
+              </label>
+              <label class="filter-field">
+                <span>模块</span>
+                <select id="public-data-module-filter"></select>
+              </label>
+            </div>
+            <div class="hero-actions">
+              <button id="public-data-export-json" class="primary-button">导出映射 JSON</button>
+              <button id="public-data-export-xlsx" class="ghost-button">导出映射 Excel</button>
+              <a class="ghost-button nav-button" href="./index.html">返回区级总览</a>
+              <a class="ghost-button nav-button" href="./followups-hospital.html">进入随访中心</a>
+            </div>
+          </div>
+        </header>
+
+        <section class="grid grid-public-data-overview">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">接入摘要</span>
+              <h3>当前公开资料资产总览</h3>
+            </div>
+            <div id="public-data-assets-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">来源索引</span>
+              <h3>公开资料来源列表</h3>
+            </div>
+            <div id="public-data-sources-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-public-data-main">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">资产浏览</span>
+              <h3>按来源 / 模块 / 资产的层级视图</h3>
+            </div>
+            <div id="public-data-filtered-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">映射草案</span>
+              <h3>后续真实字段替换占位</h3>
+            </div>
+            <div id="public-data-mapping-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+    <!-- Back to Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display:none;position:fixed;bottom:2rem;right:2rem;z-index:9999;width:48px;height:48px;border-radius:50%;border:none;background:#1e40af;color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .3s;" title="回到顶部">&#8679;</button>
+    <script>
+      window.addEventListener('scroll',function(){var b=document.getElementById('back-to-top');if(b)b.style.display=window.scrollY>300?'block':'none';});
+    </script>
+    <!-- Loading Spinner -->
+    <div id="global-spinner" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;z-index:10000;transition:opacity .5s;">
+      <div style="text-align:center;">
+        <div style="width:48px;height:48px;border:4px solid #e2e8f0;border-top:4px solid #1e40af;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;"></div>
+        <p style="color:#475569;font-size:.9rem;">正在加载数据...</p>
+      </div>
+    </div>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    <script>window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('global-spinner');if(s){s.style.opacity='0';setTimeout(function(){s.style.display='none';},500);}},800);});</script>
+  </body>
+</html>

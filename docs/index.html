@@ -1,905 +1,531 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>慢康智枢 ChroniCare OS — AI慢病管理平台</title>
-<meta name="description" content="AI驱动的慢病管理平台——HIS集成、风险分层、智能随访，覆盖高血压、糖尿病、冠心病、COPD、慢性肾病、脑卒中6大慢病。">
-<meta name="keywords" content="慢病管理,慢性病,高血压管理,糖尿病管理,AI医疗,HIS集成,风险分层,智能随访,慢康智枢,ChroniCare">
-<meta property="og:title" content="慢康智枢 ChroniCare OS — AI慢病管理平台">
-<meta property="og:description" content="AI驱动的慢病管理平台，覆盖6大慢病全周期管理">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://mokangmedical.github.io/chronicdiseasemanagement/">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://mokangmedical.github.io/chronicdiseasemanagement/">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>❤️</text></svg>">
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"慢康智枢 ChroniCare OS","description":"AI驱动的慢病管理平台——HIS集成、风险分层、智能随访","url":"https://mokangmedical.github.io/chronicdiseasemanagement/","author":{"@type":"Organization","name":"MoKangMedical","url":"https://github.com/MoKangMedical"},"codeRepository":"https://github.com/MoKangMedical/chronicdiseasemanagement","license":"https://opensource.org/licenses/MIT","applicationCategory":"HealthApplication","operatingSystem":"Cross-platform","isAccessibleForFree":true}
-</script>
-<style>
-:root {
-  --primary: #1e40af;
-  --primary-light: #3b82f6;
-  --accent: #06b6d4;
-  --surface: #f8fafc;
-  --dark: #0f172a;
-  --text: #1e293b;
-  --text-muted: #64748b;
-  --success: #059669;
-  --warning: #d97706;
-  --danger: #dc2626;
-  --border: #e2e8f0;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: "Inter", "Noto Sans SC", -apple-system, sans-serif;
-  color: var(--text);
-  line-height: 1.7;
-  background: linear-gradient(180deg, #f8fbff, #f0f4fa);
-}
-a { color: var(--primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
+<!doctype html>
+<html lang="zh-CN" data-app-mode="static">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1e40af" />
+    <title>慢康智枢 ChroniCare OS</title>
+    <meta name="description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
+    <meta name="author" content="MoKangMedical">
+    <meta property="og:title" content="Chronic Disease Management">
+    <meta property="og:description" content="AI慢病管理系统——糖尿病、高血压、COPD全周期管理">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://github.com/MoKangMedical/chronicdiseasemanagement">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='12' y='4' width='8' height='24' rx='2' fill='%23e53e3e'/%3E%3Crect x='4' y='12' width='24' height='8' rx='2' fill='%23e53e3e'/%3E%3C/svg%3E">
 
-/* Hero */
-.hero {
-  background: linear-gradient(135deg, var(--dark) 0%, #1e3a5f 100%);
-  color: #fff;
-  padding: 80px 24px 60px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(59,130,246,0.15), transparent 50%),
-              radial-gradient(circle at 70% 30%, rgba(6,182,212,0.1), transparent 40%);
-}
-.hero > * { position: relative; z-index: 1; }
-.hero h1 { font-size: 2.8rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.5rem; }
-.hero .brand-sub { font-size: 1.1rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; }
-.hero .tagline { font-size: 1.3rem; max-width: 640px; margin: 0 auto 2rem; color: rgba(255,255,255,0.85); }
-.hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 28px; border-radius: 12px; font-size: 1rem; font-weight: 600;
-  transition: all 0.2s; cursor: pointer; border: none;
-}
-.btn-primary { background: var(--primary-light); color: #fff; }
-.btn-primary:hover { background: #2563eb; text-decoration: none; transform: translateY(-1px); }
-.btn-ghost { background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
-.btn-ghost:hover { background: rgba(255,255,255,0.2); text-decoration: none; }
-
-/* Stats ribbon */
-.stats-ribbon {
-  display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
-  padding: 24px; margin-top: -30px; position: relative; z-index: 2;
-}
-.stat-item {
-  background: #fff; border-radius: 16px; padding: 20px 32px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06); text-align: center; min-width: 140px;
-}
-.stat-value { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
-.stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; }
-
-/* Sections */
-.section { max-width: 1100px; margin: 0 auto; padding: 60px 24px; }
-.section-title {
-  font-size: 1.8rem; font-weight: 700; text-align: center; margin-bottom: 12px;
-}
-.section-sub { text-align: center; color: var(--text-muted); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
-
-/* Disease cards */
-.disease-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-.disease-card {
-  background: #fff; border-radius: 16px; padding: 24px;
-  border: 1px solid var(--border); transition: all 0.2s;
-}
-.disease-card:hover { box-shadow: 0 8px 30px rgba(0,0,0,0.08); transform: translateY(-2px); }
-.disease-card h3 { font-size: 1.15rem; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
-.disease-card h3 .icon { font-size: 1.4rem; }
-.disease-card p { font-size: 0.92rem; color: var(--text-muted); }
-.disease-tag { display: inline-block; background: #eff6ff; color: var(--primary); padding: 2px 10px; border-radius: 6px; font-size: 0.8rem; margin-top: 8px; }
-
-/* Features */
-.feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-.feature-item {
-  background: #fff; border-radius: 14px; padding: 24px;
-  border: 1px solid var(--border); text-align: center;
-}
-.feature-icon { font-size: 2rem; margin-bottom: 12px; }
-.feature-item h4 { font-size: 1rem; margin-bottom: 8px; }
-.feature-item p { font-size: 0.88rem; color: var(--text-muted); }
-
-/* Architecture */
-.arch-box {
-  background: var(--dark); color: #e2e8f0; border-radius: 16px;
-  padding: 32px; font-family: "SF Mono", "Fira Code", monospace; font-size: 0.85rem;
-  overflow-x: auto; line-height: 1.8;
-}
-
-/* Tech badges */
-.tech-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 20px; }
-.tech-badge {
-  background: #f1f5f9; padding: 6px 16px; border-radius: 8px; font-size: 0.88rem;
-  border: 1px solid var(--border);
-}
-
-/* Footer */
-.footer {
-  background: var(--dark); color: rgba(255,255,255,0.6); text-align: center;
-  padding: 40px 24px; font-size: 0.88rem;
-}
-.footer a { color: rgba(255,255,255,0.8); }
-.footer-links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
-
-@media (max-width: 640px) {
-  .hero h1 { font-size: 1.8rem; }
-  .stats-ribbon { gap: 16px; }
-  .stat-item { min-width: 100px; padding: 16px 20px; }
-  .stat-value { font-size: 1.4rem; }
-  .partner-logos { gap: 16px; }
-  .partner-logo { padding: 12px 20px; font-size: 0.82rem; min-width: 100px; }
-  .how-it-works-grid { grid-template-columns: 1fr; }
-  .hiw-arrow { transform: rotate(90deg); margin: 0 auto; }
-  .testimonial-grid { grid-template-columns: 1fr; }
-  .pricing-grid { grid-template-columns: 1fr; }
-  .faq-item h4 { font-size: 0.95rem; }
-}
-
-/* Social Proof / Partners */
-.partner-section {
-  background: #fff;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 48px 24px;
-  text-align: center;
-}
-.partner-section h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 28px;
-}
-.partner-logos {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 24px;
-  max-width: 1000px;
-  margin: 0 auto 32px;
-}
-.partner-logo {
-  background: #f8fafc;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 28px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  white-space: nowrap;
-  transition: all 0.2s;
-}
-.partner-logo:hover {
-  border-color: var(--primary-light);
-  color: var(--primary);
-  box-shadow: 0 2px 12px rgba(30,64,175,0.08);
-}
-.partner-stats {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  flex-wrap: wrap;
-}
-.partner-stat {
-  text-align: center;
-}
-.partner-stat .ps-value {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--primary);
-}
-.partner-stat .ps-label {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-/* How It Works */
-.how-it-works-grid {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto 1fr;
-  align-items: center;
-  gap: 0;
-  max-width: 900px;
-  margin: 0 auto;
-}
-.hiw-step {
-  background: #fff;
-  border-radius: 16px;
-  padding: 32px 24px;
-  text-align: center;
-  border: 1px solid var(--border);
-  position: relative;
-  transition: all 0.2s;
-}
-.hiw-step:hover {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  transform: translateY(-2px);
-}
-.hiw-number {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: #fff;
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin-bottom: 16px;
-}
-.hiw-step h4 {
-  font-size: 1.1rem;
-  margin-bottom: 10px;
-}
-.hiw-step p {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-.hiw-arrow {
-  font-size: 1.6rem;
-  color: var(--primary-light);
-  padding: 0 8px;
-  font-weight: 700;
-}
-
-/* Testimonials */
-.testimonial-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-}
-.testimonial-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 32px;
-  border: 1px solid var(--border);
-  position: relative;
-  transition: all 0.2s;
-}
-.testimonial-card:hover {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-  transform: translateY(-2px);
-}
-.testimonial-quote {
-  font-size: 1rem;
-  line-height: 1.8;
-  color: var(--text);
-  margin-bottom: 24px;
-  font-style: italic;
-  position: relative;
-  padding-left: 20px;
-  border-left: 3px solid var(--primary-light);
-}
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.testimonial-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-weight: 700;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.testimonial-info h5 {
-  font-size: 0.95rem;
-  font-weight: 700;
-  margin-bottom: 2px;
-}
-.testimonial-info p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-}
-
-/* Pricing */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-  align-items: start;
-}
-.pricing-card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 36px 28px;
-  border: 1px solid var(--border);
-  text-align: center;
-  transition: all 0.2s;
-  position: relative;
-}
-.pricing-card:hover {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-}
-.pricing-card.featured {
-  border: 2px solid var(--primary);
-  box-shadow: 0 8px 40px rgba(30,64,175,0.12);
-}
-.pricing-badge {
-  position: absolute;
-  top: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--primary), var(--primary-light));
-  color: #fff;
-  padding: 4px 20px;
-  border-radius: 20px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-.pricing-card h4 {
-  font-size: 1.3rem;
-  margin-bottom: 8px;
-}
-.pricing-price {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin: 16px 0 4px;
-}
-.pricing-price span {
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: var(--text-muted);
-}
-.pricing-desc {
-  font-size: 0.88rem;
-  color: var(--text-muted);
-  margin-bottom: 24px;
-}
-.pricing-features {
-  list-style: none;
-  text-align: left;
-  margin-bottom: 28px;
-}
-.pricing-features li {
-  font-size: 0.9rem;
-  padding: 8px 0;
-  border-bottom: 1px solid #f1f5f9;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.pricing-features li::before {
-  content: "✓";
-  color: var(--success);
-  font-weight: 700;
-  flex-shrink: 0;
-}
-.pricing-features li.disabled {
-  color: var(--text-muted);
-  text-decoration: line-through;
-  opacity: 0.5;
-}
-.pricing-features li.disabled::before {
-  content: "—";
-  color: var(--text-muted);
-}
-.pricing-btn {
-  display: inline-block;
-  padding: 12px 32px;
-  border-radius: 10px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.2s;
-  cursor: pointer;
-  border: none;
-  width: 100%;
-}
-.pricing-btn-primary {
-  background: var(--primary);
-  color: #fff;
-}
-.pricing-btn-primary:hover {
-  background: #1d4ed8;
-  text-decoration: none;
-}
-.pricing-btn-outline {
-  background: transparent;
-  color: var(--primary);
-  border: 2px solid var(--primary);
-}
-.pricing-btn-outline:hover {
-  background: #eff6ff;
-  text-decoration: none;
-}
-
-/* FAQ */
-.faq-list {
-  max-width: 760px;
-  margin: 0 auto;
-}
-.faq-item {
-  background: #fff;
-  border-radius: 14px;
-  margin-bottom: 12px;
-  border: 1px solid var(--border);
-  overflow: hidden;
-  transition: all 0.2s;
-}
-.faq-item:hover {
-  border-color: var(--primary-light);
-}
-.faq-item h4 {
-  font-size: 1rem;
-  padding: 20px 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  user-select: none;
-}
-.faq-item h4::after {
-  content: "+";
-  font-size: 1.4rem;
-  color: var(--primary-light);
-  font-weight: 400;
-  flex-shrink: 0;
-  transition: transform 0.2s;
-}
-.faq-item.open h4::after {
-  content: "−";
-}
-.faq-answer {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-.faq-item.open .faq-answer {
-  max-height: 500px;
-}
-.faq-answer p {
-  padding: 0 24px 20px;
-  font-size: 0.92rem;
-  color: var(--text-muted);
-  line-height: 1.8;
-}
-
-/* CTA */
-.cta-section {
-  background: linear-gradient(135deg, var(--dark) 0%, #1e3a5f 100%);
-  color: #fff;
-  text-align: center;
-  padding: 72px 24px;
-  position: relative;
-  overflow: hidden;
-}
-.cta-section::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 50%, rgba(59,130,246,0.15), transparent 50%),
-              radial-gradient(circle at 70% 30%, rgba(6,182,212,0.1), transparent 40%);
-}
-.cta-section > * { position: relative; z-index: 1; }
-.cta-section h2 {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 12px;
-}
-.cta-section p {
-  font-size: 1.1rem;
-  color: rgba(255,255,255,0.8);
-  max-width: 560px;
-  margin: 0 auto 28px;
-}
-.cta-section .btn-primary {
-  background: #fff;
-  color: var(--primary);
-  font-size: 1.05rem;
-  padding: 16px 36px;
-  border-radius: 12px;
-}
-.cta-section .btn-primary:hover {
-  background: #f0f4ff;
-  text-decoration: none;
-}
-</style>
-</head>
-<body>
-
-<section class="hero">
-  <h1>慢康智枢 ChroniCare OS</h1>
-  <p class="brand-sub">Hospital Chronic Disease Management Platform</p>
-  <p class="tagline">AI驱动的慢病管理平台——HIS集成、风险分层、智能随访，覆盖6大慢病全周期管理</p>
-  <div class="hero-actions">
-    <a href="./app.html" class="btn btn-primary">进入在线演示</a>
-    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement" class="btn btn-ghost">GitHub 仓库</a>
-  </div>
-</section>
-
-<div class="stats-ribbon">
-  <div class="stat-item"><div class="stat-value">6</div><div class="stat-label">慢病覆盖</div></div>
-  <div class="stat-item"><div class="stat-value">5</div><div class="stat-label">医院网络</div></div>
-  <div class="stat-item"><div class="stat-value">4,440</div><div class="stat-label">纳管患者</div></div>
-  <div class="stat-item"><div class="stat-value">85%</div><div class="stat-label">随访完成率</div></div>
-</div>
-
-<!-- Social Proof / 合作伙伴 -->
-<section class="partner-section">
-  <h3>合作伙伴与医疗机构</h3>
-  <div class="partner-logos">
-    <div class="partner-logo">南京市栖霞区医院</div>
-    <div class="partner-logo">江苏省中西医结合医院</div>
-    <div class="partner-logo">迈皋桥社区卫生服务中心</div>
-    <div class="partner-logo">尧化社区卫生服务中心</div>
-    <div class="partner-logo">仙林社区卫生服务中心</div>
-    <div class="partner-logo">南京市栖霞区卫健委</div>
-  </div>
-  <div class="partner-stats">
-    <div class="partner-stat">
-      <div class="ps-value">5家</div>
-      <div class="ps-label">已接入医疗机构</div>
-    </div>
-    <div class="partner-stat">
-      <div class="ps-value">4,440+</div>
-      <div class="ps-label">服务慢病患者</div>
-    </div>
-    <div class="partner-stat">
-      <div class="ps-value">6大</div>
-      <div class="ps-label">覆盖慢病病种</div>
-    </div>
-    <div class="partner-stat">
-      <div class="ps-value">85%</div>
-      <div class="ps-label">随访完成率</div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <h2 class="section-title">6大慢病全周期管理</h2>
-  <p class="section-sub">基于循证医学指南，覆盖高血压、糖尿病、冠心病、COPD、慢性肾病、脑卒中，实现从筛查到长期随访的完整闭环。</p>
-  <div class="disease-grid">
-    <div class="disease-card">
-      <h3><span class="icon">🫀</span> 高血压管理</h3>
-      <p>基于Framingham评分 + 中国人群修正因子，10年心血管事件风险评估。阶梯式用药推荐，家庭血压自动采集。</p>
-      <span class="disease-tag">血压达标率</span> <span class="disease-tag">靶器官监测</span>
-    </div>
-    <div class="disease-card">
-      <h3><span class="icon">🍬</span> 糖尿病管理</h3>
-      <p>UKPDS风险引擎预测微血管/大血管并发症。HbA1c趋势分析，AI营养师个性化饮食方案。</p>
-      <span class="disease-tag">血糖监控</span> <span class="disease-tag">并发症筛查</span>
-    </div>
-    <div class="disease-card">
-      <h3><span class="icon">❤️</span> 冠心病管理</h3>
-      <p>GRACE评分 + SYNTAX评分综合评估。ABCDE二级预防方案自动提醒，心脏康复分期运动处方。</p>
-      <span class="disease-tag">LDL-C达标</span> <span class="disease-tag">紧急预警</span>
-    </div>
-    <div class="disease-card">
-      <h3><span class="icon">🫁</span> 慢阻肺管理</h3>
-      <p>GOLD分级 + mMRC + CAT评分综合评估。吸入装置使用指导，急性加重早期识别。</p>
-      <span class="disease-tag">肺功能监测</span> <span class="disease-tag">戒烟支持</span>
-    </div>
-    <div class="disease-card">
-      <h3><span class="icon">🫘</span> 慢性肾病管理</h3>
-      <p>KDIGO风险矩阵分层。eGFR趋势分析，肾功能不全时药物剂量自动调整提醒。</p>
-      <span class="disease-tag">透析准备</span> <span class="disease-tag">饮食管理</span>
-    </div>
-    <div class="disease-card">
-      <h3><span class="icon">🧠</span> 脑卒中管理</h3>
-      <p>CHA2DS2-VASc + ABCD2评分。复发预防、功能康复、卒中后抑郁筛查与干预。</p>
-      <span class="disease-tag">二级预防</span> <span class="disease-tag">功能康复</span>
-    </div>
-  </div>
-</section>
-
-<!-- How It Works / 工作流程 -->
-<section class="section" style="background: #f1f5f9; margin: 0 auto; max-width: 100%; padding: 60px 24px;">
-  <div style="max-width: 1100px; margin: 0 auto;">
-    <h2 class="section-title">工作流程</h2>
-    <p class="section-sub">从患者筛查到长期随访，三步实现慢病管理闭环</p>
-    <div class="how-it-works-grid">
-      <div class="hiw-step">
-        <div class="hiw-number">1</div>
-        <h4>筛查纳管</h4>
-        <p>对接HIS系统自动识别慢病高危人群，基于指南标准完成初筛评估与分层入库，实现精准纳管。</p>
-      </div>
-      <div class="hiw-arrow">&#10132;</div>
-      <div class="hiw-step">
-        <div class="hiw-number">2</div>
-        <h4>AI风险评估</h4>
-        <p>融合Framingham、UKPDS、GRACE等国际评分模型，结合中国人群修正因子，输出个性化风险报告与干预建议。</p>
-      </div>
-      <div class="hiw-arrow">&#10132;</div>
-      <div class="hiw-step">
-        <div class="hiw-number">3</div>
-        <h4>智能随访闭环</h4>
-        <p>AI驱动多通道随访提醒（电话、微信、短信），自动追踪执行情况，形成完整随访闭环与质量报告。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section" style="background: #f1f5f9; margin: 0 auto; max-width: 100%; padding: 60px 24px;">
-  <div style="max-width: 1100px; margin: 0 auto;">
-    <h2 class="section-title">核心功能</h2>
-    <p class="section-sub">从数据采集到决策支持，构建完整的慢病管理数字化闭环</p>
-    <div class="feature-grid">
-      <div class="feature-item">
-        <div class="feature-icon">🔗</div>
-        <h4>HIS系统集成</h4>
-        <p>HL7/FHIR/REST多协议适配，无缝对接卫宁、东华、创业慧康等主流HIS</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">📊</div>
-        <h4>AI风险分层</h4>
-        <p>多模型融合评估，精准识别高危人群，支持Framingham/UKPDS/GRACE等国际评分</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">📱</div>
-        <h4>智能随访</h4>
-        <p>AI电话、微信、短信多通道提醒，个性化随访计划自动生成</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">💊</div>
-        <h4>用药管理</h4>
-        <p>药物依从性监测，相互作用提醒，处方合理性审核</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">📈</div>
-        <h4>数据看板</h4>
-        <p>科室/医院/区域多维度展示，实时监控核心指标</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">👥</div>
-        <h4>MDT协作</h4>
-        <p>多学科在线讨论，会诊结论追踪，闭环执行管理</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">📋</div>
-        <h4>质控报告</h4>
-        <p>符合卫健委要求，一键生成慢病管理质量指标报告</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🔬</div>
-        <h4>科研支持</h4>
-        <p>脱敏数据导出，支持回顾性研究和真实世界研究</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Testimonials / 客户评价 -->
-<section class="section">
-  <h2 class="section-title">客户评价</h2>
-  <p class="section-sub">来自一线医疗工作者的真实反馈</p>
-  <div class="testimonial-grid">
-    <div class="testimonial-card">
-      <div class="testimonial-quote">
-        ChroniCare OS 将我们高血压患者的随访完成率从不足50%提升到了85%以上。AI自动提醒功能大幅减轻了护士的工作量，风险分层让我们能优先关注高危患者。
-      </div>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">王</div>
-        <div class="testimonial-info">
-          <h5>王建国</h5>
-          <p>全科主任 / 南京市栖霞区医院</p>
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link
+      href="https://fonts.loli.net/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+SC:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      window.__APP_CONFIG__ = window.__APP_CONFIG__ || {
+        mode: document.documentElement.dataset.appMode || "live",
+        snapshotPath: "./demo-data/pages-snapshot.json",
+        populationPath: "./demo-data/population-cohort.json"
+      };
+    </script>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="home">
+    <div class="shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">CCOS</div>
+          <div>
+            <h1>慢康智枢</h1>
+            <p>ChroniCare OS</p>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="testimonial-card">
-      <div class="testimonial-quote">
-        系统与HIS的无缝集成是我们最看重的能力。数据自动同步，医生无需二次录入，质控报告一键生成，大大提高了慢病管理的规范性和效率。
-      </div>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">李</div>
-        <div class="testimonial-info">
-          <h5>李明辉</h5>
-          <p>信息科主任 / 江苏省中西医结合医院</p>
+
+        <nav class="sidebar-nav">
+          <a class="sidebar-nav-link active" href="./index.html">区级总览</a>
+          <a class="sidebar-nav-link" href="./followups-hospital.html">随访中心</a>
+          <a class="sidebar-nav-link" href="./public-data-config.html">公开资料配置台</a>
+        </nav>
+
+        <div class="sidebar-block">
+          <div class="block-label">总览</div>
+          <div id="summary-metrics" class="metric-stack"></div>
         </div>
-      </div>
-    </div>
-    <div class="testimonial-card">
-      <div class="testimonial-quote">
-        作为社区卫生服务中心，人手一直是瓶颈。ChroniCare的智能随访和MDT协作功能让我们用有限的人力覆盖了更多慢病患者，真正实现了分级诊疗。
-      </div>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">张</div>
-        <div class="testimonial-info">
-          <h5>张丽华</h5>
-          <p>慢病管理负责人 / 迈皋桥社区卫生服务中心</p>
+
+        <div class="sidebar-block">
+          <div class="block-label">患者队列</div>
+          <div id="patient-list" class="patient-list"></div>
         </div>
+      </aside>
+
+      <main class="main-panel">
+        <section class="page-banner page-banner-home">
+          <div class="page-banner-copy">
+            <div class="page-banner-kicker">District Chronic Care Command Center</div>
+            <h2>区级慢病管理总控台</h2>
+            <p>栖霞区医院网络、三级协同与患者风险联动在同一指挥面板中呈现，支持区级运营调度、医院管理与医生工作分层查看。</p>
+            <div class="page-banner-actions">
+              <a id="display-mode-toggle" class="ghost-button banner-action" href="./index.html?display=wallboard">切换区级大屏模式</a>
+              <a class="ghost-button banner-action" href="./followups-hospital.html">进入医院管理视图</a>
+            </div>
+          </div>
+          <div class="page-banner-chips">
+            <div class="banner-chip">
+              <span class="banner-chip-label">当前模式</span>
+              <strong>区级运营大屏</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">管理单元</span>
+              <strong>医院 / 医生 / 患者</strong>
+            </div>
+            <div class="banner-chip">
+              <span class="banner-chip-label">核心任务</span>
+              <strong>分层、干预、闭环</strong>
+            </div>
+          </div>
+          <div id="wallboard-hero-ribbon" class="wallboard-hero-ribbon"></div>
+        </section>
+
+        <header class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Clinical Intelligence Layer</p>
+            <h2>慢病风险分层、行为干预与 MDT 在线协作</h2>
+            <p id="hero-subtitle" class="hero-subtitle"></p>
+          </div>
+          <div class="hero-tools">
+            <div class="filter-strip">
+              <label class="filter-field">
+                <span>医院</span>
+                <select id="hospital-filter"></select>
+              </label>
+              <label class="filter-field">
+                <span>工作台角色</span>
+                <select id="role-filter">
+                  <option value="specialist-doctor">专科医生</option>
+                  <option value="general-practitioner">全科医生</option>
+                  <option value="health-manager" selected>健康管理师</option>
+                </select>
+              </label>
+            </div>
+            <div class="hero-actions">
+              <button id="run-workflow-btn" class="primary-button">启动慢病工作流</button>
+              <button id="create-meeting-btn" class="ghost-button">发起 MDT 在线讨论</button>
+              <a class="ghost-button nav-button" href="./followups-hospital.html">进入随访中心</a>
+            </div>
+          </div>
+        </header>
+
+        <section class="grid grid-intervention-spotlight">
+          <article class="panel panel-intervention-spotlight">
+            <div class="panel-head">
+              <span class="panel-kicker">Priority Intervention Spotlight</span>
+              <h3>重点慢病与干预包</h3>
+            </div>
+            <div id="intervention-spotlight-panel" class="intervention-spotlight-panel"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-dynamic-command">
+          <article class="panel panel-dynamic-stage">
+            <div class="panel-head">
+              <span class="panel-kicker">Dynamic Command Stage</span>
+              <h3>区级动态指挥台</h3>
+            </div>
+            <div id="district-live-stage" class="district-live-stage"></div>
+          </article>
+
+          <article class="panel panel-dynamic-story">
+            <div class="panel-head">
+              <span class="panel-kicker">Disease Burden Storyline</span>
+              <h3>病种负荷、协同漏斗与阶段改善</h3>
+            </div>
+            <div id="district-flow-story" class="district-flow-story"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-population-hero">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">全人群管理仿真</span>
+              <h3>慢病人群管理驾驶舱</h3>
+            </div>
+            <div id="population-summary" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">雷达总览</span>
+              <h3>最常见慢病风险平均画像</h3>
+            </div>
+            <div id="population-radar" class="radar-panel"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-qixia-overview">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">栖霞区医院网络</span>
+              <h3>医院分部与慢病管理规模</h3>
+            </div>
+            <div id="hospital-overview-grid" class="hospital-overview-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">医院详情</span>
+              <h3>患者数、疾病比例、治疗包与起效率</h3>
+            </div>
+            <div id="hospital-detail-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-qixia-public">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">公开区情口径</span>
+              <h3>8 类公开资产、人口结构与三级协同底图</h3>
+            </div>
+            <div id="qixia-public-profile" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-executive-cockpit">
+          <article class="panel panel-feature">
+            <div class="panel-head">
+              <span class="panel-kicker">区级运营驾驶舱</span>
+              <h3>纳管覆盖、风险压降、闭环执行</h3>
+            </div>
+            <div id="district-executive-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">医院绩效横向对比</span>
+              <h3>起效率、覆盖率、结构性负荷</h3>
+            </div>
+            <div id="hospital-benchmark-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">模型治理</span>
+              <h3>预测能力、证据强度与追踪深度</h3>
+            </div>
+            <div id="model-governance-panel" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-population-main">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">管理队列</span>
+              <h3>代表性纳管样本</h3>
+            </div>
+            <div id="population-list" class="population-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">单人预测</span>
+              <h3 id="population-patient-title">选择患者查看预测</h3>
+            </div>
+            <div id="population-patient-profile" class="care-plan-summary"></div>
+            <div id="population-patient-radar" class="radar-panel"></div>
+            <div id="population-intervention-summary" class="care-plan-summary"></div>
+            <div id="population-intervention-radar" class="radar-panel"></div>
+            <div id="population-predictions" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-population-evidence">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">证据来源</span>
+              <h3>用于解释预测的临床证据链</h3>
+            </div>
+            <div id="population-evidence" class="therapy-package-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">模型分布</span>
+              <h3>TemporAI / PyHealth / Disease-Text</h3>
+            </div>
+            <div id="population-model-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-command-center">
+          <article class="panel panel-command-network">
+            <div class="panel-head">
+              <span class="panel-kicker">三级协同</span>
+              <h3>基层筛查 · 区级统筹 · 三级专科联动</h3>
+            </div>
+            <div id="command-center-network" class="command-network"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">实时风险队列</span>
+              <h3>最需要优先管理的患者</h3>
+            </div>
+            <div id="command-center-queue" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">协同指标</span>
+              <h3>会诊、转诊与闭环执行</h3>
+            </div>
+            <div id="command-center-kpis" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-overview">
+          <article class="panel panel-patient">
+            <div class="panel-head">
+              <span class="panel-kicker">患者画像</span>
+              <h3 id="patient-name">-</h3>
+            </div>
+            <div id="patient-overview" class="patient-overview"></div>
+          </article>
+
+          <article class="panel panel-risk">
+            <div class="panel-head">
+              <span class="panel-kicker">精准风险分层</span>
+              <h3>疾病领域画像</h3>
+            </div>
+            <div id="risk-domain-grid" class="risk-domain-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-medclaw-top">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">MedClaw</span>
+              <h3>医院级临床智能边界</h3>
+            </div>
+            <div id="medclaw-overview" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">只读合规</span>
+              <h3>权限与审计</h3>
+            </div>
+            <div id="medclaw-guardrails" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-ecosystem">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">B2B2C 生态</span>
+              <h3>付费方 · 医院 · 用户三方协同</h3>
+            </div>
+            <div id="ecosystem-overview" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">AI 产品矩阵</span>
+              <h3>全科、精准就医与基层工具</h3>
+            </div>
+            <div id="ecosystem-products" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-role">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">分角色工作台</span>
+              <h3 id="role-view-title">角色工作视图</h3>
+            </div>
+            <div id="role-view-panel" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">院内资源</span>
+              <h3>当前角色可用医生与管理师</h3>
+            </div>
+            <div id="clinician-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-intervention">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">行为干预</span>
+              <h3>疗法包</h3>
+            </div>
+            <div id="therapy-package-grid" class="therapy-package-grid"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">整合管理</span>
+              <h3>临床计划与随访目标</h3>
+            </div>
+            <div id="care-plan-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-medclaw-clinical">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">影像智能</span>
+              <h3>影像报告解析与时序对比</h3>
+            </div>
+            <div id="imaging-comparison" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">AI 病历</span>
+              <h3>病历全自动生成草案</h3>
+            </div>
+            <div id="record-draft" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-medclaw-data">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">辅助诊断</span>
+              <h3>诊断建议与病情预测</h3>
+            </div>
+            <div id="diagnosis-support" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">数据治理</span>
+              <h3>全链路解析、脱敏与编码</h3>
+            </div>
+            <div id="data-pipeline" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-ecosystem">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">患者权益旅程</span>
+              <h3>付费方驱动的服务编排</h3>
+            </div>
+            <div id="ecosystem-journey" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">合作伙伴</span>
+              <h3>生态客户与医院网络</h3>
+            </div>
+            <div id="ecosystem-partners" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-opensrc">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">GitHub 能力中台</span>
+              <h3>健康管理与疾病预测开源能力</h3>
+            </div>
+            <div id="github-overview" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">能力目录</span>
+              <h3>可接入的开源仓库与模型</h3>
+            </div>
+            <div id="github-catalog" class="therapy-package-grid"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-opensrc">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">患者级编排</span>
+              <h3>当前患者的开源能力接入计划</h3>
+            </div>
+            <div id="github-plan" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-opensrc">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">真实数据适配链</span>
+              <h3>HealthChain + healthkit-on-fhir</h3>
+            </div>
+            <div id="adapter-summary" class="care-plan-summary"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">本地预测服务</span>
+              <h3>TemporAI / PyHealth / disease-prediction</h3>
+            </div>
+            <div id="prediction-summary" class="care-plan-summary"></div>
+          </article>
+        </section>
+
+        <section class="grid grid-mdt">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">MDT 在线讨论</span>
+              <h3>会诊房间</h3>
+            </div>
+            <div id="meeting-list" class="meeting-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">实时协作</span>
+              <h3 id="active-meeting-title">选择一个 MDT 会议</h3>
+            </div>
+            <div id="meeting-detail" class="meeting-detail empty-state">
+              会议消息、结论和追踪动作会显示在这里。
+            </div>
+          </article>
+        </section>
+
+        <section class="grid grid-mapping">
+          <article class="panel">
+            <div class="panel-head">
+              <span class="panel-kicker">HIS 接口适配</span>
+              <h3>多医院字段映射预览</h3>
+            </div>
+            <div id="mapping-grid" class="therapy-package-grid"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <template id="patient-item-template">
+      <button class="patient-item">
+        <div class="patient-item-head">
+          <strong class="patient-item-name"></strong>
+          <span class="pill"></span>
+        </div>
+        <div class="patient-item-body"></div>
+      </button>
+    </template>
+
+    <script type="module" src="./app.js"></script>
+    <!-- Back to Top Button -->
+    <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display:none;position:fixed;bottom:2rem;right:2rem;z-index:9999;width:48px;height:48px;border-radius:50%;border:none;background:#1e40af;color:#fff;font-size:1.5rem;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .3s;" title="回到顶部">&#8679;</button>
+    <script>
+      window.addEventListener('scroll',function(){var b=document.getElementById('back-to-top');if(b)b.style.display=window.scrollY>300?'block':'none';});
+    </script>
+    <!-- Loading Spinner -->
+    <div id="global-spinner" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;z-index:10000;transition:opacity .5s;">
+      <div style="text-align:center;">
+        <div style="width:48px;height:48px;border:4px solid #e2e8f0;border-top:4px solid #1e40af;border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 1rem;"></div>
+        <p style="color:#475569;font-size:.9rem;">正在加载数据...</p>
       </div>
     </div>
-  </div>
-</section>
-
-<section class="section">
-  <h2 class="section-title">技术架构</h2>
-  <p class="section-sub">云原生微服务架构，支持私有化部署、SaaS模式与混合云</p>
-  <div class="arch-box">
-┌─────────────────────────────────────────────┐
-│                   前端层                      │
-│         Vue 3 + Element Plus + ECharts       │
-├─────────────────────────────────────────────┤
-│                  API 网关                     │
-│              Nginx / Kong                    │
-├─────────────────────────────────────────────┤
-│                后端服务层                     │
-│        FastAPI + Celery + WebSocket          │
-├──────────┬──────────┬───────────────────────┤
-│ 风险引擎  │ 随访引擎  │   HIS适配器           │
-│ (Python) │ (Python) │  (HL7/FHIR/REST)     │
-├──────────┴──────────┴───────────────────────┤
-│               数据层                         │
-│   PostgreSQL + Redis + MinIO(文件存储)        │
-├─────────────────────────────────────────────┤
-│               AI 模型层                      │
-│   scikit-learn / XGBoost / TemporAI / LLM   │
-└─────────────────────────────────────────────┘
-  </div>
-  <div class="tech-list">
-    <span class="tech-badge">Python 3.10+</span>
-    <span class="tech-badge">FastAPI</span>
-    <span class="tech-badge">PostgreSQL</span>
-    <span class="tech-badge">Redis</span>
-    <span class="tech-badge">Vue 3</span>
-    <span class="tech-badge">ECharts</span>
-    <span class="tech-badge">Docker</span>
-    <span class="tech-badge">HL7 FHIR</span>
-    <span class="tech-badge">scikit-learn</span>
-    <span class="tech-badge">XGBoost</span>
-  </div>
-</section>
-
-<!-- Pricing / 服务方案 -->
-<section class="section" style="background: #f1f5f9; margin: 0 auto; max-width: 100%; padding: 60px 24px;">
-  <div style="max-width: 1100px; margin: 0 auto;">
-    <h2 class="section-title">服务方案</h2>
-    <p class="section-sub">灵活的部署模式，满足不同规模医疗机构的需求</p>
-    <div class="pricing-grid">
-      <div class="pricing-card">
-        <h4>基础版</h4>
-        <div class="pricing-price">免费 <span>/ 开源</span></div>
-        <p class="pricing-desc">适合社区卫生服务中心和个人开发者</p>
-        <ul class="pricing-features">
-          <li>6大慢病管理模块</li>
-          <li>基础风险评估引擎</li>
-          <li>手动随访管理</li>
-          <li>基础数据看板</li>
-          <li>社区技术支持</li>
-          <li class="disabled">HIS系统集成</li>
-          <li class="disabled">AI智能随访</li>
-          <li class="disabled">多院区管理</li>
-        </ul>
-        <a href="https://github.com/MoKangMedical/chronicdiseasemanagement" class="pricing-btn pricing-btn-outline">获取开源版本</a>
-      </div>
-      <div class="pricing-card featured">
-        <div class="pricing-badge">推荐方案</div>
-        <h4>专业版</h4>
-        <div class="pricing-price">2,999 <span>元/月</span></div>
-        <p class="pricing-desc">适合二级及以下医院</p>
-        <ul class="pricing-features">
-          <li>基础版全部功能</li>
-          <li>HL7/FHIR/REST HIS集成</li>
-          <li>AI智能随访引擎</li>
-          <li>高级风险分层模型</li>
-          <li>MDT多学科协作</li>
-          <li>质控报告自动生成</li>
-          <li>微信/短信/电话通道</li>
-          <li>7x12小时技术支持</li>
-        </ul>
-        <a href="./app.html" class="pricing-btn pricing-btn-primary">申请试用</a>
-      </div>
-      <div class="pricing-card">
-        <h4>企业版</h4>
-        <div class="pricing-price">定制 <span>方案</span></div>
-        <p class="pricing-desc">适合三级医院和区域医联体</p>
-        <ul class="pricing-features">
-          <li>专业版全部功能</li>
-          <li>多院区统一管理</li>
-          <li>区域数据汇总分析</li>
-          <li>私有化部署支持</li>
-          <li>科研数据平台</li>
-          <li>定制化开发服务</li>
-          <li>专属客户成功经理</li>
-          <li>7x24小时技术支持</li>
-        </ul>
-        <a href="./app.html" class="pricing-btn pricing-btn-outline">联系销售</a>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="section">
-  <h2 class="section-title">快速开始</h2>
-  <div class="arch-box" style="max-width: 700px; margin: 0 auto;">
-# 克隆项目
-git clone https://github.com/MoKangMedical/chronicdiseasemanagement.git
-cd chronicdiseasemanagement
-
-# Docker 一键部署
-docker-compose up -d
-
-# 或手动启动
-pip install -r requirements.txt
-uvicorn src.main:app --reload --port 8000
-
-# 访问
-# API 文档: http://localhost:8000/docs
-# 管理后台: http://localhost:3000
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="section">
-  <h2 class="section-title">常见问题</h2>
-  <p class="section-sub">关于ChroniCare OS平台的常见疑问解答</p>
-  <div class="faq-list">
-    <div class="faq-item">
-      <h4 onclick="this.parentElement.classList.toggle('open')">ChroniCare OS 是否支持与现有HIS系统对接？</h4>
-      <div class="faq-answer">
-        <p>支持。ChroniCare OS 提供HL7、FHIR、REST三种标准协议适配器，已成功对接卫宁健康、东华医为、创业慧康等主流HIS厂商。对接周期通常为2-4周，我们的技术团队提供全程支持。</p>
-      </div>
-    </div>
-    <div class="faq-item">
-      <h4 onclick="this.parentElement.classList.toggle('open')">数据安全如何保障？是否支持私有化部署？</h4>
-      <div class="faq-answer">
-        <p>平台完全遵循《个人信息保护法》和《健康医疗数据安全指南》，支持私有化部署方案，数据存储在医疗机构自有服务器。企业版支持等保三级认证，所有传输通道均采用TLS加密。</p>
-      </div>
-    </div>
-    <div class="faq-item">
-      <h4 onclick="this.parentElement.classList.toggle('open')">AI风险评估模型的准确性和依据是什么？</h4>
-      <div class="faq-answer">
-        <p>我们的风险评估模型基于国际权威评分体系（Framingham、UKPDS、GRACE、GOLD、KDIGO等），并融合了中国人群队列数据进行本地化修正。模型在超过10万例回顾性数据上进行了验证，AUC达到0.85以上。</p>
-      </div>
-    </div>
-    <div class="faq-item">
-      <h4 onclick="this.parentElement.classList.toggle('open')">基础版开源版本和商业版有什么区别？</h4>
-      <div class="faq-answer">
-        <p>基础版（开源）包含6大慢病管理模块和基础风险评估引擎，适合小型社区卫生服务中心使用。商业版在此基础上增加了HIS集成、AI智能随访、MDT协作、质控报告等高级功能，并提供专业技术支持和SLA保障。</p>
-      </div>
-    </div>
-    <div class="faq-item">
-      <h4 onclick="this.parentElement.classList.toggle('open')">部署和上线需要多长时间？</h4>
-      <div class="faq-answer">
-        <p>标准SaaS部署可在1-2周内完成。私有化部署根据医院IT环境不同，通常需要4-8周（含HIS对接、数据迁移、人员培训）。我们提供完整的实施路线图和项目管理支持。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-  <h2>准备好开始了吗？</h2>
-  <p>立即体验ChroniCare OS，让AI助力您的慢病管理工作</p>
-  <a href="./app.html" class="btn btn-primary">免费试用演示系统</a>
-</section>
-
-<footer class="footer">
-  <div class="footer-links">
-    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement">GitHub</a>
-    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement/issues">Issues</a>
-    <a href="https://github.com/MoKangMedical/chronicdiseasemanagement/blob/main/CONTRIBUTING.md">Contributing</a>
-    <a href="./app.html">在线演示</a>
-  </div>
-  <p>慢康智枢 ChroniCare OS &copy; 2026 MoKangMedical. MIT License.</p>
-</footer>
-
-</body>
+    <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+    <script>window.addEventListener('load',function(){setTimeout(function(){var s=document.getElementById('global-spinner');if(s){s.style.opacity='0';setTimeout(function(){s.style.display='none';},500);}},800);});</script>
+  </body>
 </html>
