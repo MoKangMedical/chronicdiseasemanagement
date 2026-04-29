@@ -1,0 +1,232 @@
+{
+  "district": "栖霞区",
+  "updatedAt": "2026-03-24T18:10:00+08:00",
+  "summary": {
+    "totalPopulation": 1017800,
+    "totalPopulationLabel": "101.78 万人",
+    "populationAsOf": "2024 年末常住人口",
+    "notes": [
+      "人口总量采用 2024 年末官方常住人口口径。",
+      "年龄和性别结构采用第七次全国人口普查栖霞区结构参考。",
+      "未检索到栖霞区官方公开的分病种患病率表，因此病种构成仍应由平台纳管数据生成。"
+    ]
+  },
+  "sexDistribution": [
+    {
+      "label": "男性",
+      "count": 511258,
+      "ratio": 51.76,
+      "note": "七普口径"
+    },
+    {
+      "label": "女性",
+      "count": 476577,
+      "ratio": 48.24,
+      "note": "七普口径"
+    }
+  ],
+  "ageDistribution": [
+    {
+      "label": "0-14 岁",
+      "count": 110406,
+      "ratio": 11.18,
+      "note": "七普年龄结构"
+    },
+    {
+      "label": "15-39 岁",
+      "count": 459235,
+      "ratio": 46.49,
+      "note": "七普年龄结构"
+    },
+    {
+      "label": "40-59 岁",
+      "count": 263739,
+      "ratio": 26.7,
+      "note": "七普年龄结构"
+    },
+    {
+      "label": "60-64 岁",
+      "count": 47835,
+      "ratio": 4.84,
+      "note": "七普年龄结构"
+    },
+    {
+      "label": "65 岁及以上",
+      "count": 106620,
+      "ratio": 10.79,
+      "note": "七普年龄结构"
+    }
+  ],
+  "publicIndicators": [
+    {
+      "title": "60 岁及以上人口",
+      "value": "16.58 万人",
+      "detail": "占常住人口 16.37%",
+      "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+      "sourceDate": "2025-04-28"
+    },
+    {
+      "title": "0-6 岁儿童",
+      "value": "4.99 万人",
+      "detail": "占常住人口 4.92%",
+      "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+      "sourceDate": "2025-04-28"
+    },
+    {
+      "title": "家庭医生签约服务对象",
+      "value": "15.64 万人",
+      "detail": "基层连续管理与签约触达底盘",
+      "sourceLabel": "栖霞区 2025 年民生服务报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+      "sourceDate": "2025-07-30"
+    },
+    {
+      "title": "重点人群联系人数",
+      "value": "16.84 万人",
+      "detail": "重点对象池和连续联系能力参考",
+      "sourceLabel": "栖霞区 2025 年民生服务报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+      "sourceDate": "2025-07-30"
+    },
+    {
+      "title": "重大慢病过早死亡率",
+      "value": "8%",
+      "detail": "区级总体健康结果指标",
+      "sourceLabel": "栖霞区 2026 年卫生健康工作会议报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+      "sourceDate": "2026-03-05"
+    },
+    {
+      "title": "医疗卫生机构",
+      "value": "313 家",
+      "detail": "医院、基层卫生机构与公共卫生机构总量",
+      "sourceLabel": "栖霞区 2026 年卫生健康工作会议报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+      "sourceDate": "2026-03-05"
+    },
+    {
+      "title": "社区卫生服务中心",
+      "value": "10 家",
+      "detail": "分级诊疗与慢病随访基层入口能力",
+      "sourceLabel": "栖霞区 2024 年卫生健康工作会议报道",
+      "sourceUrl": "https://xl.nanjing.gov.cn/gzdt/202405/t20240506_4658517.html",
+      "sourceDate": "2024-05-06"
+    },
+    {
+      "title": "医疗集团结构",
+      "value": "1+8+1+10",
+      "detail": "省级牵头、三级协作、区医院与社区中心协同结构",
+      "sourceLabel": "栖霞区紧密型城市医疗集团成立报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/zmhd/xwfbh/20251229/",
+      "sourceDate": "2025-12-29"
+    }
+  ],
+  "systemUsableAssets": [
+    {
+      "title": "常住人口底数",
+      "value": "101.78 万人",
+      "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+      "usableModules": ["区级总览", "覆盖率驾驶舱", "医院绩效看板"],
+      "usableFields": ["publicProfile.totalPopulation", "districtOperations.managedCoverageRate", "hospitalCoverageRate"],
+      "integrationNote": "作为纳管覆盖率、医院覆盖率和区级规模化管理的统一分母口径。"
+    },
+    {
+      "title": "老年人口画像",
+      "value": "60 岁及以上 16.58 万人",
+      "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+      "usableModules": ["认知障碍早筛", "老年慢病管理", "家庭医生优先队列"],
+      "usableFields": ["publicProfile.ageHighlights", "population.carePriority", "followup.priorityRules"],
+      "integrationNote": "可作为痴呆、心血管和多病共管人群的优先管理口径。"
+    },
+    {
+      "title": "儿童与家庭健康底数",
+      "value": "0-6 岁 4.99 万人",
+      "sourceLabel": "栖霞区 2024 国民经济和社会发展统计公报",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+      "usableModules": ["家庭健康服务", "基层签约触达", "健康宣教"],
+      "usableFields": ["publicProfile.ageHighlights", "operations.familyHealthCoverage"],
+      "integrationNote": "适合扩展家庭健康、母婴与社区宣教覆盖率口径。"
+    },
+    {
+      "title": "家庭医生签约服务对象",
+      "value": "15.64 万人",
+      "sourceLabel": "栖霞区 2025 年民生服务报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+      "usableModules": ["基层触达率", "签约服务驾驶舱", "健康管理师工作台"],
+      "usableFields": ["districtOperations.generalPractitionerCoverageRate", "roleWorkload", "followup.contactablePopulation"],
+      "integrationNote": "可映射为基层连续管理能力和全科医生服务承载量的公开参照。"
+    },
+    {
+      "title": "重点人群联系人数",
+      "value": "16.84 万人",
+      "sourceLabel": "栖霞区 2025 年民生服务报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+      "usableModules": ["提醒中心", "重点对象随访", "风险闭环追踪"],
+      "usableFields": ["followup.overdueBacklog", "coordinationFunnel.closedLoopCount", "publicProfile.healthIndicators"],
+      "integrationNote": "可作为重点对象池的公开基线，用于衡量区级提醒与随访闭环能力。"
+    },
+    {
+      "title": "医疗资源底盘",
+      "value": "313 家机构 / 10 家社区中心",
+      "sourceLabel": "栖霞区 2026 年卫生健康工作会议报道 + 2024 年卫生健康工作会议报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+      "usableModules": ["医院网络地图", "三级协同拓扑", "资源分层展示"],
+      "usableFields": ["hospitalNetwork", "districtOperations.activeHospitalCount", "commandCenter.network"],
+      "integrationNote": "可作为首页医院网络、分层协同和区级资源分布的公开供给口径。"
+    },
+    {
+      "title": "慢病防控结果指标",
+      "value": "重大慢病过早死亡率 8%",
+      "sourceLabel": "栖霞区 2026 年卫生健康工作会议报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+      "usableModules": ["区级绩效看板", "模型治理", "慢病防控总览"],
+      "usableFields": ["publicProfile.healthIndicators", "modelGovernance", "districtExecutivePanel"],
+      "integrationNote": "适合作为区级总体结果指标，不应用作单病种患病率或单患者预测特征。"
+    },
+    {
+      "title": "三级协同组织结构",
+      "value": "1+8+1+10 医疗集团",
+      "sourceLabel": "栖霞区紧密型城市医疗集团成立报道",
+      "sourceUrl": "https://www.njqxq.gov.cn/zmhd/xwfbh/20251229/",
+      "usableModules": ["三级诊疗协同", "转诊拓扑", "医院层级展示"],
+      "usableFields": ["coordinationFunnel", "referralMetrics", "commandCenter.network"],
+      "integrationNote": "可直接映射为省级牵头、三级协作、区医院与社区中心的网络拓扑。"
+    }
+  ],
+  "sources": [
+    {
+      "label": "栖霞区 2024 国民经济和社会发展统计公报",
+      "url": "https://www.njqxq.gov.cn/qxqrmzf/qxqtjj/202504/t20250428_5137715.html",
+      "note": "提供常住人口、60 岁及以上人口、0-6 岁儿童等官方底盘数据。"
+    },
+    {
+      "label": "栖霞区 2025 年民生服务报道",
+      "url": "https://www.njqxq.gov.cn/sjb2018/qxzx/zwyw/202507/t20250730_5618153.html",
+      "note": "提供家庭医生签约服务对象和重点人群联系数据。"
+    },
+    {
+      "label": "栖霞区 2026 年卫生健康工作会议报道",
+      "url": "https://www.njqxq.gov.cn/qxzx/zwyw/202603/t20260305_5800721.html",
+      "note": "提供重大慢病过早死亡率和医疗卫生机构数。"
+    },
+    {
+      "label": "栖霞区 2024 年卫生健康工作会议报道",
+      "url": "https://xl.nanjing.gov.cn/gzdt/202405/t20240506_4658517.html",
+      "note": "提供社区卫生服务中心、床位数、卫生技术人员等资源数据。"
+    },
+    {
+      "label": "栖霞区紧密型城市医疗集团成立报道",
+      "url": "https://www.njqxq.gov.cn/zmhd/xwfbh/20251229/",
+      "note": "提供 1+8+1+10 三级协同结构。"
+    },
+    {
+      "label": "栖霞区第七次全国人口普查年龄金字塔",
+      "url": "https://www.hongheiku.com/xianjirank/jssxsq/9507.html",
+      "note": "提供性别结构和更细年龄结构参考。"
+    }
+  ]
+}

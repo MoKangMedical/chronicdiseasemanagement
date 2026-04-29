@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: medical-agent-os
+    runtime: docker
+    plan: starter
+    region: singapore
+    rootDir: .
+    branch: main
+    autoDeployTrigger: checksPass
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    numInstances: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        sync: false
+    disk:
+      name: storage
+      mountPath: /app/storage
+      sizeGB: 5
